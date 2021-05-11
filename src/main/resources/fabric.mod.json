@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "blockbot",
+  "version": "1.0.0",
+
+  "name": "BlockBot",
+  "description": "A Minecraft/discord chat linking mod",
+  "authors": [
+    "yitzy299"
+  ],
+  "contact": {
+    "homepage": "https://github.com/quiltservertools/blockbot",
+    "sources": "https://github.com/quiltservertools/blockbot"
+  },
+
+  "license": "LGPL-2.1",
+
+  "environment": "server",
+  "entrypoints": {
+    "server": [
+      "com.github.quiltservertools.blockbot.BlockBot"
+    ]
+  },
+  "mixins": [
+    "blockbot.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": ">0.30.0",
+    "minecraft": ">1.16.2"
+  }
+}
