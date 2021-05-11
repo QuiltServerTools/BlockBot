@@ -1,9 +1,9 @@
-# Fabric Example Mod
+# BlockBot
 
 ## Setup
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+Start the server to create a config file. Enter the channel ID for the input channel, plus the webhook URL for the output channel and a bot token
 
 ## License
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+BlockBot is available under the GNU LGPL v3.0 license. See LICENSE

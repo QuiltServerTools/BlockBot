@@ -4,12 +4,18 @@ import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import net.dv8tion.jda.api.*;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
+import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 
 import javax.security.auth.login.LoginException;
+import java.util.Arrays;
+import java.util.Collections;
+
 
 public class Discord {
     private final JDA jda;
@@ -23,15 +29,10 @@ public class Discord {
 
         // Init webhook
         WebhookClientBuilder builder = new WebhookClientBuilder(config.getWebhook());
-        builder.setThreadFactory((job) -> {
-            Thread thread = new Thread(job);
-            thread.setName("Webhook thread");
-            thread.setDaemon(true);
-            return thread;
-        });
-        builder.setWait(true);
-        this.webhook = builder.build();
+        builder.setHttpClient(new OkHttpClient.Builder()
+                .protocols(Collections.singletonList(Protocol.HTTP_1_1)).build());
         builder.setDaemon(true);
+        this.webhook = builder.build();
     }
 
     public void shutdown() {
