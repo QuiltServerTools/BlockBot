@@ -8,10 +8,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Config {
-    private static final Path path = Paths.get(FabricLoader.getInstance().getConfigDir().toString() + "\\blockbot.json");
+    private static final Path path = FabricLoader.getInstance().getConfigDir().resolve("blockbot.json");
     private String identifier;
     private String channel;
     private String webhook;
