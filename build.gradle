@@ -1,6 +1,23 @@
+// Sometimes gradle likes to pull in the wrong version of asm.
+// Like when I was trying to make this buildscript work.
+// Why gradle, why.
+buildscript {
+	dependencies {
+		constraints {
+			["asm", "asm-util", "asm-tree", "asm-analysis"].forEach {
+				classpath("org.ow2.asm:$it") {
+					version { require("9.0") }
+					because("Fabric's TinyRemapper requires ASM 9")
+				}
+			}
+		}
+	}
+}
+
 plugins {
 	id 'fabric-loom' version '0.6-SNAPSHOT'
 	id 'maven-publish'
+	id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -9,6 +26,15 @@ targetCompatibility = JavaVersion.VERSION_1_8
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
+
+configurations {
+	shade
+	implementation.extendsFrom shade
+
+	// In case it is needed in future
+	modShade
+	modImplementation.extendsFrom modShade
+}
 
 repositories {
 	maven {
@@ -27,13 +53,13 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	implementation 'net.dv8tion:JDA:4.2.1_256'
-	include 'net.dv8tion:JDA:4.2.1_256'
-	implementation 'club.minnced:discord-webhooks:0.5.6'
-	include 'club.minnced:discord-webhooks:0.5.6'
-	include("com.squareup.okhttp3:okhttp:4.9.0")
-	include("org.slf4j:slf4j-api:1.7.9")
-	include("org.slf4j:slf4j-log4j12:1.7.9")
+	shade('net.dv8tion:JDA:4.2.1_256') {
+		exclude module: 'opus-java'
+	}
+	shade 'club.minnced:discord-webhooks:0.5.6'
+	include "com.squareup.okhttp3:okhttp:4.9.0"
+	include "org.slf4j:slf4j-api:1.7.9"
+	include "org.apache.logging.log4j:log4j-slf4j-impl:2.8.1"
 }
 
 processResources {
@@ -71,6 +97,38 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_${project.archivesBaseName}"}
 	}
+}
+
+shadowJar {
+	from("LICENSE") {
+		rename { "${it}_${project.archivesBaseName}"}
+	}
+	from sourceSets.main.output
+
+	configurations = [ project.configurations.shade, project.configurations.modShade ]
+	classifier = "dev-all"
+	exclude("kotlin/**", "kotlinx/**", "javax/**", "META-INF")
+	exclude "org/checkerframework/**", "org/jetbrains/**", "org/intellij/**"
+	exclude "com/google/gson/**"
+	exclude "net/kyori/**"
+	exclude "org/slf4j/**"
+
+	def relocPath = "com.github.quiltservertools.blockbot.libs."
+	relocate "com.iwebpp.crypto", relocPath + "com.iwebpp.crypto"
+	relocate "net.dv8tion.jda", relocPath + "net.dv8tion.jda"
+	relocate "com.neovisionaries", relocPath + "com.neovisionaries"
+	relocate "okhttp3", relocPath + "okhttp3"
+	relocate "okio", relocPath + "okio"
+	relocate "org.apache.commons.collections4", relocPath + "org.apache.commons.collections4"
+	relocate "club.minnced.discord", relocPath + "club.minnced.discord"
+	relocate "org.json", relocPath + "org.json"
+	relocate "com.fasterxml", relocPath + "com.fasterxml"
+	relocate "gnu.trove", relocPath + "gnu.trove"
+}
+
+remapJar {
+	dependsOn(shadowJar)
+	input.set(shadowJar.archivePath)
 }
 
 // configure the maven publication
