@@ -24,7 +24,9 @@ public class Listeners extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getChannel().getId().equals(channel) && !event.getMessage().isWebhookMessage()) sendMessageToGame(server, event);
+        if (event.getChannel().getId().equals(channel) && !event.getMessage().isWebhookMessage()) {
+            sendMessageToGame(server, event);
+        }
     }
 
     private void sendMessageToGame(MinecraftServer server, MessageReceivedEvent event) {

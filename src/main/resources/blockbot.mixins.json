@@ -3,12 +3,11 @@
   "minVersion": "0.8",
   "package": "com.github.quiltservertools.blockbot.mixin",
   "compatibilityLevel": "JAVA_8",
-  "server": [
-  ],
   "injectors": {
     "defaultRequire": 1
   },
-  "mixins": [
-    "MixinServerPlayNetworkHandler"
+  "server": [
+    "MixinServerPlayNetworkHandler",
+    "MixinPlayerManger"
   ]
 }
