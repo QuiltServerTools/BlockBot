@@ -29,7 +29,7 @@ public class Discord {
 
     public Discord(Config config, MinecraftServer server) throws LoginException {
         jda = JDABuilder.createDefault(config.getIdentifier()).build();
-        jda.addEventListener(new Listeners(config.getChannel(), server));
+        jda.addEventListener(new Listeners(config, server));
         System.out.println(config.getChannel());
         BlockBot.LOG.info("Setup discord bot with token provided");
 

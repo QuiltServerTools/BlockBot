@@ -1,5 +1,8 @@
 package com.github.quiltservertools.blockbot;
 
+import com.github.quiltservertools.blockbot.command.discord.DiscordCommandOutput;
+import com.github.quiltservertools.blockbot.command.discord.DiscordCommandOutputHelper;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.minecraft.network.MessageType;
@@ -14,18 +17,33 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class Listeners extends ListenerAdapter {
-    private final String channel;
+    private final Config config;
     private final MinecraftServer server;
 
-    public Listeners(String channel, MinecraftServer server) {
-        this.channel = channel;
+    public Listeners(Config config, MinecraftServer server) {
+        this.config = config;
         this.server = server;
     }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getChannel().getId().equals(channel) && !event.getMessage().isWebhookMessage()) {
-            sendMessageToGame(server, event);
+        Message message = event.getMessage();
+        if (event.getChannel().getId().equals(config.getChannel()) && !message.getAuthor().isBot()) {
+            String content = message.getContentRaw();
+            if (config.enableInlineCommands() && content.startsWith("//")) { // inline commands
+                String minecraftCommand = content.substring(2);
+                this.server.execute(() -> {
+                    DiscordCommandOutput output = DiscordCommandOutputHelper.createOutput(event.getTextChannel());
+                    this.server.getCommandManager().execute(DiscordCommandOutputHelper.buildCommandSource(
+                            this.server,
+                            Objects.requireNonNull(event.getMember(), "event.getMember()"),
+                            output, event.getMember().getRoles().stream().anyMatch(config::adminRole)
+                    ), minecraftCommand);
+                    output.sendBufferedContent();
+                });
+            } else {
+                sendMessageToGame(server, event);
+            }
         }
     }
 
