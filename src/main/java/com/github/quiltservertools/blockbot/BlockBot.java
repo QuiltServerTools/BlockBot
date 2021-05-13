@@ -19,6 +19,7 @@ public class BlockBot implements DedicatedServerModInitializer {
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             try {
                 DISCORD = new Discord(CONFIG, server);
+                DISCORD.serverStatus(true);
             } catch (LoginException e) {
                 e.printStackTrace();
                 server.stop(false);
@@ -26,6 +27,7 @@ public class BlockBot implements DedicatedServerModInitializer {
         });
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
             CONFIG.shutdown();
+            DISCORD.serverStatus(false);
             DISCORD.shutdown();
         });
     }

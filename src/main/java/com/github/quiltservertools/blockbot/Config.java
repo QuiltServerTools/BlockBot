@@ -18,6 +18,8 @@ public class Config {
     private String webhook;
     private String adminRoleId;
     private boolean inlineCommands;
+    private String logo;
+    private String name;
 
     public Config() {
         JsonObject json;
@@ -44,6 +46,8 @@ public class Config {
         webhook = json.get("webhook").getAsString();
         adminRoleId = json.get("op_role_id").getAsString();
         inlineCommands = json.get("inline_commands").getAsBoolean();
+        name = json.get("name").getAsString();
+        logo = json.get("logo_url").getAsString();
     }
 
     public String getIdentifier() {
@@ -52,6 +56,14 @@ public class Config {
 
     public String getChannel() {
         return this.channel;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getAdminRoleId() {
@@ -72,6 +84,9 @@ public class Config {
         o.addProperty("channel_id", this.channel);
         o.addProperty("webhook", this.webhook);
         o.addProperty("op_role_id", this.adminRoleId);
+        o.addProperty("name", this.name);
+        o.addProperty("logo_url", this.logo);
+        o.addProperty("inline_commands", this.inlineCommands);
         try {
             Files.write(path, new GsonBuilder().setPrettyPrinting().create().toJson(o).getBytes());
         } catch (IOException e) {

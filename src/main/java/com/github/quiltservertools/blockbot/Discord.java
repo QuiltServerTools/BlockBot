@@ -6,31 +6,27 @@ import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import club.minnced.discord.webhook.send.WebhookMessage;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
-import net.dv8tion.jda.api.*;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
-import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 
 import javax.security.auth.login.LoginException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 
 public class Discord {
     private final JDA jda;
     private final WebhookClient webhook;
+    private final String name;
+    private final String logo;
 
     public Discord(Config config, MinecraftServer server) throws LoginException {
         jda = JDABuilder.createDefault(config.getIdentifier()).build();
         jda.addEventListener(new Listeners(config, server));
-        System.out.println(config.getChannel());
         BlockBot.LOG.info("Setup discord bot with token provided");
 
         // Init webhook
@@ -39,6 +35,8 @@ public class Discord {
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1)).build());
         builder.setDaemon(true);
         this.webhook = builder.build();
+        this.name = config.getName();
+        this.logo = config.getLogo();
     }
 
     public void shutdown() {
@@ -68,5 +66,13 @@ public class Discord {
         builder.setAvatarUrl(getAvatar(uuid));
         builder.setContent(content);
         return builder.build();
+    }
+
+    public void serverStatus(boolean start) {
+        WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
+        builder.setAuthor(new WebhookEmbed.EmbedAuthor(this.name, this.logo, null));
+        builder.setColor(start ? 3334259 : 14695980);
+        builder.setDescription(start ? "Server Started" : "Server Stopped");
+        webhook.send(builder.build());
     }
 }
