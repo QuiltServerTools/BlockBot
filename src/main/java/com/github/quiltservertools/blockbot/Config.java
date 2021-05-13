@@ -3,6 +3,7 @@ package com.github.quiltservertools.blockbot;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.dv8tion.jda.api.entities.Role;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
@@ -16,30 +17,33 @@ public class Config {
     private String channel;
     private String webhook;
     private String adminRoleId;
+    private boolean inlineCommands;
 
     public Config() {
         JsonObject json;
         try {
             json = new JsonParser().parse(new String(Files.readAllBytes(path))).getAsJsonObject();
-            identifier = json.get("token").getAsString();
-            channel = json.get("channel_id").getAsString();
-            webhook = json.get("webhook").getAsString();
-            adminRoleId = json.get("op_role_id").getAsString();
+            loadFromJson(json);
         } catch (IOException e) {
             // Create default
             try {
                 Files.copy(Objects.requireNonNull(Config.class.getResourceAsStream("/data/blockbot/files/default_config.json")), path);
                 json = new JsonParser().parse(new String(Files.readAllBytes(path))).getAsJsonObject();
-                identifier = json.get("token").getAsString();
-                channel = json.get("channel_id").getAsString();
-                webhook = json.get("webhook").getAsString();
-                adminRoleId = json.get("op_role_id").getAsString();
+                loadFromJson(json);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
                 BlockBot.LOG.error("Unable to create default config");
                 BlockBot.LOG.error("Please fill out the config file for BlockBot");
             }
         }
+    }
+
+    private void loadFromJson(JsonObject json) {
+        identifier = json.get("token").getAsString();
+        channel = json.get("channel_id").getAsString();
+        webhook = json.get("webhook").getAsString();
+        adminRoleId = json.get("op_role_id").getAsString();
+        inlineCommands = json.get("inline_commands").getAsBoolean();
     }
 
     public String getIdentifier() {
@@ -52,6 +56,14 @@ public class Config {
 
     public String getAdminRoleId() {
         return adminRoleId;
+    }
+
+    public boolean adminRole(Role role) {
+        return role.getId().equals(this.adminRoleId);
+    }
+
+    public boolean enableInlineCommands() {
+        return inlineCommands;
     }
 
     public void shutdown() {

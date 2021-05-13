@@ -17,27 +17,27 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class Listeners extends ListenerAdapter {
-    private final String channel;
+    private final Config config;
     private final MinecraftServer server;
 
-    public Listeners(String channel, MinecraftServer server) {
-        this.channel = channel;
+    public Listeners(Config config, MinecraftServer server) {
+        this.config = config;
         this.server = server;
     }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         Message message = event.getMessage();
-        if (event.getChannel().getId().equals(channel) && !message.getAuthor().isBot()) {
+        if (event.getChannel().getId().equals(config.getChannel()) && !message.getAuthor().isBot()) {
             String content = message.getContentRaw();
-            if (content.startsWith("//")) {
+            if (config.enableInlineCommands() && content.startsWith("//")) { // inline commands
                 String minecraftCommand = content.substring(2);
                 this.server.execute(() -> {
                     DiscordCommandOutput output = DiscordCommandOutputHelper.createOutput(event.getTextChannel());
                     this.server.getCommandManager().execute(DiscordCommandOutputHelper.buildCommandSource(
                             this.server,
                             Objects.requireNonNull(event.getMember(), "event.getMember()"),
-                            output
+                            output, event.getMember().getRoles().stream().anyMatch(config::adminRole)
                     ), minecraftCommand);
                     output.sendBufferedContent();
                 });

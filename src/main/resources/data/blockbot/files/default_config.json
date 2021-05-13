@@ -2,5 +2,6 @@
   "token": "",
   "channel_id": "",
   "webhook": "",
-  "op_role_id": ""
+  "op_role_id": "",
+  "inline_commands": true
 }

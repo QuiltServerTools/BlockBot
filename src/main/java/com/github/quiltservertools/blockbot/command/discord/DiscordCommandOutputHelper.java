@@ -12,8 +12,8 @@ import net.minecraft.util.math.Vec3d;
 
 public class DiscordCommandOutputHelper {
 
-    public static ServerCommandSource buildCommandSource(MinecraftServer server, Member member, CommandOutput output) {
-        boolean allowedOp = member.isOwner() || member.hasPermission(Permission.ADMINISTRATOR);
+    public static ServerCommandSource buildCommandSource(MinecraftServer server, Member member, CommandOutput output, boolean isAdmin) {
+        boolean allowedOp = member.isOwner() || member.hasPermission(Permission.ADMINISTRATOR) || isAdmin;
         String username = '@' + member.getEffectiveName() + '#' + member.getUser().getDiscriminator();
         return new ServerCommandSource(output, Vec3d.ZERO, Vec2f.ZERO, server.getOverworld(), allowedOp ? 4 : 0,
                 username, new LiteralText(username), server, null);
