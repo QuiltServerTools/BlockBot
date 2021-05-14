@@ -51,7 +51,7 @@ public class Listeners extends ListenerAdapter {
         String msg = event.getMessage().getAttachments().isEmpty() ? event.getMessage().getContentDisplay() : "[Image] " + event.getMessage().getContentDisplay();
         int colour = Objects.requireNonNull(event.getMember()).getColorRaw();
         Text message = new LiteralText(msg);
-        MutableText sender = new LiteralText("<@").append(new LiteralText(event.getAuthor().getName()).styled(style -> style.withColor(TextColor.fromRgb(colour)))).append(new LiteralText("> "));
+        MutableText sender = new LiteralText("<@").append(new LiteralText(event.getMember().getEffectiveName()).styled(style -> style.withColor(TextColor.fromRgb(colour)))).append(new LiteralText("> "));
         server.getPlayerManager().broadcastChatMessage(sender.append(message), MessageType.SYSTEM, Util.NIL_UUID);
     }
 }
