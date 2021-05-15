@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerManager.class)
 public class MixinPlayerManger {
+
     @Inject(method = "onPlayerConnect(Lnet/minecraft/network/ClientConnection;Lnet/minecraft/server/network/ServerPlayerEntity;)V", at = @At("RETURN"))
     public void sendJoinMessageToDiscord(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         BlockBot.DISCORD.joinLeaveToDiscord(false, player);

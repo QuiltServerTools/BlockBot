@@ -32,10 +32,11 @@ public class Config {
                 Files.copy(Objects.requireNonNull(Config.class.getResourceAsStream("/data/blockbot/files/default_config.json")), path);
                 json = new JsonParser().parse(new String(Files.readAllBytes(path))).getAsJsonObject();
                 loadFromJson(json);
+                BlockBot.LOG.fatal("Unable to load config file for BlockBot");
+                BlockBot.LOG.fatal("Please fill out the config file for BlockBot, found in config/blockbot.json");
             } catch (IOException ioException) {
                 ioException.printStackTrace();
-                BlockBot.LOG.error("Unable to create default config");
-                BlockBot.LOG.error("Please fill out the config file for BlockBot");
+                BlockBot.LOG.fatal("Unable to create default config");
             }
         }
     }

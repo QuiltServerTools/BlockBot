@@ -7,7 +7,10 @@
     "defaultRequire": 1
   },
   "server": [
-    "MixinServerPlayNetworkHandler",
-    "MixinPlayerManger"
+    "MixinPlayerManger",
+    "MixinServerPlayNetworkHandler"
+  ],
+  "mixins": [
+    "MixinServerPlayerEntity"
   ]
 }

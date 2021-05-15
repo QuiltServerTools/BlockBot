@@ -11,8 +11,10 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.LoginException;
 import java.util.Collections;
@@ -73,6 +75,17 @@ public class Discord {
         builder.setAuthor(new WebhookEmbed.EmbedAuthor(this.name, this.logo, null));
         builder.setColor(start ? 3334259 : 14695980);
         builder.setDescription(start ? "Server Started" : "Server Stopped");
+        webhook.send(builder.build());
+    }
+
+    public void sendDeathMessage(ServerPlayerEntity player, Text text) {
+        WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
+        builder.setAuthor(new WebhookEmbed.EmbedAuthor(player.getName().asString(), getAvatar(player.getUuidAsString()), null));
+        String message = text.getString();
+        message = message.replaceFirst(player.getName().asString() + " ", "");
+        message = StringUtils.capitalize(message);
+        builder.setDescription(message);
+        builder.setColor(15789375);
         webhook.send(builder.build());
     }
 }
