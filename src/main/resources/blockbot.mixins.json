@@ -2,6 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.github.quiltservertools.blockbot.mixin",
+  "plugin": "com.github.quiltservertools.blockbot.mixin.BlockBotMixinPlugin",
   "compatibilityLevel": "JAVA_8",
   "injectors": {
     "defaultRequire": 1

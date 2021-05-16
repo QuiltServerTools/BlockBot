@@ -5,5 +5,6 @@
   "op_role_id": "",
   "name": "BlockBot",
   "logo_url": "https://cdn.discordapp.com/attachments/777257427334201404/777259569839734784/Blocklogger_Logo.png",
-  "inline_commands": true
+  "inline_commands": true,
+  "death_messages": true
 }
