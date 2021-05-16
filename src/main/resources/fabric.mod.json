@@ -14,7 +14,7 @@
   },
 
   "license": "LGPL-2.1",
-
+  "icon": "assets/blockbot/icon.png",
   "environment": "server",
   "entrypoints": {
     "server": [
