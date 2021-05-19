@@ -16,6 +16,7 @@ public class BlockBot implements DedicatedServerModInitializer {
     public void onInitializeServer() {
         LOG = LogManager.getLogger();
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+            CONFIG = new Config();
             try {
                 DISCORD = new Discord(CONFIG, server);
                 DISCORD.serverStatus(true);

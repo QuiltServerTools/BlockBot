@@ -5,6 +5,7 @@ import com.github.quiltservertools.blockbot.command.discord.DiscordCommandOutput
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.network.MessageType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.*;
@@ -20,6 +21,8 @@ public class Listeners extends ListenerAdapter {
     public Listeners(Config config, MinecraftServer server) {
         this.config = config;
         this.server = server;
+        ServerPlayConnectionEvents.JOIN.register(((handler, sender, server1) -> BlockBot.DISCORD.joinLeaveToDiscord(false, handler.player)));
+        ServerPlayConnectionEvents.DISCONNECT.register(((handler, sender) -> BlockBot.DISCORD.joinLeaveToDiscord(true, handler.player)));
     }
 
     @Override
