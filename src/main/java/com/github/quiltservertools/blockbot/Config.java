@@ -21,6 +21,8 @@ public class Config {
     private String logo;
     private String name;
     private boolean deathMessages;
+    private boolean statusMessages;
+    private boolean advancementMessages;
 
     public Config() {
         JsonObject json;
@@ -51,6 +53,8 @@ public class Config {
         name = json.get("name").getAsString();
         logo = json.get("logo_url").getAsString();
         deathMessages = json.get("death_messages").getAsBoolean();
+        statusMessages = json.get("status_messages") == null || json.get("status_messages").getAsBoolean();
+        advancementMessages = json.get("advancement_messages") == null || json.get("advancement_messages").getAsBoolean();
     }
 
     public String getIdentifier() {
@@ -85,6 +89,14 @@ public class Config {
         return deathMessages;
     }
 
+    public boolean sendStatusMessages() {
+        return statusMessages;
+    }
+
+    public boolean sendAdvancementMessages() {
+        return advancementMessages;
+    }
+
     public void shutdown() {
         JsonObject o = new JsonObject();
         o.addProperty("token", this.identifier);
@@ -95,6 +107,8 @@ public class Config {
         o.addProperty("logo_url", this.logo);
         o.addProperty("inline_commands", this.inlineCommands);
         o.addProperty("death_messages", this.deathMessages);
+        o.addProperty("status_messages", this.statusMessages);
+        o.addProperty("advancement_messages", this.advancementMessages);
         try {
             Files.write(path, new GsonBuilder().setPrettyPrinting().create().toJson(o).getBytes());
         } catch (IOException e) {

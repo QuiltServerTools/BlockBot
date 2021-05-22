@@ -7,7 +7,8 @@
     "defaultRequire": 1
   },
   "server": [
+    "MixinServerPlayerEntity",
     "MixinServerPlayNetworkHandler",
-    "MixinServerPlayerEntity"
+    "MixinPlayerAdvancementTracker"
   ]
 }

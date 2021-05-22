@@ -8,6 +8,7 @@ import club.minnced.discord.webhook.send.WebhookMessage;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.minecraft.advancement.Advancement;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.LoginException;
 import java.util.Collections;
+import java.util.Objects;
 
 
 public class Discord {
@@ -71,6 +73,7 @@ public class Discord {
     }
 
     public void serverStatus(boolean start) {
+        if (!BlockBot.CONFIG.sendStatusMessages()) return;
         WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
         builder.setAuthor(new WebhookEmbed.EmbedAuthor(this.name, this.logo, null));
         builder.setColor(start ? 3334259 : 14695980);
@@ -86,6 +89,15 @@ public class Discord {
         message = StringUtils.capitalize(message);
         builder.setDescription(message);
         builder.setColor(15789375);
+        webhook.send(builder.build());
+    }
+
+    public void sendAdvancementMessage(ServerPlayerEntity player, Advancement advancement) {
+        if (!BlockBot.CONFIG.sendAdvancementMessages()) return;
+        WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
+        builder.setDescription(player.getName().getString() + " has made the advancement [" + Objects.requireNonNull(advancement.getDisplay()).getTitle().getString() + "]");
+        builder.setColor(16771646);
+        builder.setAuthor(new WebhookEmbed.EmbedAuthor(player.getName().asString(), getAvatar(player.getUuidAsString()), null));
         webhook.send(builder.build());
     }
 }
