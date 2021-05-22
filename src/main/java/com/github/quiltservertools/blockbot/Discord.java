@@ -71,7 +71,7 @@ public class Discord {
     }
 
     private String getAvatar(String UUID) {
-        return "https://visage.surgeplay.com/face/" + UUID;
+        return "https://crafatar.com/avatars/" + UUID;
     }
 
     private WebhookMessage prepare(String username, String uuid, String content) {
