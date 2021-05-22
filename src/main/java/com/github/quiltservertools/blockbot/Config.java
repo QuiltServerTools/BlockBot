@@ -23,6 +23,7 @@ public class Config {
     private boolean deathMessages;
     private boolean statusMessages;
     private boolean advancementMessages;
+    private boolean showPresence;
 
     public Config() {
         JsonObject json;
@@ -55,6 +56,7 @@ public class Config {
         deathMessages = json.get("death_messages").getAsBoolean();
         statusMessages = json.get("status_messages") == null || json.get("status_messages").getAsBoolean();
         advancementMessages = json.get("advancement_messages") == null || json.get("advancement_messages").getAsBoolean();
+        showPresence = json.get("show_presence").getAsBoolean();
     }
 
     public String getIdentifier() {
@@ -97,6 +99,10 @@ public class Config {
         return advancementMessages;
     }
 
+    public boolean showPresence() {
+        return showPresence;
+    }
+
     public void shutdown() {
         JsonObject o = new JsonObject();
         o.addProperty("token", this.identifier);
@@ -109,6 +115,7 @@ public class Config {
         o.addProperty("death_messages", this.deathMessages);
         o.addProperty("status_messages", this.statusMessages);
         o.addProperty("advancement_messages", this.advancementMessages);
+        o.addProperty("show_presence", this.showPresence);
         try {
             Files.write(path, new GsonBuilder().setPrettyPrinting().create().toJson(o).getBytes());
         } catch (IOException e) {

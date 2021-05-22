@@ -27,6 +27,7 @@ public class Discord {
     private final WebhookClient webhook;
     private final String name;
     private final String logo;
+    private final Status status;
 
     public Discord(Config config, MinecraftServer server) throws LoginException {
         jda = JDABuilder.createDefault(config.getIdentifier()).build();
@@ -41,11 +42,20 @@ public class Discord {
         this.webhook = builder.build();
         this.name = config.getName();
         this.logo = config.getLogo();
+        this.status = new Status();
     }
 
     public void shutdown() {
         jda.shutdownNow();
         webhook.close();
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public JDA getJda() {
+        return jda;
     }
 
     public void sendMessageToDiscord(ChatMessageC2SPacket packet, ServerPlayerEntity player) {

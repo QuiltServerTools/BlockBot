@@ -21,8 +21,16 @@ public class Listeners extends ListenerAdapter {
     public Listeners(Config config, MinecraftServer server) {
         this.config = config;
         this.server = server;
-        ServerPlayConnectionEvents.JOIN.register(((handler, sender, server1) -> BlockBot.DISCORD.joinLeaveToDiscord(false, handler.player)));
-        ServerPlayConnectionEvents.DISCONNECT.register(((handler, sender) -> BlockBot.DISCORD.joinLeaveToDiscord(true, handler.player)));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server1) -> {
+            BlockBot.DISCORD.joinLeaveToDiscord(false, handler.player);
+            BlockBot.DISCORD.getStatus().addPlayer(handler.player.getUuid());
+            BlockBot.DISCORD.getStatus().update();
+        });
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, sender) -> {
+            BlockBot.DISCORD.joinLeaveToDiscord(true, handler.player);
+            BlockBot.DISCORD.getStatus().removePlayer(handler.player.getUuid());
+            BlockBot.DISCORD.getStatus().update();
+        });
     }
 
     @Override
