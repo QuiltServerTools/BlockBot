@@ -18,6 +18,10 @@ import okhttp3.Protocol;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.LoginException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalField;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -37,7 +41,8 @@ public class Discord {
         // Init webhook
         WebhookClientBuilder builder = new WebhookClientBuilder(config.getWebhook());
         builder.setHttpClient(new OkHttpClient.Builder()
-                .protocols(Collections.singletonList(Protocol.HTTP_1_1)).build());
+                .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                .build());
         builder.setDaemon(true);
         this.webhook = builder.build();
         this.name = config.getName();
@@ -71,7 +76,7 @@ public class Discord {
     }
 
     private String getAvatar(String UUID) {
-        return "https://crafatar.com/avatars/" + UUID;
+        return "https://crafatar.com/avatars/" + UUID + "?t=" + LocalDateTime.now().getHour();
     }
 
     private WebhookMessage prepare(String username, String uuid, String content) {
