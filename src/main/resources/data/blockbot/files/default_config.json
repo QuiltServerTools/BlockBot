@@ -9,5 +9,7 @@
   "death_messages": true,
   "status_messages": true,
   "advancement_messages": true,
-  "show_presence": true
+  "show_presence": true,
+  "command_prefix": "!",
+  "whitelist_command": true
 }

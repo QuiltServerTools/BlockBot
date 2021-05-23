@@ -24,6 +24,8 @@ public class Config {
     private boolean statusMessages;
     private boolean advancementMessages;
     private boolean showPresence;
+    private String commandPrefix;
+    private boolean whitelistCommand;
 
     public Config() {
         JsonObject json;
@@ -56,7 +58,9 @@ public class Config {
         deathMessages = json.get("death_messages").getAsBoolean();
         statusMessages = json.get("status_messages") == null || json.get("status_messages").getAsBoolean();
         advancementMessages = json.get("advancement_messages") == null || json.get("advancement_messages").getAsBoolean();
-        showPresence = json.get("show_presence").getAsBoolean();
+        showPresence = json.get("show_presence") == null || json.get("show_presence").getAsBoolean();
+        commandPrefix = json.get("command_prefix") == null ? "!" : json.get("command_prefix").getAsString();
+        whitelistCommand = json.get("whitelist_command") == null || json.get("whitelist_command").getAsBoolean();
     }
 
     public String getIdentifier() {
@@ -103,6 +107,14 @@ public class Config {
         return showPresence;
     }
 
+    public String getCommandPrefix() {
+        return commandPrefix;
+    }
+
+    public boolean whitelistCommandEnabled() {
+        return whitelistCommand;
+    }
+
     public void shutdown() {
         JsonObject o = new JsonObject();
         o.addProperty("token", this.identifier);
@@ -116,6 +128,8 @@ public class Config {
         o.addProperty("status_messages", this.statusMessages);
         o.addProperty("advancement_messages", this.advancementMessages);
         o.addProperty("show_presence", this.showPresence);
+        o.addProperty("command_prefix", this.commandPrefix);
+        o.addProperty("whitelist_command", this.whitelistCommand);
         try {
             Files.write(path, new GsonBuilder().setPrettyPrinting().create().toJson(o).getBytes());
         } catch (IOException e) {

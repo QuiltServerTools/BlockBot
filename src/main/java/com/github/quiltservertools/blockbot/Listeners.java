@@ -50,7 +50,9 @@ public class Listeners extends ListenerAdapter {
                     output.sendBufferedContent();
                 });
             } else {
-                sendMessageToGame(server, event);
+                if (!botCommand(message)) {
+                    sendMessageToGame(server, event);
+                }
             }
         }
     }
@@ -67,5 +69,18 @@ public class Listeners extends ListenerAdapter {
             server.getPlayerManager().broadcastChatMessage(sender.append(message), MessageType.SYSTEM, Util.NIL_UUID);
         }
 
+    }
+
+    private boolean botCommand(Message message) {
+        if (!message.getContentRaw().startsWith(config.getCommandPrefix())) return false;
+        String msg = message.getContentRaw().replaceFirst(this.config.getCommandPrefix(), "");
+        if (msg.startsWith("whitelist")) {
+            if (!this.config.whitelistCommandEnabled()) return false;
+            String user = msg.replaceFirst("whitelist add ", "");
+            this.server.getCommandManager().execute(this.server.getCommandSource(), "whitelist add " + user);
+            message.getChannel().sendMessage("Whitelisted " + user).queue();
+            return true;
+        }
+        return false;
     }
 }
