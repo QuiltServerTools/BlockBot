@@ -11,5 +11,6 @@
   "advancement_messages": true,
   "show_presence": true,
   "command_prefix": "!",
-  "whitelist_command": true
+  "whitelist_command": true,
+  "skin_overlay": true
 }

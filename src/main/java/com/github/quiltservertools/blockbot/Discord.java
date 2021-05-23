@@ -76,7 +76,9 @@ public class Discord {
     }
 
     private String getAvatar(String UUID) {
-        return "https://crafatar.com/avatars/" + UUID + "?t=" + LocalDateTime.now().getHour();
+        String url = "https://crafatar.com/avatars/" + UUID + "?t=" + LocalDateTime.now().getHour();
+        if (BlockBot.CONFIG.enableSkinOverlay()) url = url.concat("&overlay");
+        return url;
     }
 
     private WebhookMessage prepare(String username, String uuid, String content) {

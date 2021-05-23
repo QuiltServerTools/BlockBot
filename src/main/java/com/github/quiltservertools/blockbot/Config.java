@@ -26,6 +26,7 @@ public class Config {
     private boolean showPresence;
     private String commandPrefix;
     private boolean whitelistCommand;
+    private boolean skinOverlay;
 
     public Config() {
         JsonObject json;
@@ -61,6 +62,7 @@ public class Config {
         showPresence = json.get("show_presence") == null || json.get("show_presence").getAsBoolean();
         commandPrefix = json.get("command_prefix") == null ? "!" : json.get("command_prefix").getAsString();
         whitelistCommand = json.get("whitelist_command") == null || json.get("whitelist_command").getAsBoolean();
+        skinOverlay = json.get("skin_overlay") == null || json.get("skin_overlay").getAsBoolean();
     }
 
     public String getIdentifier() {
@@ -115,6 +117,10 @@ public class Config {
         return whitelistCommand;
     }
 
+    public boolean enableSkinOverlay() {
+        return skinOverlay;
+    }
+
     public void shutdown() {
         JsonObject o = new JsonObject();
         o.addProperty("token", this.identifier);
@@ -130,6 +136,7 @@ public class Config {
         o.addProperty("show_presence", this.showPresence);
         o.addProperty("command_prefix", this.commandPrefix);
         o.addProperty("whitelist_command", this.whitelistCommand);
+        o.addProperty("skin_overlay", this.skinOverlay);
         try {
             Files.write(path, new GsonBuilder().setPrettyPrinting().create().toJson(o).getBytes());
         } catch (IOException e) {
