@@ -51,7 +51,7 @@ public class Discord {
     }
 
     public void shutdown() {
-        jda.shutdownNow();
+        jda.shutdown();
         webhook.close();
     }
 

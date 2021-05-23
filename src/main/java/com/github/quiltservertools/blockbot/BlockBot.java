@@ -25,7 +25,7 @@ public class BlockBot implements DedicatedServerModInitializer {
                 server.stop(false);
             }
         });
-        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             CONFIG.shutdown();
             DISCORD.serverStatus(false);
             DISCORD.shutdown();
