@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "blockbot",
-  "version": "1.0.0",
+  "version": "1.1.0",
 
   "name": "BlockBot",
   "description": "A Minecraft/discord chat linking mod",
@@ -26,8 +26,9 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.7.4",
-    "fabric": ">0.30.0",
-    "minecraft": ">1.16.2"
+    "fabricloader": ">=0.11.3",
+    "fabric": ">=0.34.6",
+    "minecraft": "1.17.x",
+    "java": ">=16"
   }
 }
