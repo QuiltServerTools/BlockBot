@@ -61,7 +61,7 @@ public class Listeners extends ListenerAdapter {
         String msg = event.getMessage().getContentDisplay();
         int colour = Objects.requireNonNull(event.getMember()).getColorRaw();
         Text message = new LiteralText(msg);
-        MutableText sender = new LiteralText("<§7§o@§r").append(new LiteralText(event.getMember().getEffectiveName()).styled(style -> style.withColor(TextColor.fromRgb(colour)))).append(new LiteralText("> "));
+        MutableText sender = new LiteralText("[§7§o@§r").append(new LiteralText(event.getMember().getEffectiveName()).styled(style -> style.withColor(TextColor.fromRgb(colour)))).append(new LiteralText("] "));
         if (!event.getMessage().getAttachments().isEmpty()) {
             event.getMessage().getAttachments().forEach(attachment -> server.getPlayerManager().broadcastChatMessage(sender.append(new LiteralText(attachment.getUrl()).styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl())))), MessageType.SYSTEM, Util.NIL_UUID));
             if (!msg.equals("")) server.getPlayerManager().broadcastChatMessage(sender.append(message), MessageType.SYSTEM, Util.NIL_UUID);
