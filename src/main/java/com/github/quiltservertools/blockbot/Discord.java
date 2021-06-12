@@ -2,10 +2,7 @@ package com.github.quiltservertools.blockbot;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;
-import club.minnced.discord.webhook.send.WebhookEmbed;
-import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
-import club.minnced.discord.webhook.send.WebhookMessage;
-import club.minnced.discord.webhook.send.WebhookMessageBuilder;
+import club.minnced.discord.webhook.send.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.minecraft.advancement.Advancement;
@@ -41,6 +38,7 @@ public class Discord {
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .build());
         builder.setDaemon(true);
+        builder.setAllowedMentions(AllowedMentions.none().withParseUsers(true));
         this.webhook = builder.build();
         this.name = config.getName();
         this.logo = config.getLogo();
