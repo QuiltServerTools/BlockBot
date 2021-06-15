@@ -1,6 +1,6 @@
 package com.github.quiltservertools.blockbot.mixin;
 
-import com.github.quiltservertools.blockbot.BlockBot;
+import com.github.quiltservertools.blockbot.api.event.PlayerAdvancementGrantEvent;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -18,6 +18,6 @@ public class MixinPlayerAdvancementTracker {
 
     @Inject(method = "grantCriterion(Lnet/minecraft/advancement/Advancement;Ljava/lang/String;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;broadcastChatMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/MessageType;Ljava/util/UUID;)V"))
     public void announceAdvancement(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        BlockBot.DISCORD.sendAdvancementMessage(owner, advancement);
+        PlayerAdvancementGrantEvent.EVENT.invoker().onAdvancementGrant(owner, advancement);
     }
 }
