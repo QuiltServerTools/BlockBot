@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "blockbot",
-  "version": "1.1.0",
+  "version": "1.1.1-beta.1",
 
   "name": "BlockBot",
   "description": "A Minecraft/discord chat linking mod",
@@ -13,7 +13,7 @@
     "sources": "https://github.com/quiltservertools/blockbot"
   },
 
-  "license": "LGPL-2.1",
+  "license": "LGPL-3",
   "icon": "assets/blockbot/icon.png",
   "environment": "server",
   "entrypoints": {

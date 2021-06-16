@@ -28,4 +28,6 @@ public interface Bot {
     void onPlayerConnect(ServerPlayNetworkHandler handler, PacketSender packetSender, MinecraftServer server);
 
     void onPlayerDisconnect(ServerPlayNetworkHandler handler, MinecraftServer server);
+
+    void onAlert(String alert);
 }

@@ -4,6 +4,7 @@ import com.github.quiltservertools.blockbot.api.Bot;
 import com.github.quiltservertools.blockbot.api.event.ChatMessageEvent;
 import com.github.quiltservertools.blockbot.api.event.PlayerAdvancementGrantEvent;
 import com.github.quiltservertools.blockbot.api.event.PlayerDeathEvent;
+import com.github.quiltservertools.blockbot.api.event.ServerAlertEvent;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -50,6 +51,7 @@ public class BlockBot implements DedicatedServerModInitializer {
         ChatMessageEvent.EVENT.register(bot::onChatMessage);
         PlayerDeathEvent.EVENT.register(bot::onDeathMessage);
         PlayerAdvancementGrantEvent.EVENT.register(bot::onAdvancementGrant);
+        ServerAlertEvent.EVENT.register(bot::onAlert);
 
         ServerPlayConnectionEvents.JOIN.register(bot::onPlayerConnect);
         ServerPlayConnectionEvents.DISCONNECT.register(bot::onPlayerDisconnect);

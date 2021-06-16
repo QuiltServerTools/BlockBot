@@ -125,6 +125,12 @@ public class BlockBotDiscord implements Bot {
         tickStatus(server);
     }
 
+    @Override
+    public void onAlert(String alert) {
+        // BlockBot by default does nothing, may add admin channel functionality later
+        // The alert method also remains unused at this time
+    }
+
     private WebhookEmbed buildConnectMessage(ServerPlayerEntity player, boolean joined) {
         WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
         builder.setAuthor(new WebhookEmbed.EmbedAuthor(player.getName().asString(), getAvatarUrl(player), null));
