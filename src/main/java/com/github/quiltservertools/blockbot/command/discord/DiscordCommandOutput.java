@@ -30,7 +30,9 @@ public class DiscordCommandOutput implements CommandOutput {
             }
             buffer.append(content);
         } else {
-            this.channel.sendMessage(content).queue();
+            if (!content.isBlank()) { // some mods are naughty and send empty messages :>
+                this.channel.sendMessage(content).queue();
+            }
         }
     }
 
