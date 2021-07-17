@@ -13,26 +13,20 @@
     "issues": "https://github.com/axieum/fabric-example-mod/issues"
   },
   "license": "CC0",
-  "icon": "assets/blockbot-discord/icon.png",
-  "environment": "server",
+  "icon": "assets/blockbot-api/icon.png",
+  "environment": "*",
   "entrypoints": {
     "main": [
-      {
-        "value": "com.github.quiltservertools.blockbotdiscord.BlockBotDiscord::INSTANCE"
-      }
+      "com.github.quiltservertools.blockbotapi.BlockBotApi"
     ]
   },
   "mixins": [
-    "blockbot-discord.mixins.json"
+    "blockbot-api.mixins.json"
   ],
   "depends": {
     "java": ">=16",
     "minecraft": "1.17.x",
     "fabricloader": ">=0.11.3",
-    "fabric": "*",
-    "blockbot-api": ">=1.0.0"
-  },
-  "suggests": {
-    "modmenu": "*"
+    "fabric": "*"
   }
 }

@@ -1,33 +1,60 @@
-# gradle
+### project
+
+### fabric
+
+# runtime
+run/
+
+### java
+
+# compiled classes
+*.class
+
+# log files
+*.log
+
+# packaged files
+*.ear
+*.jar
+*.nar
+*.rar
+*.tar.gz
+*.war
+*.zip
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+### gradle
 
 .gradle/
-build/
-out/
-classes/
 
-# eclipse
+# build
+**/build/
+!src/**/build/
 
-*.launch
+# wrapper
+!gradle-wrapper.jar
+!gradle-wrapper.properties
 
-# idea
+### jetbrains
 
 .idea/
+!.idea/icon.png
 *.iml
-*.ipr
-*.iws
 
-# vscode
+### eclipse
 
 .settings/
-.vscode/
-bin/
-.classpath
+
+# launch configurations
+*.launch
+
+# project description
 .project
 
-# macos
+### vscode
 
-*.DS_Store
-
-# fabric
-
-run/
+.vscode/
+.history/
+*.code-workspace

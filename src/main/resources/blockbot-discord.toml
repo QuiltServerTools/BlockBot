@@ -1,0 +1,19 @@
+[bot]
+token = ""
+guild =
+    [bot.channels]
+    chat =
+    console =
+
+[chatRelay]
+discordFormat = "{player} » {message}"
+minecraftFormat = "[<color:#7289DA>Discord</color> | {sender_colored}] {message}"
+allowMentions = true
+    [chatRelay.webhook]
+    useWebhook = true
+    webhookName = "chat-relay"
+    avatarUrl = "https://crafatar.com/avatars/{uuid}?size=100&overlay"
+
+[consoleRelay]
+pattern = "[%level] (%logger{1}) %msg%n"
+minLevel = "INFO"

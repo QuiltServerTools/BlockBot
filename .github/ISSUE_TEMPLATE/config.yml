@@ -1,0 +1,14 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Wiki
+    url: https://github.com/axieum/fabric-example-mod/wiki
+    about: Please find helpful guides related to using the mod here
+  - name: GitHub Discussions
+    url: https://github.com/axieum/fabric-example-mod/discussions
+    about: Please ask and answer any questions regarding the mod here
+  - name: Join Discord
+    url: https://discord.gg/example
+    about: Please get involved with the mod's community here
+  - name: About Fabric
+    url: https://fabricmc.net/
+    about: Please find information regarding the Fabric mod loader here
