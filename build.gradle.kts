@@ -13,7 +13,7 @@ allprojects {
 
     apply(plugin = "fabric-loom")
 
-    base.archivesName.set("${modId}-mc${rootProject.libs.versions.minecraft}")
+    base.archivesName.set("${modId}-mc${rootProject.libs.versions.minecraft.get()}")
     group = mavenGroup
     version = modVersion
 
@@ -85,7 +85,6 @@ dependencies {
 
     subprojects.forEach {
         implementation(project(":${it.name}"))
-        include(project("${it.name}:")) // nest within distribution
     }
 }
 

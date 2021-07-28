@@ -1,8 +1,6 @@
 package com.github.quiltservertools.blockbotapi;
 
-import com.github.quiltservertools.blockbotapi.event.ChatMessageEvent;
-import com.github.quiltservertools.blockbotapi.event.PlayerAdvancementGrantEvent;
-import com.github.quiltservertools.blockbotapi.event.PlayerDeathEvent;
+import com.github.quiltservertools.blockbotapi.event.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -13,19 +11,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BlockBotApi implements ModInitializer {
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger("BlockBot API");
     private static final Set<Bot> bots = new HashSet<>();
 
     @Override
     public void onInitialize() {
         // More testing of events
-        LOGGER.info("The api thing initialized");
-        ChatMessageEvent.EVENT.register((player, message) -> {
-            LOGGER.info("chat message " + message);
-        });
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-            LOGGER.info("SERVER IS STARTING");
-        });
+        LOGGER.info("Initializing BlockBotAPI");
+
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> LOGGER.info("Loaded " + bots.size() + " bots"));
     }
 
     public static Set<Bot> getBots() {
