@@ -16,7 +16,6 @@ public class BlockBotApi implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // More testing of events
         LOGGER.info("Initializing BlockBotAPI");
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> LOGGER.info("Loaded " + bots.size() + " bots"));

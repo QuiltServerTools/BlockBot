@@ -5,7 +5,8 @@
   "name": "${name}",
   "description": "Library containing common code for chat bridge mods",
   "authors": [
-    "yitzy299"
+    "yitzy299",
+    "Potatoboy9999"
   ],
   "contact": {
     "homepage": "https://curseforge.com/minecraft/mc-mods/blockbot-api",

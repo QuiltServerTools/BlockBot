@@ -13,7 +13,7 @@ allprojects {
 
     apply(plugin = "fabric-loom")
 
-    base.archivesName.set("${modId}-mc${rootProject.libs.versions.minecraft.get()}")
+    base.archivesName.set(modId)
     group = mavenGroup
     version = modVersion
 
@@ -26,8 +26,7 @@ allprojects {
     dependencies {
         // Fabric
         minecraft(rootProject.libs.minecraft)
-        //mappings(variantOf(rootProject.libs.yarn.mappings) { classifier("v2") })
-        mappings("net.fabricmc:yarn:1.17.1+build.14:v2")
+        mappings(variantOf(rootProject.libs.yarn.mappings) { classifier("v2") })
         modImplementation(rootProject.libs.fabric.loader)
 
         // Mods
@@ -69,19 +68,23 @@ allprojects {
 repositories {
     maven("https://maven.nucleoid.xyz/")
     maven("https://maven.kotlindiscord.com/repository/maven-public/")
+    mavenLocal()
 }
 
 dependencies {
     modImplementation(libs.fabric.kotlin)
 
-    modImplementation(include("eu.pb4", "placeholder-api", "1.0.0-rc2-1.17"))
+    modImplementation(libs.placeholder.api)
+    include(libs.placeholder.api)
 
-    //implementation("com.kotlindiscord.kord.extensions:kord-extensions:1.4.1-20210613.173344-25")
-    //implementation("com.kotlindiscord.kordex.ext.common:ext-common:1.0.0-SNAPSHOT")
+    modImplementation(libs.mcDiscordReserializer)
+    include(libs.mcDiscordReserializer)
+
     implementation(libs.kord.extensions)
+    implementation(libs.emoji)
 
-    implementation("com.uchuhimo:konf:0.23.0")
-    implementation("com.uchuhimo:konf-toml:0.23.0")
+    implementation(libs.konf.base)
+    implementation(libs.konf.toml)
 
     subprojects.forEach {
         implementation(project(":${it.name}"))

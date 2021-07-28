@@ -5,15 +5,30 @@ yarn-mappings = "1.17.1+build.14"
 
 fabric-api = "0.37.0+1.17"
 
+# Kotlin
 kotlin = "1.5.20"
 fabric-kotlin = "1.6.2+kotlin.1.5.20"
 
+# Discord
 kord-extensions = "1.4.2-SNAPSHOT"
+mc-discord-reserializer = "1.0.0"
+emoji-java = "5.1.1"
+
+placeholder-api = "1.0.0-rc2-1.17"
+konf = "0.23.0"
 
 [libraries]
-kord-extensions = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version.ref = "kord-extensions" }
 minecraft = { module = "net.minecraft:minecraft", version.ref = "minecraft" }
 yarn-mappings = { module = "net.fabricmc:yarn", version.ref = "yarn-mappings" }
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+
 fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
 fabric-kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric-kotlin" }
+
+kord-extensions = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version.ref = "kord-extensions" }
+emoji = { module = "com.vdurmont:emoji-java", version.ref = "emoji-java"}
+mcDiscordReserializer = { module = "com.github.quiltservertools:mcdiscordreserializer", version.ref = "mc-discord-reserializer"}
+
+placeholder-api = { module = "eu.pb4:placeholder-api", version.ref = "placeholder-api" }
+konf-base = { module = "com.uchuhimo:konf", version.ref = "konf"}
+konf-toml = { module = "com.uchuhimo:konf-toml", version.ref = "konf"}

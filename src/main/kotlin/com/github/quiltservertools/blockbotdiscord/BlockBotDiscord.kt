@@ -12,20 +12,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
-import net.minecraft.entity.player.PlayerEntity
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.network.ServerPlayNetworkHandler
-import net.minecraft.util.ActionResult
-import net.minecraft.util.Hand
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Direction
-import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.nio.file.Files
 
 @OptIn(PrivilegedIntent::class)
 object BlockBotDiscord : ModInitializer, CoroutineScope {
@@ -37,7 +29,13 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
     override fun onInitialize() {
         logInfo("Initializing")
 
-        createConfigFile()
+        if (!Files.exists(FabricLoader.getInstance().configDir.resolve(CONFIG_PATH))) {
+            logInfo("No config file, creating...")
+            Files.copy(
+                FabricLoader.getInstance().getModContainer(MOD_ID).get().getPath(CONFIG_PATH),
+                FabricLoader.getInstance().configDir.resolve(CONFIG_PATH)
+            )
+        }
         if (!config.isCorrect()) {
             logFatal("Config invalid. Disabling mod...")
             return
@@ -46,24 +44,10 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
         ServerLifecycleEvents.SERVER_STARTING.register(::serverStarting)
 
         DiscordConsoleAppender().start()
-
-        // Event testing, none work :/
-        AttackBlockCallback.EVENT.register { player, world, hand, pos, direction ->
-            logInfo("block attacked")
-            ActionResult.PASS
-        }
-        ServerLifecycleEvents.SERVER_STARTING.register { server: MinecraftServer ->
-            logInfo(server.name)
-        }
-        ServerPlayConnectionEvents.JOIN.register { handler, sender, server ->
-            logInfo(handler.player.name.asString())
-        }
     }
 
     private fun serverStarting(server: MinecraftServer) {
-        logInfo("Staring bot")
         launch {
-            logInfo("Staring bot2")
             bot = ExtensibleBot(config[BotSpec.token]) {
                 slashCommands {
                     enabled = true
