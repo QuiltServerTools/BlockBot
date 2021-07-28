@@ -6,6 +6,8 @@ import com.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import com.github.quiltservertools.blockbotdiscord.config.config
 import com.github.quiltservertools.blockbotdiscord.config.getChannel
 import com.kotlindiscord.kord.extensions.extensions.Extension
+import dev.kord.core.behavior.channel.createMessage
+import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import kotlinx.coroutines.launch
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.dedicated.MinecraftDedicatedServer
@@ -39,7 +41,10 @@ class ConsoleExtension : Extension() {
                 }
 
                 if (message.isNotEmpty()) {
-                    channel.createMessage(message)
+                    channel.createMessage {
+                        allowedMentions = AllowedMentionsBuilder()
+                        content = message
+                    }
                 }
             }
         }

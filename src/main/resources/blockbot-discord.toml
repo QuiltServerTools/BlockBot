@@ -6,13 +6,20 @@ guild =
     console =
 
 [chatRelay]
-discordFormat = "{player} » {message}"
-minecraftFormat = "[<color:#7289DA>Discord</color> | {sender_colored}] {message}"
 allowMentions = true
+convertEmoji = true
+convertMarkdown = true
+
+    [chatRelay.messageFormat]
+    discordFormat = "{player} » {message}"
+    minecraftFormat = "[<color:#7289DA>Discord</color> | {sender_colored}] {message}"
+    replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
+
     [chatRelay.webhook]
     useWebhook = true
-    webhookName = "chat-relay"
-    avatarUrl = "https://crafatar.com/avatars/{uuid}?size=100&overlay"
+    webhookName = "Server"
+    webhookAvatar = "https://www.creativefabrica.com/wp-content/uploads/2019/05/Server-icon-by-ahlangraphic-1-580x386.jpg"
+    playerAvatarUrl = "https://crafatar.com/avatars/{uuid}?size=100&overlay"
 
 [consoleRelay]
 pattern = "[%level] (%logger{1}) %msg%n"

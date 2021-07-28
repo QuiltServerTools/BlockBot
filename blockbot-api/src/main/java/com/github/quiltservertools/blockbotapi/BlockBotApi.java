@@ -18,14 +18,7 @@ public class BlockBotApi implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // More testing of events
-        LOGGER.info("The api thing initialized");
-        ChatMessageEvent.EVENT.register((player, message) -> {
-            LOGGER.info("chat message " + message);
-        });
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-            LOGGER.info("SERVER IS STARTING");
-        });
+
     }
 
     public static Set<Bot> getBots() {

@@ -1,19 +1,20 @@
 package com.github.quiltservertools.blockbotdiscord.config
 
 import com.github.quiltservertools.blockbotdiscord.BlockBotDiscord
-import com.github.quiltservertools.blockbotdiscord.logInfo
 import com.github.quiltservertools.blockbotdiscord.logWarn
 import com.github.quiltservertools.blockbotdiscord.utility.literal
+import com.github.quiltservertools.blockbotdiscord.utility.summary
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import com.kotlindiscord.kord.extensions.ExtensibleBot
-import com.uchuhimo.konf.BaseConfig
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.UnsetValueException
 import com.uchuhimo.konf.source.toml
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.getChannelOf
+import dev.kord.core.entity.Member
+import dev.kord.core.entity.Message
 import dev.kord.core.entity.channel.GuildMessageChannel
 import eu.pb4.placeholders.PlaceholderAPI
 import eu.pb4.placeholders.TextParser
@@ -23,20 +24,9 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
-import java.nio.file.Files
 import java.util.*
 
-private const val CONFIG_PATH = "blockbot-discord.toml"
-
-fun createConfigFile() {
-    if (!Files.exists(FabricLoader.getInstance().configDir.resolve(CONFIG_PATH))) {
-        logInfo("No config file, creating...")
-        Files.copy(
-            FabricLoader.getInstance().getModContainer(BlockBotDiscord.MOD_ID).get().getPath(CONFIG_PATH),
-            FabricLoader.getInstance().configDir.resolve(CONFIG_PATH)
-        )
-    }
-}
+const val CONFIG_PATH = "blockbot-discord.toml"
 
 val config = Config {
     addSpec(BotSpec)
@@ -50,7 +40,7 @@ val config = Config {
 fun Config.getDiscordChatRelayMsg(player: ServerPlayerEntity, message: String): String =
     PlaceholderAPI.parseText(
         PlaceholderAPI.parsePredefinedText(
-            this[ChatRelaySpec.discordFormat].literal(),
+            this[ChatRelaySpec.MessageFormatSpec.discordFormat].literal(),
             PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
             mapOf("player" to player.displayName, "message" to message.literal())
         ),
@@ -68,24 +58,39 @@ fun Config.isCorrect() = try {
 fun Config.getMinecraftChatRelayMsg(
     sender: MutableText,
     topRole: MutableText,
-    message: String,
+    message: Text,
     server: MinecraftServer
 ): Text = PlaceholderAPI.parseText(
     PlaceholderAPI.parsePredefinedText(
-        TextParser.parse(this[ChatRelaySpec.minecraftFormat]),
+        TextParser.parse(this[ChatRelaySpec.MessageFormatSpec.minecraftFormat]),
         PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
         mapOf(
             "sender" to sender.copy().formatted(Formatting.RESET),
             "sender_colored" to sender,
             "top_role" to topRole,
-            "message" to message.literal()
+            "message" to message
+        )
+    ), server
+)
+
+fun Config.getReplyMsg(
+    sender: String,
+    message: Message,
+    server: MinecraftServer
+): Text = PlaceholderAPI.parseText(
+    PlaceholderAPI.parsePredefinedText(
+        TextParser.parse(this[ChatRelaySpec.MessageFormatSpec.replyFormat]),
+        PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+        mapOf(
+            "sender" to (sender).literal(),
+            "summary" to message.summary().literal(),
         )
     ), server
 )
 
 fun Config.getWebhookChatRelayAvatar(uuid: UUID): String =
     PlaceholderAPI.parsePredefinedText(
-        this[ChatRelaySpec.WebhookSpec.avatarUrl].literal(),
+        this[ChatRelaySpec.WebhookSpec.playerAvatarUrl].literal(),
         PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
         mapOf("uuid" to uuid.toString().literal())
     ).string
