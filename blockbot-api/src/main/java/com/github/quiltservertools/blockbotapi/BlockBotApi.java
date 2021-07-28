@@ -18,7 +18,6 @@ public class BlockBotApi implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("Initializing BlockBotAPI");
 
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> LOGGER.info("Loaded " + bots.size() + " bots"));
     }
 
     public static Set<Bot> getBots() {
