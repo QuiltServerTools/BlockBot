@@ -6,9 +6,7 @@ import com.github.quiltservertools.blockbotapi.event.DiscordMessageEvent
 import com.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import com.github.quiltservertools.blockbotdiscord.MentionToMinecraftRenderer
 import com.github.quiltservertools.blockbotdiscord.config.*
-import com.github.quiltservertools.blockbotdiscord.utility.Colors
-import com.github.quiltservertools.blockbotdiscord.utility.convertStringToMention
-import com.github.quiltservertools.blockbotdiscord.utility.literal
+import com.github.quiltservertools.blockbotdiscord.utility.*
 import com.github.quiltservertools.mcdiscordreserializer.minecraft.MinecraftSerializer
 import com.github.quiltservertools.mcdiscordreserializer.minecraft.MinecraftSerializerOptions
 import com.kotlindiscord.kord.extensions.extensions.Extension
@@ -94,10 +92,10 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     public suspend fun getChatMessage(sender: Member, message: Message): Text {
-        val emojiString =
-            if (config[ChatRelaySpec.convertEmoji]) EmojiParser.parseToAliases(message.content) else message.content
+        val emojiString = EmojiParser.parseToAliases(message.content)
         var content: MutableText =
             if (config[ChatRelaySpec.convertMarkdown]) minecraftSerializer.serialize(emojiString) else emojiString.literal()
+        content = convertEmojiToTranslatable(content)
         if (message.referencedMessage != null) {
             val reply = config.getReplyMsg(
                 message.referencedMessage!!.data.author.username,

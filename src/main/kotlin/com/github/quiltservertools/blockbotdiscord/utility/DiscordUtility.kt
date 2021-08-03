@@ -1,7 +1,14 @@
 package com.github.quiltservertools.blockbotdiscord.utility
 
+import com.vdurmont.emoji.EmojiManager
 import dev.kord.core.entity.Guild
 import dev.kord.core.firstOrNull
+import eu.pb4.placeholders.PlaceholderAPI
+import net.minecraft.text.MutableText
+import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
+import java.util.regex.Pattern
+
 
 suspend fun convertStringToMention(message: String, guild: Guild): String {
     val mentionsRegex = Regex("@(.{3,32})")
@@ -21,4 +28,26 @@ suspend fun convertStringToMention(message: String, guild: Guild): String {
     }
 
     return mentionMessage
+}
+
+private val emojiPattern =
+    Pattern.compile("[:](?<id>[^:\\s]+)[:]")
+
+private val emojiAliases = EmojiManager.getAll().flatMap { it.aliases }.map {
+    it to
+        TranslatableText(
+            "%1\$s%3256342\$s", ":$it:", EmojiManager.getForAlias(it).unicode
+        )
+}.toMap(
+    mutableMapOf()
+)
+
+fun convertEmojiToTranslatable(
+    input: MutableText
+): MutableText {
+    return PlaceholderAPI.parsePredefinedText(
+        input,
+        emojiPattern,
+        emojiAliases as Map<String, Text>
+    ) as MutableText
 }

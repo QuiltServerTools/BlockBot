@@ -3,7 +3,10 @@ plugins {
     id("maven-publish")
     id("fabric-loom") version "0.8-SNAPSHOT"
     kotlin("jvm") version "1.5.20"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
+
+configurations.implementation.get().extendsFrom(configurations.shadow.get())
 
 allprojects {
     val modId: String by project
@@ -80,11 +83,11 @@ dependencies {
     modImplementation(libs.mcDiscordReserializer)
     include(libs.mcDiscordReserializer)
 
-    implementation(libs.kord.extensions)
-    implementation(libs.emoji)
+    shadow(libs.kord.extensions)
+    shadow(libs.emoji)
 
-    implementation(libs.konf.base)
-    implementation(libs.konf.toml)
+    shadow(libs.konf.base)
+    shadow(libs.konf.toml)
 
     subprojects.forEach {
         implementation(project(":${it.name}"))
@@ -92,8 +95,58 @@ dependencies {
     }
 }
 
-tasks.compileKotlin {
-    kotlinOptions {
-        jvmTarget = "16"
+tasks {
+    remapJar {
+        dependsOn(shadowJar)
+        input.set(shadowJar.get().archiveFile)
+    }
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = "16"
+        }
+    }
+    shadowJar {
+        from("LICENSE")
+
+        configurations = listOf(
+            project.configurations.shadow.get()
+        )
+        archiveClassifier.set("dev-all")
+
+        exclude("kotlin/**", "kotlinx/**", "javax/**", "META-INF")
+        exclude("org/checkerframework/**", "org/intellij/**", "org/jetbrains/annotations/**")
+        exclude("com/google/gson/**")
+        exclude("net/kyori/**")
+        exclude("org/slf4j/**")
+
+        val relocPath = "com.github.quiltservertools.libs."
+        relocate("com.fasterxml", relocPath + "com.fasterxml")
+        relocate("com.moandjiezana.toml", relocPath + "com.moandjiezana.toml")
+        relocate("com.uchuhimo.konf", relocPath + "com.uchuhimo.konf")
+        relocate("com.googlecode", relocPath + "com.googlecode")
+        relocate("com.ibm", relocPath + "com.ibm")
+        relocate("com.kotlindiscord", relocPath + "com.kotlindiscord")
+        relocate("com.sun", relocPath + "com.sun")
+        relocate("com.typesafe", relocPath + "com.typesafe")
+        relocate("com.vdurmont", relocPath + "com.vdurmont")
+        relocate("javassist", relocPath + "javassist")
+        relocate("dev.kord", relocPath + "dev.kord")
+        relocate("io.ktor", relocPath + "io.ktor")
+        relocate("io.sentry", relocPath + "io.sentry")
+        relocate("org.apache.commons", relocPath + "org.apache.commons")
+        relocate("org.eclipse", relocPath + "org.eclipse")
+        relocate("org.gjt", relocPath + "org.gjt")
+        relocate("org.jaxen", relocPath + "org.jaxen")
+        relocate("org.json", relocPath + "org.json")
+        relocate("org.koin", relocPath + "org.koin")
+        relocate("org.relaxng", relocPath + "org.relaxng")
+        relocate("org.xml", relocPath + "org.xml")
+        relocate("org.xmlpull", relocPath + "org.xmlpull")
+        relocate("org.yaml", relocPath + "org.yaml")
+        relocate("org.dom4j", relocPath + "org.yaml")
+
+        relocate("org.reflections", relocPath + "org.reflections")
+        // it appears you cannot relocate sqlite due to the native libraries
+        // relocate("org.sqlite", relocPath + "org.sqlite")
     }
 }

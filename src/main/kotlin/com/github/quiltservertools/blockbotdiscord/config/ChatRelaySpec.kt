@@ -5,7 +5,6 @@ import com.uchuhimo.konf.ConfigSpec
 object ChatRelaySpec : ConfigSpec() {
 
     val allowMentions by required<Boolean>()
-    val convertEmoji by required<Boolean>()
     val convertMarkdown by required<Boolean>()
     object MessageFormatSpec: ConfigSpec() {
         val discordFormat by required<String>()

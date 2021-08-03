@@ -7,7 +7,6 @@ guild =
 
 [chatRelay]
 allowMentions = true
-convertEmoji = true
 convertMarkdown = true
 
     [chatRelay.messageFormat]
