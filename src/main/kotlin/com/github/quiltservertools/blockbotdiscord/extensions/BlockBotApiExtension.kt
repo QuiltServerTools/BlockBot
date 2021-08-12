@@ -3,10 +3,15 @@ package com.github.quiltservertools.blockbotdiscord.extensions
 import com.github.quiltservertools.blockbotapi.Bot
 import com.github.quiltservertools.blockbotapi.Channels
 import com.github.quiltservertools.blockbotapi.event.DiscordMessageEvent
+import com.github.quiltservertools.blockbotapi.sender.MessageSender
+import com.github.quiltservertools.blockbotapi.sender.PlayerMessageSender
 import com.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import com.github.quiltservertools.blockbotdiscord.MentionToMinecraftRenderer
 import com.github.quiltservertools.blockbotdiscord.config.*
-import com.github.quiltservertools.blockbotdiscord.utility.*
+import com.github.quiltservertools.blockbotdiscord.utility.Colors
+import com.github.quiltservertools.blockbotdiscord.utility.convertEmojiToTranslatable
+import com.github.quiltservertools.blockbotdiscord.utility.convertStringToMention
+import com.github.quiltservertools.blockbotdiscord.utility.literal
 import com.github.quiltservertools.mcdiscordreserializer.minecraft.MinecraftSerializer
 import com.github.quiltservertools.mcdiscordreserializer.minecraft.MinecraftSerializerOptions
 import com.kotlindiscord.kord.extensions.extensions.Extension
@@ -158,7 +163,7 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onChatMessage(player: ServerPlayerEntity?, message: String) {
+    override fun onChatMessage(sender: MessageSender, message: String) {
         BlockBotDiscord.launch {
             var content = message
             // content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
@@ -169,19 +174,16 @@ class BlockBotApiExtension : Extension(), Bot {
             if (config[ChatRelaySpec.WebhookSpec.useWebhook]) {
                 chatWebhook.execute(chatWebhook.token!!) {
                     this.allowedMentions = mentions
-                    this.username = player?.displayName?.asString() ?: "Server"
-                    this.content = content
-                    this.avatarUrl = if (player != null)
-                        config.getWebhookChatRelayAvatar(player.uuid)
-                    else
-                        config[ChatRelaySpec.WebhookSpec.webhookAvatar]
+                    this.username = sender.name.asString()
+                    this.content = sender.formatWebhookContent(content)
+                    this.avatarUrl = sender.getAvatar()
                 }
             } else {
                 val messageChannel = config.getChannel(Channels.CHAT, bot)
 
                 messageChannel.createMessage {
                     allowedMentions = mentions
-                    this.content = if (player != null) config.getDiscordChatRelayMsg(player, content) else content
+                    this.content = sender.formatMessageContent(content)
                 }
             }
         }
@@ -266,5 +268,26 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onDiscordMessage(content: String, channel: String) {
+    }
+}
+
+fun MessageSender.getAvatar(): String {
+    return if (this is PlayerMessageSender) config.getWebhookChatRelayAvatar(this.uuid)
+    else config[ChatRelaySpec.WebhookSpec.webhookAvatar]
+}
+
+fun MessageSender.formatMessageContent(content: String): String {
+    return when (this.type) {
+        MessageSender.MessageType.REGULAR -> config.formatDiscordMessage(this, content)
+        MessageSender.MessageType.EMOTE -> config.formatDiscordEmote(this, content)
+        MessageSender.MessageType.ANNOUNCEMENT -> config.formatDiscordAnnouncement(this, content)
+    }
+}
+
+fun MessageSender.formatWebhookContent(content: String): String {
+    return when (this.type) {
+        MessageSender.MessageType.REGULAR -> config.formatWebhookMessage(this, content)
+        MessageSender.MessageType.EMOTE -> config.formatWebhookEmote(this, content)
+        MessageSender.MessageType.ANNOUNCEMENT -> config.formatWebhookAnnouncement(this, content)
     }
 }

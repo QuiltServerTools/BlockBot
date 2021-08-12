@@ -1,5 +1,7 @@
 package com.github.quiltservertools.blockbotdiscord.config
 
+import com.github.quiltservertools.blockbotapi.sender.MessageSender
+import com.github.quiltservertools.blockbotapi.sender.PlayerMessageSender
 import com.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import com.github.quiltservertools.blockbotdiscord.logWarn
 import com.github.quiltservertools.blockbotdiscord.utility.literal
@@ -13,14 +15,12 @@ import com.uchuhimo.konf.source.toml
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.getChannelOf
-import dev.kord.core.entity.Member
 import dev.kord.core.entity.Message
 import dev.kord.core.entity.channel.GuildMessageChannel
 import eu.pb4.placeholders.PlaceholderAPI
 import eu.pb4.placeholders.TextParser
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
@@ -37,14 +37,32 @@ val config = Config {
     .from.env()
     .from.systemProperties()
 
-fun Config.getDiscordChatRelayMsg(player: ServerPlayerEntity, message: String): String =
+fun Config.formatDiscordMessage(sender: MessageSender, message: String): String =
+    formatDiscordRelayMessage(sender, message, config[ChatRelaySpec.DiscordMessageFormatSpec.messageFormat])
+
+fun Config.formatDiscordEmote(sender: MessageSender, message: String): String =
+    formatDiscordRelayMessage(sender, message, config[ChatRelaySpec.DiscordMessageFormatSpec.emoteFormat])
+
+fun Config.formatDiscordAnnouncement(sender: MessageSender, message: String): String =
+    formatDiscordRelayMessage(sender, message, config[ChatRelaySpec.DiscordMessageFormatSpec.announcementFormat])
+
+fun Config.formatWebhookMessage(sender: MessageSender, message: String): String =
+    formatDiscordRelayMessage(sender, message, config[ChatRelaySpec.DiscordWebhookFormatSpec.messageFormat])
+
+fun Config.formatWebhookEmote(sender: MessageSender, message: String): String =
+    formatDiscordRelayMessage(sender, message, config[ChatRelaySpec.DiscordWebhookFormatSpec.emoteFormat])
+
+fun Config.formatWebhookAnnouncement(sender: MessageSender, message: String): String =
+    formatDiscordRelayMessage(sender, message, config[ChatRelaySpec.DiscordWebhookFormatSpec.announcementFormat])
+
+private fun formatDiscordRelayMessage(sender: MessageSender, message: String, format: String): String =
     PlaceholderAPI.parseText(
         PlaceholderAPI.parsePredefinedText(
-            this[ChatRelaySpec.MessageFormatSpec.discordFormat].literal(),
+            format.literal(),
             PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
-            mapOf("player" to player.displayName, "message" to message.literal())
+            mapOf("sender" to sender.name, "message" to message.literal())
         ),
-        player
+        if (sender is PlayerMessageSender) sender.player else null
     ).string
 
 fun Config.isCorrect() = try {
@@ -62,7 +80,7 @@ fun Config.getMinecraftChatRelayMsg(
     server: MinecraftServer
 ): Text = PlaceholderAPI.parseText(
     PlaceholderAPI.parsePredefinedText(
-        TextParser.parse(this[ChatRelaySpec.MessageFormatSpec.minecraftFormat]),
+        TextParser.parse(this[ChatRelaySpec.MinecraftFormatSpec.messageFormat]),
         PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
         mapOf(
             "sender" to sender.copy().formatted(Formatting.RESET),
@@ -79,7 +97,7 @@ fun Config.getReplyMsg(
     server: MinecraftServer
 ): Text = PlaceholderAPI.parseText(
     PlaceholderAPI.parsePredefinedText(
-        TextParser.parse(this[ChatRelaySpec.MessageFormatSpec.replyFormat]),
+        TextParser.parse(this[ChatRelaySpec.MinecraftFormatSpec.replyFormat]),
         PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
         mapOf(
             "sender" to (sender).literal(),

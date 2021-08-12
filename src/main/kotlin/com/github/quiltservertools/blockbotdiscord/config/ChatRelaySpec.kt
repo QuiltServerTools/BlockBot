@@ -6,11 +6,19 @@ object ChatRelaySpec : ConfigSpec() {
 
     val allowMentions by required<Boolean>()
     val convertMarkdown by required<Boolean>()
-    object MessageFormatSpec: ConfigSpec() {
-        val discordFormat by required<String>()
-
-        val minecraftFormat by required<String>()
+    object MinecraftFormatSpec: ConfigSpec() {
+        val messageFormat by required<String>()
         val replyFormat by required<String>()
+    }
+    object DiscordMessageFormatSpec: ConfigSpec() {
+        val messageFormat by required<String>()
+        val announcementFormat by required<String>()
+        val emoteFormat by required<String>()
+    }
+    object DiscordWebhookFormatSpec: ConfigSpec() {
+        val messageFormat by required<String>()
+        val announcementFormat by required<String>()
+        val emoteFormat by required<String>()
     }
     object WebhookSpec : ConfigSpec() {
         val useWebhook by required<Boolean>()

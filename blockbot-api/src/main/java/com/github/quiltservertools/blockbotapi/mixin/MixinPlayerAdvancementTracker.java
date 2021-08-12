@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerAdvancementTracker.class)
-public class MixinPlayerAdvancementTracker {
+public abstract class MixinPlayerAdvancementTracker {
     @Shadow
     private ServerPlayerEntity owner;
 

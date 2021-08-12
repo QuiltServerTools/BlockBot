@@ -4,9 +4,12 @@
   "package": "com.github.quiltservertools.blockbotapi.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "MeCommandMixin",
     "MixinPlayerAdvancementTracker",
     "MixinServerPlayerEntity",
-    "MixinServerPlayNetworkHandler"
+    "MixinServerPlayNetworkHandler",
+    "SayCommandMixin",
+    "TellRawCommandMixin"
   ],
   "server": [],
   "injectors": {

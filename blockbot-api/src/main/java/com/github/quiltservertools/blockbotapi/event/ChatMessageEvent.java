@@ -1,16 +1,15 @@
 package com.github.quiltservertools.blockbotapi.event;
 
+import com.github.quiltservertools.blockbotapi.sender.MessageSender;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.server.network.ServerPlayerEntity;
-import org.jetbrains.annotations.Nullable;
 
 public interface ChatMessageEvent {
-    Event<ChatMessageEvent> EVENT = EventFactory.createArrayBacked(ChatMessageEvent.class, (listeners) -> (player, message) -> {
+    Event<ChatMessageEvent> EVENT = EventFactory.createArrayBacked(ChatMessageEvent.class, (listeners) -> (sender, message) -> {
         for(ChatMessageEvent listener: listeners) {
-            listener.message(player, message);
+            listener.message(sender, message);
         }
     });
 
-    void message(@Nullable ServerPlayerEntity player, String message);
+    void message(MessageSender sender, String message);
 }
