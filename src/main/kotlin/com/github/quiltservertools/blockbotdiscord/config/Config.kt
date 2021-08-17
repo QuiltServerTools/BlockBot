@@ -20,7 +20,9 @@ import dev.kord.core.entity.channel.GuildMessageChannel
 import eu.pb4.placeholders.PlaceholderAPI
 import eu.pb4.placeholders.TextParser
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.advancement.Advancement
 import net.minecraft.server.MinecraftServer
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
@@ -32,7 +34,9 @@ val config = Config {
     addSpec(BotSpec)
     addSpec(ChatRelaySpec)
     addSpec(ConsoleRelaySpec)
+    addSpec(InlineCommandsSpec)
 }.from.toml.resource(CONFIG_PATH)
+    .from.toml.resource(CONFIG_PATH)
     .from.toml.watchFile(FabricLoader.getInstance().configDir.resolve(CONFIG_PATH).toFile())
     .from.env()
     .from.systemProperties()
@@ -55,6 +59,21 @@ fun Config.formatWebhookEmote(sender: MessageSender, message: String): String =
 fun Config.formatWebhookAnnouncement(sender: MessageSender, message: String): String =
     formatDiscordRelayMessage(sender, message, config[ChatRelaySpec.DiscordWebhookFormatSpec.announcementFormat])
 
+fun Config.formatPlayerJoinMessage(player: ServerPlayerEntity): String =
+    formatDiscordRelayMessage(player, config[ChatRelaySpec.DiscordMessageFormatSpec.playerJoin])
+
+fun Config.formatPlayerLeaveMessage(player: ServerPlayerEntity): String =
+    formatDiscordRelayMessage(player, config[ChatRelaySpec.DiscordMessageFormatSpec.playerLeave])
+
+fun Config.formatPlayerAdvancementMessage(player: ServerPlayerEntity, advancement: Advancement): String =
+    formatDiscordRelayMessage(player, config[ChatRelaySpec.DiscordMessageFormatSpec.playerAdvancement], mapOf("advancement" to advancement.display!!.title))
+
+fun Config.formatServerStartMessage(server: MinecraftServer): String =
+    formatDiscordRelayMessage(server, config[ChatRelaySpec.DiscordMessageFormatSpec.serverStart])
+
+fun Config.formatServerStopMessage(server: MinecraftServer): String =
+    formatDiscordRelayMessage(server, config[ChatRelaySpec.DiscordMessageFormatSpec.serverStop])
+
 private fun formatDiscordRelayMessage(sender: MessageSender, message: String, format: String): String =
     PlaceholderAPI.parseText(
         PlaceholderAPI.parsePredefinedText(
@@ -63,6 +82,26 @@ private fun formatDiscordRelayMessage(sender: MessageSender, message: String, fo
             mapOf("sender" to sender.name, "message" to message.literal())
         ),
         if (sender is PlayerMessageSender) sender.player else null
+    ).string
+
+fun formatDiscordRelayMessage(player: ServerPlayerEntity, format: String, placeholders: Map<String, Text> = mapOf()): String =
+    PlaceholderAPI.parseText(
+        PlaceholderAPI.parsePredefinedText(
+            format.literal(),
+            PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+            placeholders
+        ),
+        player
+    ).string
+
+fun formatDiscordRelayMessage(server: MinecraftServer, format: String, placeholders: Map<String, Text> = mapOf()): String =
+    PlaceholderAPI.parseText(
+        PlaceholderAPI.parsePredefinedText(
+            format.literal(),
+            PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+            placeholders
+        ),
+        server
     ).string
 
 fun Config.isCorrect() = try {

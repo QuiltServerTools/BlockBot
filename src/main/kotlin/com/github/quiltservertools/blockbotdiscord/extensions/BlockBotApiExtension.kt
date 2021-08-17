@@ -2,9 +2,10 @@ package com.github.quiltservertools.blockbotdiscord.extensions
 
 import com.github.quiltservertools.blockbotapi.Bot
 import com.github.quiltservertools.blockbotapi.Channels
-import com.github.quiltservertools.blockbotapi.event.DiscordMessageEvent
+import com.github.quiltservertools.blockbotapi.event.RelayMessageEvent
 import com.github.quiltservertools.blockbotapi.sender.MessageSender
 import com.github.quiltservertools.blockbotapi.sender.PlayerMessageSender
+import com.github.quiltservertools.blockbotapi.sender.RelayMessageSender
 import com.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import com.github.quiltservertools.blockbotdiscord.MentionToMinecraftRenderer
 import com.github.quiltservertools.blockbotdiscord.config.*
@@ -12,13 +13,13 @@ import com.github.quiltservertools.blockbotdiscord.utility.Colors
 import com.github.quiltservertools.blockbotdiscord.utility.convertEmojiToTranslatable
 import com.github.quiltservertools.blockbotdiscord.utility.convertStringToMention
 import com.github.quiltservertools.blockbotdiscord.utility.literal
-import com.github.quiltservertools.mcdiscordreserializer.minecraft.MinecraftSerializer
-import com.github.quiltservertools.mcdiscordreserializer.minecraft.MinecraftSerializerOptions
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.utils.ensureWebhook
 import com.kotlindiscord.kord.extensions.utils.getTopRole
+import com.kotlindiscord.kord.extensions.utils.hasPermission
 import com.vdurmont.emoji.EmojiParser
 import dev.kord.common.entity.AllowedMentionType
+import dev.kord.common.entity.Permission
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.execute
 import dev.kord.core.entity.Member
@@ -27,6 +28,8 @@ import dev.kord.core.entity.Webhook
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import dev.kord.rest.builder.message.EmbedBuilder
+import io.github.quiltservertools.mcdiscordreserializer.minecraft.MinecraftSerializer
+import io.github.quiltservertools.mcdiscordreserializer.minecraft.MinecraftSerializerOptions
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
@@ -73,8 +76,13 @@ class BlockBotApiExtension : Extension(), Bot {
             action {
                 val sender = event.message.getAuthorAsMember()!!
                 val configChannel = config.getChannelsBi().inverse()[event.message.channelId.value]!!
-                val result = DiscordMessageEvent.EVENT.invoker().message(
-                    sender.displayName,
+                val result = RelayMessageEvent.EVENT.invoker().message(
+                    RelayMessageSender(
+                        sender.username,
+                        sender.nickname,
+                        sender.tag,
+                        sender.hasPermission(Permission.Administrator)
+                    ),
                     configChannel,
                     event.message.content
                 )
@@ -166,7 +174,7 @@ class BlockBotApiExtension : Extension(), Bot {
     override fun onChatMessage(sender: MessageSender, message: String) {
         BlockBotDiscord.launch {
             var content = message
-            // content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
+            content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
             if (config[ChatRelaySpec.allowMentions]) {
                 content = convertStringToMention(content, config.getGuild(bot))
             }
@@ -193,7 +201,7 @@ class BlockBotApiExtension : Extension(), Bot {
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
-                    name = "${handler.player.displayName.asString()} joined the game"
+                    name = config.formatPlayerJoinMessage(handler.player)
                     icon = config.getWebhookChatRelayAvatar(handler.player.uuid)
                 }
                 color = Colors.green
@@ -205,7 +213,7 @@ class BlockBotApiExtension : Extension(), Bot {
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
-                    name = "${handler.player.displayName.asString()} left the game"
+                    name = config.formatPlayerLeaveMessage(handler.player)
                     icon = config.getWebhookChatRelayAvatar(handler.player.uuid)
                 }
                 color = Colors.red
@@ -229,8 +237,7 @@ class BlockBotApiExtension : Extension(), Bot {
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
-                    name =
-                        "${player.displayName.asString()} has made the advancement [${advancement.display!!.title.string}]"
+                    name = config.formatPlayerAdvancementMessage(player, advancement)
                     icon = config.getWebhookChatRelayAvatar(player.uuid)
                 }
                 footer {
@@ -241,22 +248,22 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onServerStart(server: MinecraftServer?) {
+    override fun onServerStart(server: MinecraftServer) {
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
-                    name = "🟢 Server Started!"
+                    name = config.formatServerStartMessage(server)
                 }
                 color = Colors.green
             }
         }
     }
 
-    override fun onServerStop(server: MinecraftServer?) {
+    override fun onServerStop(server: MinecraftServer) {
         runBlocking {
             createDiscordEmbed {
                 author {
-                    name = "🛑 Server Stopped"
+                    name = config.formatServerStopMessage(server)
                 }
                 color = Colors.red
             }
@@ -264,10 +271,10 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
 
-    override fun sendDiscordMessage(content: String, channel: String) {
+    override fun sendRelayMessage(content: String, channel: String) {
     }
 
-    override fun onDiscordMessage(content: String, channel: String) {
+    override fun onRelayMessage(content: String, channel: String) {
     }
 }
 

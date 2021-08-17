@@ -1,25 +1,82 @@
 [bot]
+# Discord Bot token
 token = ""
+# Discord guild/server id
 guild =
+    # Channel IDs for the bot to use. Only the `chat` channel is required, others can be added or deleted
     [bot.channels]
+    # Chat relay channel
     chat =
+    # Console relay channel (can be deleted)
     console =
 
-[chatRelay]
+[ChatRelay]
+# Allow minecraft chat to mention/ping users and roles
 allowMentions = true
+# Convert discord formatting to minecraft formatting
 convertMarkdown = true
 
-    [chatRelay.messageFormat]
-    discordFormat = "{player} » {message}"
-    minecraftFormat = "[<color:#7289DA>Discord</color> | {sender_colored}] {message}"
-    replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
+[ChatRelay.MinecraftFormat]
+# Discord -> Minecraft message format
+# Placeholders: {sender}, {sender_colored}, {top_role}, {message}
+# Supports Simplified Text Format and Placeholder API with server context
+messageFormat = "[<color:#7289DA>Discord</color> | {sender_colored}] {message}"
+# Discord -> Minecraft reply format
+# Placeholders: {sender}, {summary}
+# Supports Simplified Text Format and Placeholder API with server context
+replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
 
-    [chatRelay.webhook]
+    # Used when not using Webhook
+    [ChatRelay.DiscordMessageFormat]
+
+    # Placeholders: {sender}, {message}
+    # Supports discord markdown and Placeholder API with player context
+    # Minecraft -> Discord message format
+    messageFormat = "{sender} » {message}"
+    # Minecraft -> Discord annoucement format (/say)
+    announcementFormat = "{sender} » **{message}**"
+    # Minecraft -> Discord emote format (/me)
+    emoteFormat = "*{sender} {message}*"
+
+    # Supports discord markdown and Placeholder API with player context
+    playerJoin = "%player:displayname% joined the game"
+    playerLeave = "%player:displayname% left the game"
+    # Placeholders: {advancement}
+    playerAdvancement = "%player:displayname% has made the advancment [{advancement}]"
+
+    serverStart = "🟢 Server Started"
+    serverStop = "🛑 Server Stopped"
+
+    # Placeholders: {sender}, {message}
+    # Supports discord markdown and Placeholder API with player context
+    # Used when using Webhook
+    [ChatRelay.DiscordWebhookFormat]
+    messageFormat = "{message}"
+    announcementFormat = "**{message}**"
+    emoteFormat = "*{sender} {message}*"
+
+    [ChatRelay.Webhook]
+    # Use a webhook (less compact) to display player names and avatars
     useWebhook = true
+    # Name of the webhook for messages not from players
     webhookName = "Server"
-    webhookAvatar = "https://www.creativefabrica.com/wp-content/uploads/2019/05/Server-icon-by-ahlangraphic-1-580x386.jpg"
+    # URL for the webhook avatar for messages not from players
+    webhookAvatar = "https://i.imgur.com/IxPg1R2.png"
+    # URL to get the webhook avatar from for players
     playerAvatarUrl = "https://crafatar.com/avatars/{uuid}?size=100&overlay"
 
-[consoleRelay]
+[ConsoleRelay]
+# Format to use for the console relay
 pattern = "[%level] (%logger{1}) %msg%n"
+# Minium logger level to show in the console relay. OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
 minLevel = "INFO"
+# Require administator on discord to use console
+requireAdmin = true
+
+[InlineCommands]
+# Enables the /mc discord slash command to run in game commands from discord
+enabled = true
+# Comma seperated list of the role ID's allowed to use the command
+allowedRoles = []
+# OP permission level to restrict commands
+opLevel = 3

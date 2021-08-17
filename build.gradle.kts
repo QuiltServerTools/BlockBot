@@ -71,7 +71,7 @@ allprojects {
 repositories {
     maven("https://maven.nucleoid.xyz/")
     maven("https://maven.kotlindiscord.com/repository/maven-public/")
-    mavenLocal()
+    maven("https://maven.tomthegeek.ml/releases/")
 }
 
 dependencies {

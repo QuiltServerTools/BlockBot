@@ -39,7 +39,7 @@ public class BlockBotApi implements ModInitializer {
         LOGGER.info("Registered bot: " + bot);
     }
 
-    public static void sendDiscordMessage(String content, String channel) {
-        bots.forEach(bot -> bot.sendDiscordMessage(content, channel));
+    public static void sendRelayMessage(String content, String channel) {
+        bots.forEach(bot -> bot.sendRelayMessage(content, channel));
     }
 }

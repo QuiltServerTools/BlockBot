@@ -2,13 +2,11 @@ package com.github.quiltservertools.blockbotdiscord
 
 import com.github.quiltservertools.blockbotdiscord.config.config
 import com.github.quiltservertools.blockbotdiscord.config.getGuild
-import com.github.quiltservertools.mcdiscordreserializer.renderer.implementation.DefaultMinecraftRenderer
 import com.kotlindiscord.kord.extensions.ExtensibleBot
-import dev.kord.cache.api.getEntry
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
-import dev.kord.core.entity.Role
 import dev.kord.core.supplier.EntitySupplyStrategy
+import io.github.quiltservertools.mcdiscordreserializer.renderer.implementation.DefaultMinecraftRenderer
 import kotlinx.coroutines.runBlocking
 import net.minecraft.text.LiteralText
 import net.minecraft.text.MutableText

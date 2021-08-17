@@ -27,7 +27,7 @@ fabric-kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = 
 
 kord-extensions = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version.ref = "kord-extensions" }
 emoji = { module = "com.vdurmont:emoji-java", version.ref = "emoji-java"}
-mcDiscordReserializer = { module = "com.github.quiltservertools:mcdiscordreserializer", version.ref = "mc-discord-reserializer"}
+mcDiscordReserializer = { module = "io.github.quiltservertools:MCDiscordReserializer", version.ref = "mc-discord-reserializer"}
 
 placeholder-api = { module = "eu.pb4:placeholder-api", version.ref = "placeholder-api" }
 konf-base = { module = "com.uchuhimo:konf", version.ref = "konf"}

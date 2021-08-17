@@ -17,6 +17,6 @@ public interface Bot {
     void onServerStart(MinecraftServer server);
     void onServerStop(MinecraftServer server);
 
-    void sendDiscordMessage(String content, String channel);
-    void onDiscordMessage(String content, String channel);
+    void sendRelayMessage(String content, String channel);
+    void onRelayMessage(String content, String channel);
 }

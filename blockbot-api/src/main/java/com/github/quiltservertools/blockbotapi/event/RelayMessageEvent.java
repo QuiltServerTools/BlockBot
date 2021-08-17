@@ -1,12 +1,13 @@
 package com.github.quiltservertools.blockbotapi.event;
 
+import com.github.quiltservertools.blockbotapi.sender.RelayMessageSender;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.util.ActionResult;
 
-public interface DiscordMessageEvent {
-    Event<DiscordMessageEvent> EVENT = EventFactory.createArrayBacked(DiscordMessageEvent.class, (listeners) -> (sender, channel, message) -> {
-        for (DiscordMessageEvent listener : listeners) {
+public interface RelayMessageEvent {
+    Event<RelayMessageEvent> EVENT = EventFactory.createArrayBacked(RelayMessageEvent.class, (listeners) -> (sender, channel, message) -> {
+        for (RelayMessageEvent listener : listeners) {
             ActionResult result = listener.message(sender, channel, message);
 
             if (result != ActionResult.PASS) {
@@ -17,5 +18,5 @@ public interface DiscordMessageEvent {
         return ActionResult.PASS;
     });
 
-    ActionResult message(String sender, String channel, String message);
+    ActionResult message(RelayMessageSender sender, String channel, String message);
 }

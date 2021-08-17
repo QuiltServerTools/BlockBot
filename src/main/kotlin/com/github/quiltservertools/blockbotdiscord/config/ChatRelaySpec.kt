@@ -14,6 +14,12 @@ object ChatRelaySpec : ConfigSpec() {
         val messageFormat by required<String>()
         val announcementFormat by required<String>()
         val emoteFormat by required<String>()
+
+        val playerJoin by required<String>()
+        val playerLeave by required<String>()
+        val playerAdvancement by required<String>()
+        val serverStart by required<String>()
+        val serverStop by required<String>()
     }
     object DiscordWebhookFormatSpec: ConfigSpec() {
         val messageFormat by required<String>()

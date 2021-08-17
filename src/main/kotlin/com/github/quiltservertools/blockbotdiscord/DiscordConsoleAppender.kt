@@ -24,5 +24,4 @@ class DiscordConsoleAppender : AbstractAppender("DiscordConsoleAppender", null, 
             ConsoleExtension.consoleQueue.add(PATTERN_LAYOUT.toSerializable(event).toString())
         }
     }
-
 }

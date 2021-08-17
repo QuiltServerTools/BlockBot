@@ -4,6 +4,7 @@ import com.github.quiltservertools.blockbotapi.BlockBotApi
 import com.github.quiltservertools.blockbotdiscord.config.*
 import com.github.quiltservertools.blockbotdiscord.extensions.BlockBotApiExtension
 import com.github.quiltservertools.blockbotdiscord.extensions.ConsoleExtension
+import com.github.quiltservertools.blockbotdiscord.extensions.inline.InlineCommandsExtension
 import com.kotlindiscord.kord.extensions.ExtensibleBot
 import com.kotlindiscord.kord.extensions.utils.loadModule
 import dev.kord.gateway.Intents
@@ -55,9 +56,8 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
 
                 extensions {
                     add(::BlockBotApiExtension)
-                    if (config.getChannelsBi().containsKey("console")) {
-                        add(::ConsoleExtension)
-                    }
+                    if (config.getChannelsBi().containsKey("console")) add(::ConsoleExtension)
+                    if (config[InlineCommandsSpec.enabled]) add(::InlineCommandsExtension)
                 }
 
                 intents {
