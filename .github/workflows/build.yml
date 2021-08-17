@@ -3,7 +3,7 @@
 name: Build
 
 # On pull requests
-on: [pull_request]
+on: [pull_request, push]
 
 jobs:
   build:

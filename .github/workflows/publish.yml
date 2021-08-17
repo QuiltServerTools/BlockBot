@@ -38,21 +38,4 @@ jobs:
           java-version: 16
           distribution: adopt
 
-      - name: 🏗 Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14
-
-      - name: ⬇ Install Node.js dependencies
-        run: npm install -g
-          semantic-release@17
-          @semantic-release/git
-          @semantic-release/changelog
-          @semantic-release/exec
-
-      - name: 📦 Publish new release
-        run: semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
-          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+# Do release things
