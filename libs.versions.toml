@@ -30,5 +30,5 @@ emoji = { module = "com.vdurmont:emoji-java", version.ref = "emoji-java"}
 mcDiscordReserializer = { module = "io.github.quiltservertools:MCDiscordReserializer", version.ref = "mc-discord-reserializer"}
 
 placeholder-api = { module = "eu.pb4:placeholder-api", version.ref = "placeholder-api" }
-konf-base = { module = "com.uchuhimo:konf", version.ref = "konf"}
+konf-base = { module = "com.uchuhimo:konf-core", version.ref = "konf"}
 konf-toml = { module = "com.uchuhimo:konf-toml", version.ref = "konf"}

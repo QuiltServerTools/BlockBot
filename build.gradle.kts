@@ -113,17 +113,17 @@ tasks {
         )
         archiveClassifier.set("dev-all")
 
-        exclude("kotlin/**", "javax/**", "META-INF")
+        exclude("kotlin/**", "kotlinx/coroutines/**", "kotlinx/serialization/**", "javax/**", "META-INF")
         exclude("org/checkerframework/**", "org/intellij/**", "org/jetbrains/annotations/**")
         exclude("com/google/gson/**")
         exclude("net/kyori/**")
         exclude("org/slf4j/**")
         exclude("com/ibm/**")
 
-        val relocPath = "io.github.quiltservertools.libs."
+        val relocPath = "io.github.quiltservertools.blockbotdiscord.libs."
         relocate("com.fasterxml", relocPath + "com.fasterxml")
-        relocate("com.moandjiezana.toml", relocPath + "com.moandjiezana.toml")
-        relocate("com.uchuhimo.konf", relocPath + "com.uchuhimo.konf")
+        relocate("com.moandjiezana", relocPath + "com.moandjiezana")
+        relocate("com.uchuhimo", relocPath + "com.uchuhimo")
         relocate("com.googlecode", relocPath + "com.googlecode")
         relocate("com.kotlindiscord", relocPath + "com.kotlindiscord")
         relocate("com.sun", relocPath + "com.sun")
@@ -143,7 +143,7 @@ tasks {
         relocate("org.xml", relocPath + "org.xml")
         relocate("org.xmlpull", relocPath + "org.xmlpull")
         relocate("org.yaml", relocPath + "org.yaml")
-        relocate("org.dom4j", relocPath + "org.yaml")
+        relocate("org.dom4j", relocPath + "org.dom4j")
 
         relocate("org.reflections", relocPath + "org.reflections")
     }
