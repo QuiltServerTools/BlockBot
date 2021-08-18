@@ -17,7 +17,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.github.quiltservertools.blockbotapi.BlockBotApi"
+      "io.github.quiltservertools.blockbotapi.BlockBotApi"
     ]
   },
   "mixins": [

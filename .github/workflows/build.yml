@@ -2,7 +2,6 @@
 
 name: Build
 
-# On pull requests
 on: [pull_request, push]
 
 jobs:

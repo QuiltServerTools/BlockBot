@@ -18,7 +18,7 @@
   "entrypoints": {
     "main": [
       {
-        "value": "com.github.quiltservertools.blockbotdiscord.BlockBotDiscord::INSTANCE"
+        "value": "io.github.quiltservertools.blockbotdiscord.BlockBotDiscord::INSTANCE"
       }
     ]
   },

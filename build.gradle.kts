@@ -113,18 +113,18 @@ tasks {
         )
         archiveClassifier.set("dev-all")
 
-        exclude("kotlin/**", "kotlinx/**", "javax/**", "META-INF")
+        exclude("kotlin/**", "javax/**", "META-INF")
         exclude("org/checkerframework/**", "org/intellij/**", "org/jetbrains/annotations/**")
         exclude("com/google/gson/**")
         exclude("net/kyori/**")
         exclude("org/slf4j/**")
+        exclude("com/ibm/**")
 
-        val relocPath = "com.github.quiltservertools.libs."
+        val relocPath = "io.github.quiltservertools.libs."
         relocate("com.fasterxml", relocPath + "com.fasterxml")
         relocate("com.moandjiezana.toml", relocPath + "com.moandjiezana.toml")
         relocate("com.uchuhimo.konf", relocPath + "com.uchuhimo.konf")
         relocate("com.googlecode", relocPath + "com.googlecode")
-        relocate("com.ibm", relocPath + "com.ibm")
         relocate("com.kotlindiscord", relocPath + "com.kotlindiscord")
         relocate("com.sun", relocPath + "com.sun")
         relocate("com.typesafe", relocPath + "com.typesafe")
@@ -146,7 +146,5 @@ tasks {
         relocate("org.dom4j", relocPath + "org.yaml")
 
         relocate("org.reflections", relocPath + "org.reflections")
-        // it appears you cannot relocate sqlite due to the native libraries
-        // relocate("org.sqlite", relocPath + "org.sqlite")
     }
 }
