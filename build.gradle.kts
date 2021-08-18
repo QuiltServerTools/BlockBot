@@ -1,7 +1,7 @@
 plugins {
     java
     id("maven-publish")
-    id("fabric-loom") version "0.8-SNAPSHOT"
+    id("fabric-loom") version "0.9.+"
     kotlin("jvm") version "1.5.20"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
@@ -54,7 +54,15 @@ allprojects {
 
         // fabric.mod.json
         filesMatching("fabric.mod.json") {
-            expand(mapOf("id" to modId, "name" to modName, "version" to modVersion))
+            expand(
+                mapOf(
+                    "id" to modId,
+                    "name" to modName,
+                    "version" to modVersion,
+                    "fabricLoader" to libs.versions.fabric.loader.get(),
+                    "fabricApi" to libs.versions.fabric.api.get(),
+                )
+            )
         }
     }
 
@@ -100,11 +108,13 @@ tasks {
         dependsOn(shadowJar)
         input.set(shadowJar.get().archiveFile)
     }
+
     compileKotlin {
         kotlinOptions {
             jvmTarget = "16"
         }
     }
+
     shadowJar {
         from("LICENSE")
 

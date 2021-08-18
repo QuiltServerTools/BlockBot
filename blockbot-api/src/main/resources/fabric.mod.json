@@ -3,16 +3,17 @@
   "id": "${id}",
   "version": "${version}",
   "name": "${name}",
-  "description": "Lorem ipsum dolor sit amet",
+  "description": "Library containing common code for chat bridge mods",
   "authors": [
+    "yitzy299",
     "Potatoboy9999"
   ],
   "contact": {
-    "homepage": "https://github.com/axieum/fabric-example-mod",
-    "sources": "https://github.com/axieum/fabric-example-mod",
-    "issues": "https://github.com/axieum/fabric-example-mod/issues"
+    "homepage": "https://curseforge.com/minecraft/mc-mods/blockbot-api",
+    "sources": "https://github.com/QuiltServerTools/BlockBot",
+    "issues": "https://github.com/QuiltServerTools/BlockBot/issues"
   },
-  "license": "CC0",
+  "license": "LGPL-3.0",
   "icon": "assets/blockbot-api/icon.png",
   "environment": "*",
   "entrypoints": {
@@ -26,7 +27,7 @@
   "depends": {
     "java": ">=16",
     "minecraft": "1.17.x",
-    "fabricloader": ">=0.11.3",
-    "fabric": "*"
+    "fabricloader": ">=${fabricLoader}",
+    "fabric": ">=${fabricApi}"
   }
 }
