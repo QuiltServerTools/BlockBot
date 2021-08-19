@@ -40,7 +40,7 @@ public abstract class TellRawCommandMixin {
 
             ChatMessageEvent.EVENT.invoker().message(
                 sender,
-                Texts.parse(context.getSource(), TextArgumentType.getTextArgument(context, "message"), entity, 0).asString()
+                Texts.parse(context.getSource(), TextArgumentType.getTextArgument(context, "message"), entity, 0).getString()
             );
         }
     }

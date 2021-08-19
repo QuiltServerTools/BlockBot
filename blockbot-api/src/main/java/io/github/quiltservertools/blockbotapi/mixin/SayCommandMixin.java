@@ -38,7 +38,7 @@ public abstract class SayCommandMixin {
 
         ChatMessageEvent.EVENT.invoker().message(
             sender,
-            message.asString()
+            message.getString()
         );
     }
 }
