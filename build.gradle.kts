@@ -2,7 +2,7 @@ plugins {
     java
     id("maven-publish")
     id("fabric-loom") version "0.9.+"
-    kotlin("jvm") version "1.5.20"
+    kotlin("jvm") version "1.5.21"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 

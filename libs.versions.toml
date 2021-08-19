@@ -6,8 +6,8 @@ yarn-mappings = "1.17.1+build.14"
 fabric-api = "0.37.0+1.17"
 
 # Kotlin
-kotlin = "1.5.20"
-fabric-kotlin = "1.6.2+kotlin.1.5.20"
+kotlin = "1.5.21"
+fabric-kotlin = "1.6.3+kotlin.1.5.21"
 
 # Discord
 kord-extensions = "1.4.2-SNAPSHOT"

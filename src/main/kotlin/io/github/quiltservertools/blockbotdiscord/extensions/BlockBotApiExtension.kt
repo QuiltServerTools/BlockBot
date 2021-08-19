@@ -174,7 +174,7 @@ class BlockBotApiExtension : Extension(), Bot {
     override fun onChatMessage(sender: MessageSender, message: String) {
         BlockBotDiscord.launch {
             var content = message
-            content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
+            content = MinecraftSerializer.INSTANCE.escapeMarkdown(content) // TODO config
             if (config[ChatRelaySpec.allowMentions]) {
                 content = convertStringToMention(content, config.getGuild(bot))
             }

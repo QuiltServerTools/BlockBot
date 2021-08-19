@@ -3,6 +3,7 @@
 token = ""
 # Discord guild/server id
 guild =
+
     # Channel IDs for the bot to use. Only the `chat` channel is required, others can be added or deleted
     [bot.channels]
     # Chat relay channel
