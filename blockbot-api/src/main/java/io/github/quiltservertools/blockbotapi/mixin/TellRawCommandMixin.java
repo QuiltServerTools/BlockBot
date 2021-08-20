@@ -10,6 +10,7 @@ import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.TellRawCommand;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Texts;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,6 +34,7 @@ public abstract class TellRawCommandMixin {
                 );
             } else {
                 sender = new MessageSender(
+                    new LiteralText(context.getSource().getName()),
                     context.getSource().getDisplayName(),
                     MessageSender.MessageType.REGULAR
                 );

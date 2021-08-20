@@ -7,6 +7,7 @@ import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender;
 import net.minecraft.server.command.SayCommand;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,6 +32,7 @@ public abstract class SayCommandMixin {
             );
         } else {
             sender = new MessageSender(
+                new LiteralText(context.getSource().getName()),
                 context.getSource().getDisplayName(),
                 MessageSender.MessageType.ANNOUNCEMENT
             );

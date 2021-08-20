@@ -9,7 +9,7 @@ public class PlayerMessageSender extends MessageSender {
     private final ServerPlayerEntity player;
 
     public PlayerMessageSender(ServerPlayerEntity player, MessageType type) {
-        super(player.getDisplayName(), type);
+        super(player.getName(), player.getDisplayName(), type);
         this.uuid = player.getUuid();
         this.player = player;
     }

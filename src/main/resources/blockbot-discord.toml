@@ -30,14 +30,14 @@ replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
     # Used when not using Webhook
     [ChatRelay.DiscordMessageFormat]
 
-    # Placeholders: {sender}, {message}
+    # Placeholders: {sender}, {sender_display}, {message}
     # Supports discord markdown and Placeholder API with player context
     # Minecraft -> Discord message format
-    messageFormat = "{sender} » {message}"
+    messageFormat = "{sender_display} » {message}"
     # Minecraft -> Discord annoucement format (/say)
-    announcementFormat = "{sender} » **{message}**"
+    announcementFormat = "{sender_display} » **{message}**"
     # Minecraft -> Discord emote format (/me)
-    emoteFormat = "*{sender} {message}*"
+    emoteFormat = "*{sender_display} {message}*"
 
     # Supports discord markdown and Placeholder API with player context
     playerJoin = "%player:displayname% joined the game"
@@ -48,7 +48,7 @@ replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
     serverStart = "🟢 Server Started"
     serverStop = "🛑 Server Stopped"
 
-    # Placeholders: {sender}, {message}
+    # Placeholders: {sender}, {sender_display}, {message}
     # Supports discord markdown and Placeholder API with player context
     # Used when using Webhook
     [ChatRelay.DiscordWebhookFormat]

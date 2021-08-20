@@ -7,6 +7,7 @@ import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender;
 import net.minecraft.server.command.MeCommand;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,6 +31,7 @@ public abstract class MeCommandMixin {
             );
         } else {
             sender = new MessageSender(
+                new LiteralText(context.getSource().getName()),
                 context.getSource().getDisplayName(),
                 MessageSender.MessageType.EMOTE
             );

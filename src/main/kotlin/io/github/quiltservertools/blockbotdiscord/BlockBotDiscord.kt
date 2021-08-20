@@ -3,6 +3,7 @@ package io.github.quiltservertools.blockbotdiscord
 import com.kotlindiscord.kord.extensions.ExtensibleBot
 import com.kotlindiscord.kord.extensions.utils.loadModule
 import dev.kord.gateway.Intent
+import dev.kord.gateway.Intents
 import dev.kord.gateway.PrivilegedIntent
 import io.github.quiltservertools.blockbotapi.BlockBotApi
 import io.github.quiltservertools.blockbotdiscord.config.*
@@ -61,6 +62,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
                 }
 
                 intents {
+                    +Intents.nonPrivileged
                     +Intent.GuildMembers
                 }
 

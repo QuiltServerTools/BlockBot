@@ -79,7 +79,11 @@ private fun formatDiscordRelayMessage(sender: MessageSender, message: String, fo
         PlaceholderAPI.parsePredefinedText(
             format.literal(),
             PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
-            mapOf("sender" to sender.name, "message" to message.literal())
+            mapOf(
+                "sender" to sender.name,
+                "sender_display" to sender.displayName,
+                "message" to message.literal()
+            )
         ),
         if (sender is PlayerMessageSender) sender.player else null
     ).string

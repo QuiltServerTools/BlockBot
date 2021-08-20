@@ -18,7 +18,7 @@ allprojects {
 
     base.archivesName.set(modId)
     group = mavenGroup
-    version = modVersion
+    version = "$modVersion${getVersionMetadata()}"
 
     java {
         sourceCompatibility = JavaVersion.VERSION_16
@@ -157,4 +157,16 @@ tasks {
 
         relocate("org.reflections", relocPath + "org.reflections")
     }
+}
+
+fun getVersionMetadata(): String {
+    val buildId = System.getenv("GITHUB_RUN_NUMBER")
+
+    // CI builds only
+    if (buildId != null) {
+        return "+build.$buildId"
+    }
+
+    // No tracking information could be found about the build
+    return ""
 }
