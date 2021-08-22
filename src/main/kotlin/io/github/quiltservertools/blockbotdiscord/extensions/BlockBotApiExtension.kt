@@ -128,12 +128,16 @@ class BlockBotApiExtension : Extension(), Bot {
         }
 
         val topRole = sender.getTopRole()
-        val topRoleMessage =
-            topRole?.data?.name?.literal()?.styled { it.withColor(topRole.color.rgb) } ?: "".literal()
+        val topColor = sender.getDisplayColor()
+        println(topColor)
+        println(topRole)
+        var topRoleMessage: MutableText =
+            topRole?.data?.name?.literal() ?: "".literal()
+        if (topColor != null) topRoleMessage = topRoleMessage.styled { it.withColor(topColor.rgb) }
         var username: MutableText = sender.displayName.literal()
-        if (topRole != null) {
+        if (topColor != null) {
             username = username.styled {
-                it.withColor(topRole.color.rgb)
+                it.withColor(topColor.rgb)
             }
         }
 
@@ -299,3 +303,6 @@ fun MessageSender.formatWebhookContent(content: String): String {
         MessageSender.MessageType.ANNOUNCEMENT -> config.formatWebhookAnnouncement(this, content)
     }
 }
+
+suspend fun Member.getDisplayColor() =
+    this.roles.toList().sortedByDescending { it.rawPosition }.firstOrNull { it.color.rgb != 0 }?.color

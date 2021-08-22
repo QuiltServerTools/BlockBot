@@ -5,7 +5,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.quiltservertools.blockbotapi.event.ChatMessageEvent;
 import io.github.quiltservertools.blockbotapi.sender.MessageSender;
 import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender;
-import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.TellRawCommand;
@@ -24,9 +23,9 @@ public abstract class TellRawCommandMixin {
         at = @At(value = "HEAD")
     )
     private static void relayMeToDiscord(CommandContext<ServerCommandSource> context, CallbackInfoReturnable<Integer> cir) throws CommandSyntaxException {
-        if (EntityArgumentType.getPlayers(context, "targets").containsAll(context.getSource().getServer().getPlayerManager().getPlayerList())) {
+        if (context.getInput().replace("/tellraw ", "").startsWith("@a")) {
             var entity = context.getSource().getEntity();
-            MessageSender sender = null;
+            MessageSender sender;
             if (entity instanceof ServerPlayerEntity player) {
                 sender = new PlayerMessageSender(
                     player,
