@@ -129,8 +129,6 @@ class BlockBotApiExtension : Extension(), Bot {
 
         val topRole = sender.getTopRole()
         val topColor = sender.getDisplayColor()
-        println(topColor)
-        println(topRole)
         var topRoleMessage: MutableText =
             topRole?.data?.name?.literal() ?: "".literal()
         if (topColor != null) topRoleMessage = topRoleMessage.styled { it.withColor(topColor.rgb) }
@@ -185,6 +183,7 @@ class BlockBotApiExtension : Extension(), Bot {
             }
 
             if (config[ChatRelaySpec.WebhookSpec.useWebhook]) {
+                if (sender.formatWebhookContent(content).isEmpty()) return@launch
                 chatWebhook.execute(chatWebhook.token!!) {
                     this.allowedMentions = mentions
                     this.username = sender.name.string
@@ -192,8 +191,9 @@ class BlockBotApiExtension : Extension(), Bot {
                     this.avatarUrl = sender.getAvatar()
                 }
             } else {
-                val messageChannel = config.getChannel(Channels.CHAT, bot)
+                if (sender.formatMessageContent(content).isEmpty()) return@launch
 
+                val messageChannel = config.getChannel(Channels.CHAT, bot)
                 messageChannel.createMessage {
                     allowedMentions = mentions
                     this.content = sender.formatMessageContent(content)
@@ -203,6 +203,7 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onPlayerConnect(handler: ServerPlayNetworkHandler, sender: PacketSender, server: MinecraftServer) {
+        if (config.formatPlayerJoinMessage(handler.player).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
@@ -215,6 +216,7 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onPlayerDisconnect(handler: ServerPlayNetworkHandler, server: MinecraftServer) {
+        if (config.formatPlayerLeaveMessage(handler.player).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
@@ -239,6 +241,7 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onAdvancementGrant(player: ServerPlayerEntity, advancement: Advancement) {
+        if (config.formatPlayerAdvancementMessage(player, advancement).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
@@ -254,6 +257,7 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onServerStart(server: MinecraftServer) {
+        if (config.formatServerStartMessage(server).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
@@ -265,6 +269,7 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onServerStop(server: MinecraftServer) {
+        if (config.formatServerStopMessage(server).isEmpty()) return
         runBlocking {
             createDiscordEmbed {
                 author {
