@@ -1,5 +1,7 @@
 package io.github.quiltservertools.blockbotdiscord.extensions
 
+import com.kotlindiscord.kord.extensions.checks.inGuild
+import com.kotlindiscord.kord.extensions.checks.isNotbot
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.utils.ensureWebhook
 import com.kotlindiscord.kord.extensions.utils.getTopRole
@@ -7,14 +9,17 @@ import com.kotlindiscord.kord.extensions.utils.hasPermission
 import com.vdurmont.emoji.EmojiParser
 import dev.kord.common.entity.AllowedMentionType
 import dev.kord.common.entity.Permission
+import dev.kord.common.entity.Snowflake
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.execute
 import dev.kord.core.entity.Member
 import dev.kord.core.entity.Message
 import dev.kord.core.entity.Webhook
+import dev.kord.core.entity.channel.TopGuildMessageChannel
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import dev.kord.rest.builder.message.EmbedBuilder
+import dev.kord.rest.builder.message.create.embed
 import io.github.quiltservertools.blockbotapi.Bot
 import io.github.quiltservertools.blockbotapi.Channels
 import io.github.quiltservertools.blockbotapi.event.RelayMessageEvent
@@ -63,15 +68,15 @@ class BlockBotApiExtension : Extension(), Bot {
     override suspend fun setup() {
         val channel = config.getChannel(Channels.CHAT, bot)
 
-        chatWebhook = ensureWebhook(channel, config[ChatRelaySpec.WebhookSpec.webhookName])
+        chatWebhook = ensureWebhook(channel as TopGuildMessageChannel, config[ChatRelaySpec.WebhookSpec.webhookName])
         mentions.add(AllowedMentionType.UserMentions)
         mentions.roles.addAll(config.getGuild(bot).roles.filter { it.mentionable }.map { it.id }
             .toList())
 
         event<MessageCreateEvent> {
-            check { it.message.getAuthorAsMember() != null }
-            check { it.message.author?.isBot == false }
-            check { config.getChannelsBi().containsValue(it.message.channelId.value) }
+            check(isNotbot)
+            check(inGuild(Snowflake(config[BotSpec.guild])))
+            check { failIfNot(config.getChannelsBi().containsValue(event.message.channelId.value)) }
 
             action {
                 val sender = event.message.getAuthorAsMember()!!
@@ -145,9 +150,9 @@ class BlockBotApiExtension : Extension(), Bot {
     public suspend fun createDiscordEmbed(builder: EmbedBuilder.() -> Unit) {
         if (config[ChatRelaySpec.WebhookSpec.useWebhook]) {
             chatWebhook.execute(chatWebhook.token!!) {
-                avatarUrl = config[ChatRelaySpec.WebhookSpec.webhookAvatar]
+                //fixme avatarUrl = config[ChatRelaySpec.WebhookSpec.webhookAvatar]
                 allowedMentions = mentions
-                embeds.add(EmbedBuilder().apply(builder).toRequest())
+                embeds.add(EmbedBuilder().apply(builder))
             }
         } else {
             val messageChannel = config.getChannel(Channels.CHAT, bot)
@@ -186,9 +191,9 @@ class BlockBotApiExtension : Extension(), Bot {
                 if (sender.formatWebhookContent(content).isEmpty()) return@launch
                 chatWebhook.execute(chatWebhook.token!!) {
                     this.allowedMentions = mentions
-                    this.username = sender.name.string
+                    //fixme this.username = sender.name.string
                     this.content = sender.formatWebhookContent(content)
-                    this.avatarUrl = sender.getAvatar()
+                    //fixme this.avatarUrl = sender.getAvatar()
                 }
             } else {
                 if (sender.formatMessageContent(content).isEmpty()) return@launch

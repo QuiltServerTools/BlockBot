@@ -4,6 +4,7 @@ import com.vdurmont.emoji.EmojiManager
 import dev.kord.core.entity.Guild
 import dev.kord.core.firstOrNull
 import eu.pb4.placeholders.PlaceholderAPI
+import kotlinx.coroutines.flow.toCollection
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -17,7 +18,9 @@ suspend fun convertStringToMention(message: String, guild: Guild): String {
 
     for (mention in mentions) {
         val name = mention.groupValues[1]
-        var mentionString = guild.members.firstOrNull { it.nickname == name || it.username == name }?.mention
+        println(guild.members.toCollection(mutableListOf()))
+        val member =  guild.members.firstOrNull { it.nickname == name || it.username == name }
+        var mentionString = member?.mention
         if (mentionString == null) {
             mentionString = guild.roles.firstOrNull { it.name == name }?.mention
         }
@@ -35,9 +38,7 @@ private val emojiPattern =
 
 private val emojiAliases = EmojiManager.getAll().flatMap { it.aliases }.map {
     it to
-        TranslatableText(
-            "%1\$s%3256342\$s", ":$it:", EmojiManager.getForAlias(it).unicode
-        )
+        TranslatableText(":$it:")
 }.toMap(
     mutableMapOf()
 )
