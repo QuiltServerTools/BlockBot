@@ -17,12 +17,13 @@ class MentionToMinecraftRenderer(
 ) : DefaultMinecraftRenderer() {
     override fun appendChannelMention(text: MutableText, id: String): MutableText {
         return runBlocking {
+            val channel = bot.getKoin().get<Kord>()
+                .getChannel(Snowflake(id), EntitySupplyStrategy.cacheWithRestFallback)
+            val name = channel?.data?.name?.value ?: "deleted-channel"
+
             text.append(
                 LiteralText(
-                    "#${
-                        bot.getKoin().get<Kord>()
-                            .getChannel(Snowflake(id), EntitySupplyStrategy.cacheWithRestFallback)?.data?.name?.value
-                    }"
+                    "#$name"
                 ).styled { it.withColor(BLURPLE) }
             )
         }
@@ -30,8 +31,11 @@ class MentionToMinecraftRenderer(
 
     override fun appendUserMention(component: MutableText, id: String): MutableText {
         return runBlocking {
+            val member = config.getGuild(bot).getMemberOrNull(Snowflake(id))
+            val name = member?.displayName ?: "unknown-user"
+
             component.append(
-                LiteralText("@${config.getGuild(bot).getMemberOrNull(Snowflake(id))?.displayName}")
+                LiteralText("@$name")
             ).styled { it.withColor(BLURPLE) }
         }
     }
@@ -39,11 +43,13 @@ class MentionToMinecraftRenderer(
     override fun appendRoleMention(text: MutableText, id: String): MutableText {
         return runBlocking {
             val role = config.getGuild(bot).getRoleOrNull(Snowflake(id))
+            val name = role?.name ?: "deleted-role"
+            val color = if (role != null && role.color.rgb != 0) role.color.rgb else BLURPLE.rgb
 
             text.append(
                 LiteralText(
-                    "@${role?.name}"
-                ).styled { it.withColor(role?.color?.rgb ?: BLURPLE.rgb) }
+                    "@${name}"
+                ).styled { it.withColor(color) }
             )
         }
     }
