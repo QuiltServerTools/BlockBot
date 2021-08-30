@@ -5,6 +5,7 @@ import com.kotlindiscord.kord.extensions.utils.ensureWebhook
 import com.kotlindiscord.kord.extensions.utils.getTopRole
 import com.kotlindiscord.kord.extensions.utils.hasPermission
 import com.vdurmont.emoji.EmojiParser
+import dev.kord.common.entity.ActivityType
 import dev.kord.common.entity.AllowedMentionType
 import dev.kord.common.entity.Permission
 import dev.kord.core.behavior.channel.createMessage
@@ -176,7 +177,6 @@ class BlockBotApiExtension : Extension(), Bot {
     override fun onChatMessage(sender: MessageSender, message: String) {
         BlockBotDiscord.launch {
             var content = message
-            var sender = sender
             content = MinecraftSerializer.INSTANCE.escapeMarkdown(content) // TODO config
             if (config[ChatRelaySpec.allowMentions]) {
                 content = convertStringToMention(content, config.getGuild(bot))
@@ -276,6 +276,22 @@ class BlockBotApiExtension : Extension(), Bot {
                     name = config.formatServerStopMessage(server)
                 }
                 color = Colors.red
+            }
+        }
+    }
+
+    override fun onServerTick(server: MinecraftServer) {
+        BlockBotDiscord.launch {
+            if (server.ticks % 1200 == 0) {
+                kord.editPresence {
+                    when (config[PresenceSpec.activityType]) {
+                        ActivityType.Game -> playing(config.formatPresenceText(server))
+                        ActivityType.Listening -> listening(config.formatPresenceText(server))
+                        ActivityType.Watching -> watching(config.formatPresenceText(server))
+                        ActivityType.Competing -> competing(config.formatPresenceText(server))
+                        else -> Unit
+                    }
+                }
             }
         }
     }

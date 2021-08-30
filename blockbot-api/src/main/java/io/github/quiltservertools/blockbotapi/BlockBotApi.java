@@ -5,6 +5,7 @@ import io.github.quiltservertools.blockbotapi.event.PlayerAdvancementGrantEvent;
 import io.github.quiltservertools.blockbotapi.event.PlayerDeathEvent;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +36,7 @@ public class BlockBotApi implements ModInitializer {
         PlayerAdvancementGrantEvent.EVENT.register(bot::onAdvancementGrant);
         ServerLifecycleEvents.SERVER_STARTED.register(bot::onServerStart);
         ServerLifecycleEvents.SERVER_STOPPED.register(bot::onServerStop);
+        ServerTickEvents.END_SERVER_TICK.register(bot::onServerTick);
 
         LOGGER.info("Registered bot: " + bot);
     }

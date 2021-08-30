@@ -81,3 +81,9 @@ enabled = true
 allowedRoles = []
 # OP permission level to restrict commands
 opLevel = 3
+
+[Presence]
+# The type of presence. Can be "Game", "Listening", "Watching", "Competing"
+# Updates every 1200 ticks (60 seconds)
+activityType = "Game"
+activityText = "Minecraft | %server:online%/%server:max_players%"

@@ -35,6 +35,7 @@ val config = Config {
     addSpec(ChatRelaySpec)
     addSpec(ConsoleRelaySpec)
     addSpec(InlineCommandsSpec)
+    addSpec(PresenceSpec)
 }.from.toml.resource(CONFIG_PATH)
     .from.toml.resource(CONFIG_PATH)
     .from.toml.watchFile(FabricLoader.getInstance().configDir.resolve(CONFIG_PATH).toFile())
