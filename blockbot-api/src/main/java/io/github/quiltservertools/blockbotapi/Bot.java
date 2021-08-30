@@ -16,6 +16,7 @@ public interface Bot {
     void onAdvancementGrant(ServerPlayerEntity player, Advancement advancement);
     void onServerStart(MinecraftServer server);
     void onServerStop(MinecraftServer server);
+    void onServerTick(MinecraftServer server);
 
     void sendRelayMessage(String content, String channel);
     void onRelayMessage(String content, String channel);
