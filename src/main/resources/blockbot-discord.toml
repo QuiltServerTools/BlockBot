@@ -89,5 +89,7 @@ activityType = "Game"
 activityText = "Minecraft | %server:online%/%server:max_players%"
 
 [MemberCommands]
+# Enables the /playerlist discord slash command to get the players online
 playerList = true
-whitelist = true
+# Enables the /whitelist discord slash command to allow discord users to whitelist players
+whitelist = false
