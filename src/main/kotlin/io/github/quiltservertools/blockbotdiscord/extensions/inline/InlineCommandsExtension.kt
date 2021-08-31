@@ -22,7 +22,7 @@ class InlineCommandsExtension : Extension() {
     private val server: MinecraftServer by inject()
 
     override suspend fun setup() {
-        slashCommand(InlineCommandsExtension::InlineCommandsArgs) {
+        slashCommand(::InlineCommandsArgs) {
             name = "mc"
             description = "Run a command in game"
 
@@ -51,7 +51,7 @@ class InlineCommandsExtension : Extension() {
         }
     }
 
-    class InlineCommandsArgs : Arguments() {
+    inner class InlineCommandsArgs : Arguments() {
         val command by string("command", "The command to run (gamemode creative steve)")
     }
 }
