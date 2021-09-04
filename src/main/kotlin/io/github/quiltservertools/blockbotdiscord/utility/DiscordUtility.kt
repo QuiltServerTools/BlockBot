@@ -33,14 +33,7 @@ suspend fun convertStringToMention(message: String, guild: Guild): String {
 private val emojiPattern =
     Pattern.compile("[:](?<id>[^:\\s]+)[:]")
 
-private val emojiAliases = EmojiManager.getAll().flatMap { it.aliases }.map {
-    it to
-        TranslatableText(
-            "%1\$s%3256342\$s", ":$it:", EmojiManager.getForAlias(it).unicode
-        )
-}.toMap(
-    mutableMapOf()
-)
+private val emojiAliases = EmojiManager.getAll().flatMap { it.aliases }.associateWith { TranslatableText(":$it:") }
 
 fun convertEmojiToTranslatable(
     input: MutableText

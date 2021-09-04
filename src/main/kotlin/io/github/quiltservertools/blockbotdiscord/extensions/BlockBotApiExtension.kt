@@ -119,13 +119,17 @@ class BlockBotApiExtension : Extension(), Bot {
             content = "".literal().append(reply).append("\n").append(content)
         }
 
-        if (message.attachments.isNotEmpty()) {
-            for (attachment in message.attachments) {
-                content.append("\n[${attachment.filename}]".literal().styled {
-                    it.withColor(Formatting.BLUE)
-                        .withClickEvent(ClickEvent(ClickEvent.Action.OPEN_URL, attachment.url))
-                })
-            }
+        for (sticker in message.stickers) {
+            if (content.string.isNotEmpty()) content.append("\n")
+            content.append("[Sticker: ${sticker.name}]")
+        }
+
+        for (attachment in message.attachments) {
+            if (content.string.isNotEmpty()) content.append("\n")
+            content.append("[${attachment.filename}]".literal().styled {
+                it.withColor(Formatting.BLUE)
+                    .withClickEvent(ClickEvent(ClickEvent.Action.OPEN_URL, attachment.url))
+            })
         }
 
         val topRole = sender.getTopRole()
