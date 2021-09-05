@@ -186,7 +186,7 @@ class BlockBotApiExtension : Extension(), Bot {
                 if (sender.formatWebhookContent(content).isEmpty()) return@launch
                 chatWebhook.execute(chatWebhook.token!!) {
                     this.allowedMentions = mentions
-                    this.username = sender.name.string
+                    this.username = config.formatWebhookAuthor(sender)
                     this.content = sender.formatWebhookContent(content)
                     this.avatarUrl = sender.getAvatar()
                 }
