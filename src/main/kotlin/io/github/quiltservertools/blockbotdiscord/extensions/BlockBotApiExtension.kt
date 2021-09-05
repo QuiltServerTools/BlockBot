@@ -103,6 +103,9 @@ class BlockBotApiExtension : Extension(), Bot {
                 }
             }
         }
+
+        // Send server started message if the server has already started. isLoading should be named isRunning
+        if (server.isLoading) onServerStart(server)
     }
 
     public suspend fun getChatMessage(sender: Member, message: Message): Text {
