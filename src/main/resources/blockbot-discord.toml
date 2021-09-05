@@ -16,6 +16,8 @@ guild =
 allowMentions = true
 # Convert discord formatting to minecraft formatting
 convertMarkdown = true
+# Try to escape player markdown sent in game
+escapeIngameMarkdown = false
 
 [ChatRelay.MinecraftFormat]
 # Discord -> Minecraft message format

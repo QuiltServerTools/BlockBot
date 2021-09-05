@@ -20,6 +20,7 @@ import java.util.*
 object ChatRelaySpec : ConfigSpec() {
     val allowMentions by required<Boolean>()
     val convertMarkdown by required<Boolean>()
+    val escapeIngameMarkdown by required<Boolean>()
 
     object MinecraftFormatSpec : ConfigSpec() {
         val messageFormat by required<String>()
