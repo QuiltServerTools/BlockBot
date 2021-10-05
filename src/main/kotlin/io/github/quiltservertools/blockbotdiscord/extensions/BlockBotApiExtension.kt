@@ -213,7 +213,7 @@ class BlockBotApiExtension : Extension(), Bot {
             createDiscordEmbed {
                 author {
                     name = config.formatPlayerJoinMessage(handler.player)
-                    icon = config.getWebhookChatRelayAvatar(handler.player.uuid)
+                    icon = config.getWebhookChatRelayAvatar(handler.player.gameProfile)
                 }
                 color = Colors.green
             }
@@ -226,7 +226,7 @@ class BlockBotApiExtension : Extension(), Bot {
             createDiscordEmbed {
                 author {
                     name = config.formatPlayerLeaveMessage(handler.player)
-                    icon = config.getWebhookChatRelayAvatar(handler.player.uuid)
+                    icon = config.getWebhookChatRelayAvatar(handler.player.gameProfile)
                 }
                 color = Colors.red
             }
@@ -238,7 +238,7 @@ class BlockBotApiExtension : Extension(), Bot {
             createDiscordEmbed {
                 author {
                     name = message.string
-                    icon = config.getWebhookChatRelayAvatar(player.uuid)
+                    icon = config.getWebhookChatRelayAvatar(player.gameProfile)
                 }
                 color = Colors.orange
             }
@@ -251,7 +251,7 @@ class BlockBotApiExtension : Extension(), Bot {
             createDiscordEmbed {
                 author {
                     name = config.formatPlayerAdvancementMessage(player, advancement)
-                    icon = config.getWebhookChatRelayAvatar(player.uuid)
+                    icon = config.getWebhookChatRelayAvatar(player.gameProfile)
                 }
                 footer {
                     text = advancement.display!!.description.string
@@ -310,7 +310,7 @@ class BlockBotApiExtension : Extension(), Bot {
 }
 
 fun MessageSender.getAvatar(): String {
-    return if (this is PlayerMessageSender) config.getWebhookChatRelayAvatar(this.uuid)
+    return if (this is PlayerMessageSender) config.getWebhookChatRelayAvatar(this.profile)
     else config[ChatRelaySpec.WebhookSpec.webhookAvatar]
 }
 
