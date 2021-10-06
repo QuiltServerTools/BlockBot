@@ -5,8 +5,10 @@ import com.uchuhimo.konf.UnsetValueException
 import com.uchuhimo.konf.source.toml
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import net.fabricmc.loader.api.FabricLoader
+import java.nio.file.Path
 
 const val CONFIG_PATH = "blockbot-discord.toml"
+const val MESSAGES_PATH = "messages.json"
 
 val config = Config {
     addSpec(BotSpec)
@@ -16,8 +18,7 @@ val config = Config {
     addSpec(PresenceSpec)
     addSpec(MemberCommandsSpec)
 }.from.toml.resource(CONFIG_PATH)
-    .from.toml.resource(CONFIG_PATH)
-    .from.toml.watchFile(FabricLoader.getInstance().configDir.resolve(CONFIG_PATH).toFile())
+    .from.toml.watchFile(BlockBotDiscord.CONFIG_FOLDER.resolve(CONFIG_PATH).toFile())
     .from.env()
     .from.systemProperties()
 
