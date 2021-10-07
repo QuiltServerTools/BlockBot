@@ -69,25 +69,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
             logInfo("No messages file, creating...")
             val format = Json { prettyPrint = true }
             val messages = MessagesConfig()
-            logInfo(format.encodeToString(mapOf(
-                "test" to MessageCreateRequest(
-                    content = "**test** ok".optional(),
-                    tts = true.optional(),
-                    embed = EmbedRequest(
-                        title = "aaa".optional(),
-                        type = "rich".optional(),
-                        description = "description".optional(),
-                        url = "google.com".optional(),
-                        timestamp = Clock.System.now().optional(),
-                        color = Color(20, 30, 60).optional(),
-                        fields = listOf(EmbedFieldRequest(
-                            name = "Changes",
-                            value = "test",
-                            inline = true.optional()
-                        )).optional()
-                    ).optional(),
-                )
-            )))
+            logInfo(format.encodeToString(DEFAULT_MESSAGES))
         }
     }
 
