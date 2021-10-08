@@ -309,22 +309,6 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onServerTick(server: MinecraftServer) {
-        BlockBotDiscord.launch {
-            if (server.ticks % 400 == 0) {
-                kord.editPresence {
-                    when (config[PresenceSpec.activityType]) {
-                        ActivityType.Game -> playing(config.formatPresenceText(server))
-                        ActivityType.Listening -> listening(config.formatPresenceText(server))
-                        ActivityType.Watching -> watching(config.formatPresenceText(server))
-                        ActivityType.Competing -> competing(config.formatPresenceText(server))
-                        else -> Unit
-                    }
-                }
-            }
-        }
-    }
-
 
     override fun sendRelayMessage(content: String, channel: String) {
     }

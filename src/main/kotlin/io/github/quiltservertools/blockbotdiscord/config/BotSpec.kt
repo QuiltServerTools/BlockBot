@@ -17,7 +17,7 @@ object BotSpec : ConfigSpec() {
     val channels by required<Map<String, ULong>>()
 }
 
-fun Config.getChannelsBi(): BiMap<String, Long> = HashBiMap.create(this[BotSpec.channels])
+fun Config.getChannelsBi(): BiMap<String, ULong> = HashBiMap.create(this[BotSpec.channels])
 
 suspend fun Config.getChannel(name: String, bot: ExtensibleBot): GuildMessageChannel {
     val channel: GuildMessageChannel? =
