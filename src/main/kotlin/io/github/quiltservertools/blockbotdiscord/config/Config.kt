@@ -157,7 +157,7 @@ fun Config.getWebhookChatRelayAvatar(uuid: UUID): String =
         mapOf("uuid" to uuid.toString().literal())
     ).string
 
-fun Config.getChannelsBi(): BiMap<String, Long> = HashBiMap.create(this[BotSpec.channels])
+fun Config.getChannelsBi(): BiMap<String, ULong> = HashBiMap.create(this[BotSpec.channels])
 
 suspend fun Config.getChannel(name: String, bot: ExtensibleBot): GuildMessageChannel {
     val channel: GuildMessageChannel? =

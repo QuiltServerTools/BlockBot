@@ -1,8 +1,9 @@
 package io.github.quiltservertools.blockbotdiscord.extensions
 
 import com.kotlindiscord.kord.extensions.checks.inGuild
-import com.kotlindiscord.kord.extensions.checks.isNotbot
+import com.kotlindiscord.kord.extensions.checks.isNotBot
 import com.kotlindiscord.kord.extensions.extensions.Extension
+import com.kotlindiscord.kord.extensions.extensions.event
 import com.kotlindiscord.kord.extensions.utils.ensureWebhook
 import com.kotlindiscord.kord.extensions.utils.getTopRole
 import com.kotlindiscord.kord.extensions.utils.hasPermission
@@ -75,8 +76,8 @@ class BlockBotApiExtension : Extension(), Bot {
             .toList())
 
         event<MessageCreateEvent> {
-            check(isNotbot)
-            check(inGuild(Snowflake(config[BotSpec.guild])))
+            check { isNotBot() }
+            check { inGuild(Snowflake(config[BotSpec.guild])) }
             check { failIfNot(config.getChannelsBi().containsValue(event.message.channelId.value)) }
 
             action {
@@ -282,6 +283,7 @@ class BlockBotApiExtension : Extension(), Bot {
                 }
                 color = Colors.red
             }
+            kord.shutdown()
         }
     }
 

@@ -51,7 +51,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
     private fun serverStarting(server: MinecraftServer) {
         launch {
             bot = ExtensibleBot(config[BotSpec.token]) {
-                slashCommands {
+                applicationCommands {
                     enabled = true
                 }
 
@@ -64,6 +64,10 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
                 intents {
                     +Intents.nonPrivileged
                     +Intent.GuildMembers
+                }
+
+                members {
+                    fill(config[BotSpec.guild])
                 }
 
                 hooks {

@@ -1,8 +1,9 @@
 package io.github.quiltservertools.blockbotdiscord.extensions.inline
 
+import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
-import com.kotlindiscord.kord.extensions.commands.parser.Arguments
 import com.kotlindiscord.kord.extensions.extensions.Extension
+import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import dev.kord.common.entity.Snowflake
 import io.github.quiltservertools.blockbotdiscord.config.InlineCommandsSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
@@ -22,7 +23,7 @@ class InlineCommandsExtension : Extension() {
     private val server: MinecraftServer by inject()
 
     override suspend fun setup() {
-        slashCommand(InlineCommandsExtension::InlineCommandsArgs) {
+        ephemeralSlashCommand(::InlineCommandsArgs) {
             name = "mc"
             description = "Run a command in game"
 

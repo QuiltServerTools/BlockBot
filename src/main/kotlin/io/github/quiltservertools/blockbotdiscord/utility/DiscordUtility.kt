@@ -4,7 +4,6 @@ import com.vdurmont.emoji.EmojiManager
 import dev.kord.core.entity.Guild
 import dev.kord.core.firstOrNull
 import eu.pb4.placeholders.PlaceholderAPI
-import kotlinx.coroutines.flow.toCollection
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -12,21 +11,20 @@ import java.util.regex.Pattern
 
 
 suspend fun convertStringToMention(message: String, guild: Guild): String {
-    val mentionsRegex = Regex("@(.{3,32})")
+    val mentionsRegex = Regex("@(\\S{3,32})")
     val mentions = mentionsRegex.findAll(message)
     var mentionMessage = message
 
     for (mention in mentions) {
         val name = mention.groupValues[1]
-        println(guild.members.toCollection(mutableListOf()))
-        val member =  guild.members.firstOrNull { it.nickname == name || it.username == name }
+        val member =  guild.members.firstOrNull { it.nickname.equals(name, ignoreCase = true) || it.username.equals(name, ignoreCase = true) }
         var mentionString = member?.mention
         if (mentionString == null) {
             mentionString = guild.roles.firstOrNull { it.name == name }?.mention
         }
 
         if (mentionString != null) {
-            mentionMessage = message.replace(mention.value, mentionString)
+            mentionMessage = mentionMessage.replace(mention.value, mentionString)
         }
     }
 

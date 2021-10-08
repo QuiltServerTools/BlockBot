@@ -1,21 +1,21 @@
 [versions]
 minecraft = "1.17.1"
 fabric-loader = "0.11.6"
-yarn-mappings = "1.17.1+build.14"
+yarn-mappings = "1.17.1+build.61"
 
-fabric-api = "0.37.0+1.17"
+fabric-api = "0.40.6+1.17"
 
 # Kotlin
-kotlin = "1.5.21"
-fabric-kotlin = "1.6.3+kotlin.1.5.21"
+kotlin = "1.5.31"
+fabric-kotlin = "1.6.5+kotlin.1.5.31"
 
 # Discord
-kord-extensions = "1.4.4-RC4"
+kord-extensions = "1.5.1-SNAPSHOT"
 mc-discord-reserializer = "1.0.0"
 emoji-java = "5.1.1"
 
-placeholder-api = "1.0.0-rc2-1.17"
-konf = "0.23.0"
+placeholder-api = "1.1.1+1.17.1"
+konf = "1.1.2"
 
 [libraries]
 minecraft = { module = "net.minecraft:minecraft", version.ref = "minecraft" }
