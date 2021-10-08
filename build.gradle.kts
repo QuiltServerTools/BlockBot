@@ -154,6 +154,8 @@ tasks {
         relocate("org.xmlpull", relocPath + "org.xmlpull")
         relocate("org.yaml", relocPath + "org.yaml")
         relocate("org.dom4j", relocPath + "org.dom4j")
+        relocate("kotlinx.atomicfu", relocPath + "kotlinx.atomicfu")
+        relocate("kotlinx.datetime", relocPath + "kotlinx.datetime")
 
         relocate("org.reflections", relocPath + "org.reflections")
     }

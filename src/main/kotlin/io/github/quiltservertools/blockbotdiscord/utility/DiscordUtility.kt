@@ -11,19 +11,20 @@ import java.util.regex.Pattern
 
 
 suspend fun convertStringToMention(message: String, guild: Guild): String {
-    val mentionsRegex = Regex("@(.{3,32})")
+    val mentionsRegex = Regex("@(\\S{3,32})")
     val mentions = mentionsRegex.findAll(message)
     var mentionMessage = message
 
     for (mention in mentions) {
         val name = mention.groupValues[1]
-        var mentionString = guild.members.firstOrNull { it.nickname == name || it.username == name }?.mention
+        val member =  guild.members.firstOrNull { it.nickname.equals(name, ignoreCase = true) || it.username.equals(name, ignoreCase = true) }
+        var mentionString = member?.mention
         if (mentionString == null) {
             mentionString = guild.roles.firstOrNull { it.name == name }?.mention
         }
 
         if (mentionString != null) {
-            mentionMessage = message.replace(mention.value, mentionString)
+            mentionMessage = mentionMessage.replace(mention.value, mentionString)
         }
     }
 
@@ -35,9 +36,7 @@ private val emojiPattern =
 
 private val emojiAliases = EmojiManager.getAll().flatMap { it.aliases }.map {
     it to
-        TranslatableText(
-            "%1\$s%3256342\$s", ":$it:", EmojiManager.getForAlias(it).unicode
-        )
+        TranslatableText(":$it:")
 }.toMap(
     mutableMapOf()
 )

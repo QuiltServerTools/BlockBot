@@ -14,7 +14,7 @@ import io.github.quiltservertools.blockbotdiscord.logWarn
 object BotSpec : ConfigSpec() {
     val token by required<String>()
     val guild by required<Long>()
-    val channels by required<Map<String, Long>>()
+    val channels by required<Map<String, ULong>>()
 }
 
 fun Config.getChannelsBi(): BiMap<String, Long> = HashBiMap.create(this[BotSpec.channels])

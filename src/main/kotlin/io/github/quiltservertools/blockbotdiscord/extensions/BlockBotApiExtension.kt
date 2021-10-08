@@ -1,6 +1,9 @@
 package io.github.quiltservertools.blockbotdiscord.extensions
 
+import com.kotlindiscord.kord.extensions.checks.inGuild
+import com.kotlindiscord.kord.extensions.checks.isNotBot
 import com.kotlindiscord.kord.extensions.extensions.Extension
+import com.kotlindiscord.kord.extensions.extensions.event
 import com.kotlindiscord.kord.extensions.utils.ensureWebhook
 import com.kotlindiscord.kord.extensions.utils.getTopRole
 import com.kotlindiscord.kord.extensions.utils.hasPermission
@@ -8,14 +11,17 @@ import com.vdurmont.emoji.EmojiParser
 import dev.kord.common.entity.ActivityType
 import dev.kord.common.entity.AllowedMentionType
 import dev.kord.common.entity.Permission
+import dev.kord.common.entity.Snowflake
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.execute
 import dev.kord.core.entity.Member
 import dev.kord.core.entity.Message
 import dev.kord.core.entity.Webhook
+import dev.kord.core.entity.channel.TopGuildMessageChannel
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import dev.kord.rest.builder.message.EmbedBuilder
+import dev.kord.rest.builder.message.create.embed
 import io.github.quiltservertools.blockbotapi.Bot
 import io.github.quiltservertools.blockbotapi.Channels
 import io.github.quiltservertools.blockbotapi.event.RelayMessageEvent
@@ -64,15 +70,15 @@ class BlockBotApiExtension : Extension(), Bot {
     override suspend fun setup() {
         val channel = config.getChannel(Channels.CHAT, bot)
 
-        chatWebhook = ensureWebhook(channel, config[ChatRelaySpec.WebhookSpec.webhookName])
+        chatWebhook = ensureWebhook(channel as TopGuildMessageChannel, config[ChatRelaySpec.WebhookSpec.webhookName])
         mentions.add(AllowedMentionType.UserMentions)
         mentions.roles.addAll(config.getGuild(bot).roles.filter { it.mentionable }.map { it.id }
             .toList())
 
         event<MessageCreateEvent> {
-            check { it.message.getAuthorAsMember() != null }
-            check { it.message.author?.isBot == false }
-            check { config.getChannelsBi().containsValue(it.message.channelId.value) }
+            check { isNotBot() }
+            check { inGuild(Snowflake(config[BotSpec.guild])) }
+            check { failIfNot(config.getChannelsBi().containsValue(event.message.channelId.value)) }
 
             action {
                 val sender = event.message.getAuthorAsMember()!!
@@ -151,7 +157,7 @@ class BlockBotApiExtension : Extension(), Bot {
             chatWebhook.execute(chatWebhook.token!!) {
                 avatarUrl = config[ChatRelaySpec.WebhookSpec.webhookAvatar]
                 allowedMentions = mentions
-                embeds.add(EmbedBuilder().apply(builder).toRequest())
+                embeds.add(EmbedBuilder().apply(builder))
             }
         } else {
             val messageChannel = config.getChannel(Channels.CHAT, bot)
@@ -180,6 +186,7 @@ class BlockBotApiExtension : Extension(), Bot {
     override fun onChatMessage(sender: MessageSender, message: String) {
         BlockBotDiscord.launch {
             var content = message
+            content = MinecraftSerializer.INSTANCE.escapeMarkdown(content) // TODO config
             if (config[ChatRelaySpec.escapeIngameMarkdown]) {
                 content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
             }
@@ -281,6 +288,23 @@ class BlockBotApiExtension : Extension(), Bot {
                     name = config.formatServerStopMessage(server)
                 }
                 color = Colors.red
+            }
+            kord.shutdown()
+        }
+    }
+
+    override fun onServerTick(server: MinecraftServer) {
+        BlockBotDiscord.launch {
+            if (server.ticks % 400 == 0) {
+                kord.editPresence {
+                    when (config[PresenceSpec.activityType]) {
+                        ActivityType.Game -> playing(config.formatPresenceText(server))
+                        ActivityType.Listening -> listening(config.formatPresenceText(server))
+                        ActivityType.Watching -> watching(config.formatPresenceText(server))
+                        ActivityType.Competing -> competing(config.formatPresenceText(server))
+                        else -> Unit
+                    }
+                }
             }
         }
     }
