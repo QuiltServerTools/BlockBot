@@ -21,7 +21,7 @@ class DiscordConsoleAppender : AbstractAppender("DiscordConsoleAppender", null, 
 
     override fun append(event: LogEvent) {
         if (event.level <= Level.valueOf(config[ConsoleRelaySpec.minLevel])) {
-            ConsoleExtension.consoleQueue.add(PATTERN_LAYOUT.toSerializable(event).toString())
+            ConsoleExtension.addToQueue(PATTERN_LAYOUT.toSerializable(event).toString())
         }
     }
 }
