@@ -58,7 +58,7 @@ replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
     # URL for the webhook avatar for messages not from players
     webhookAvatar = "https://i.imgur.com/IxPg1R2.png"
     # URL to get the webhook avatar from for players
-    playerAvatarUrl = "https://crafatar.com/avatars/{uuid}?size=100&overlay"
+    playerAvatarUrl = "https://cravatar.eu/helmavatar/{uuid}/128.png?{texture}"
 
     # Placeholders: {sender}, {sender_display}, {message}
     # Supports discord markdown and Placeholder API with player context
