@@ -64,7 +64,10 @@ class BlockBotApiExtension : Extension(), Bot {
     override suspend fun setup() {
         val channel = config.getChannel(Channels.CHAT, bot)
 
-        chatWebhook = ensureWebhook(channel, config[ChatRelaySpec.WebhookSpec.webhookName])
+        chatWebhook = ensureWebhook(
+            channel,
+            config[ChatRelaySpec.WebhookSpec.webhookName]
+        ) { this::class.java.getResourceAsStream("/assets/blockbot-discord/server.png").readBytes() }
         mentions.add(AllowedMentionType.UserMentions)
         mentions.roles.addAll(config.getGuild(bot).roles.filter { it.mentionable }.map { it.id }
             .toList())
@@ -149,7 +152,6 @@ class BlockBotApiExtension : Extension(), Bot {
     public suspend fun createDiscordEmbed(builder: EmbedBuilder.() -> Unit) {
         if (config[ChatRelaySpec.WebhookSpec.useWebhook]) {
             chatWebhook.execute(chatWebhook.token!!) {
-                avatarUrl = config[ChatRelaySpec.WebhookSpec.webhookAvatar]
                 allowedMentions = mentions
                 embeds.add(EmbedBuilder().apply(builder).toRequest())
             }
@@ -309,9 +311,9 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 }
 
-fun MessageSender.getAvatar(): String {
+fun MessageSender.getAvatar(): String? {
     return if (this is PlayerMessageSender) config.getWebhookChatRelayAvatar(this.profile)
-    else config[ChatRelaySpec.WebhookSpec.webhookAvatar]
+    else null
 }
 
 fun MessageSender.formatMessageContent(content: String): String {

@@ -3,7 +3,7 @@ minecraft = "1.17.1"
 fabric-loader = "0.11.6"
 yarn-mappings = "1.17.1+build.14"
 
-fabric-api = "0.37.0+1.17"
+fabric-api = "0.40.8+1.17"
 
 # Kotlin
 kotlin = "1.5.21"

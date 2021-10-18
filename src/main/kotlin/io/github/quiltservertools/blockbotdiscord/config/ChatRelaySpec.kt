@@ -18,7 +18,6 @@ import net.minecraft.text.LiteralText
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
-import java.util.*
 
 object ChatRelaySpec : ConfigSpec() {
     val allowMentions by required<Boolean>()
@@ -52,7 +51,6 @@ object ChatRelaySpec : ConfigSpec() {
     object WebhookSpec : ConfigSpec() {
         val useWebhook by required<Boolean>()
         val webhookName by required<String>()
-        val webhookAvatar by required<String>()
         val playerAvatarUrl by required<String>()
     }
 }

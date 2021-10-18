@@ -2,15 +2,9 @@ package io.github.quiltservertools.blockbotdiscord
 
 import com.kotlindiscord.kord.extensions.ExtensibleBot
 import com.kotlindiscord.kord.extensions.utils.loadModule
-import dev.kord.common.Color
-import dev.kord.common.entity.optional.Optional
-import dev.kord.common.entity.optional.optional
 import dev.kord.gateway.Intent
 import dev.kord.gateway.Intents
 import dev.kord.gateway.PrivilegedIntent
-import dev.kord.rest.json.request.EmbedFieldRequest
-import dev.kord.rest.json.request.EmbedRequest
-import dev.kord.rest.json.request.MessageCreateRequest
 import io.github.quiltservertools.blockbotapi.BlockBotApi
 import io.github.quiltservertools.blockbotdiscord.config.*
 import io.github.quiltservertools.blockbotdiscord.extensions.BlockBotApiExtension
@@ -20,8 +14,6 @@ import io.github.quiltservertools.blockbotdiscord.extensions.inline.InlineComman
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.fabricmc.api.ModInitializer
@@ -68,8 +60,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
         if (CONFIG_FOLDER.resolve(MESSAGES_PATH).notExists()) {
             logInfo("No messages file, creating...")
             val format = Json { prettyPrint = true }
-            val messages = MessagesConfig()
-            logInfo(format.encodeToString(DEFAULT_MESSAGES))
+            logInfo(format.encodeToString(DEFAULT_MESSAGE_CONFIG))
         }
     }
 
