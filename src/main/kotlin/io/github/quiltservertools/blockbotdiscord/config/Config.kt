@@ -4,8 +4,6 @@ import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.UnsetValueException
 import com.uchuhimo.konf.source.toml
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
-import net.fabricmc.loader.api.FabricLoader
-import java.nio.file.Path
 
 const val CONFIG_PATH = "blockbot-discord.toml"
 const val MESSAGES_PATH = "messages.json"
@@ -29,3 +27,5 @@ fun Config.isCorrect() = try {
     BlockBotDiscord.logger.error(ex)
     false
 }
+
+lateinit var messagesConfig: MessageConfig

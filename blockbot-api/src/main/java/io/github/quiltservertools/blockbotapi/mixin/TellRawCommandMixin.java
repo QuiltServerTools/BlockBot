@@ -4,6 +4,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.quiltservertools.blockbotapi.event.ChatMessageEvent;
 import io.github.quiltservertools.blockbotapi.sender.MessageSender;
+import io.github.quiltservertools.blockbotapi.sender.MessageType;
 import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
@@ -28,19 +29,18 @@ public abstract class TellRawCommandMixin {
             MessageSender sender;
             if (entity instanceof ServerPlayerEntity player) {
                 sender = new PlayerMessageSender(
-                    player,
-                    MessageSender.MessageType.REGULAR
+                    player
                 );
             } else {
                 sender = new MessageSender(
                     new LiteralText(context.getSource().getName()),
-                    context.getSource().getDisplayName(),
-                    MessageSender.MessageType.REGULAR
+                    context.getSource().getDisplayName()
                 );
             }
 
             ChatMessageEvent.EVENT.invoker().message(
                 sender,
+                MessageType.REGULAR,
                 Texts.parse(context.getSource(), TextArgumentType.getTextArgument(context, "message"), entity, 0).getString()
             );
         }

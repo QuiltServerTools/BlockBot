@@ -3,6 +3,7 @@ package io.github.quiltservertools.blockbotapi.mixin;
 import com.mojang.brigadier.context.CommandContext;
 import io.github.quiltservertools.blockbotapi.event.ChatMessageEvent;
 import io.github.quiltservertools.blockbotapi.sender.MessageSender;
+import io.github.quiltservertools.blockbotapi.sender.MessageType;
 import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender;
 import net.minecraft.server.command.MeCommand;
 import net.minecraft.server.command.ServerCommandSource;
@@ -26,19 +27,18 @@ public abstract class MeCommandMixin {
         MessageSender sender = null;
         if (entity instanceof ServerPlayerEntity player) {
             sender = new PlayerMessageSender(
-                player,
-                MessageSender.MessageType.EMOTE
+                player
             );
         } else {
             sender = new MessageSender(
                 new LiteralText(context.getSource().getName()),
-                context.getSource().getDisplayName(),
-                MessageSender.MessageType.EMOTE
+                context.getSource().getDisplayName()
             );
         }
 
         ChatMessageEvent.EVENT.invoker().message(
             sender,
+            MessageType.EMOTE,
             message
         );
     }

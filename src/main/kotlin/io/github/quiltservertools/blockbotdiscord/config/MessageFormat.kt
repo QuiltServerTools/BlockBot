@@ -48,6 +48,7 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             content = "The regular content part of message",
             username = "The webhooks username for this message",
             avatar = "URL to use for webhook avatar for this message",
+            tts = false,
             embeds = listOf(
                 MessageEmbed(
                     title = "Title of embed (Can't have discord emojis)",
@@ -95,7 +96,6 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             content = "*{sender} {message}*"
         ),
         advancement = WebhookMessage(
-            avatar = "{webhook_avatar}",
             embeds = listOf(
                 MessageEmbed(
                     author = EmbedAuthor(
@@ -107,7 +107,6 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             )
         ),
         join = WebhookMessage(
-            avatar = "{webhook_avatar}",
             embeds = listOf(
                 MessageEmbed(
                     author = EmbedAuthor(
@@ -119,7 +118,6 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             )
         ),
         leave = WebhookMessage(
-            avatar = "{webhook_avatar}",
             embeds = listOf(
                 MessageEmbed(
                     author = EmbedAuthor(
@@ -131,7 +129,6 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             )
         ),
         death = WebhookMessage(
-            avatar = "{webhook_avatar}",
             embeds = listOf(
                 MessageEmbed(
                     author = EmbedAuthor(
@@ -143,7 +140,6 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             )
         ),
         serverStart = WebhookMessage(
-            avatar = "{webhook_avatar}",
             embeds = listOf(
                 MessageEmbed(
                     title = ":green_circle: Server Started",
@@ -152,7 +148,6 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             )
         ),
         serverStop = WebhookMessage(
-            avatar = "{webhook_avatar}",
             embeds = listOf(
                 MessageEmbed(
                     title = ":octagonal_sign: Server Stopped",
@@ -261,7 +256,7 @@ data class WebhookMessage(
     val username: String? = null,
     val avatar: String? = null,
     val tts: Boolean? = null,
-    val embeds: List<MessageEmbed>? = null
+    val embeds: List<MessageEmbed> = listOf()
 )
 
 @Serializable
@@ -281,7 +276,7 @@ data class MessageEmbed(
     val image: String? = null,
     val thumbnail: String? = null,
     val author: EmbedAuthor? = null,
-    val fields: List<EmbedField>? = null,
+    val fields: List<EmbedField> = listOf(),
 )
 
 @Serializable

@@ -1,3 +1,5 @@
+@file:OptIn(PrivilegedIntent::class)
+
 package io.github.quiltservertools.blockbotdiscord
 
 import com.kotlindiscord.kord.extensions.ExtensibleBot
@@ -14,6 +16,8 @@ import io.github.quiltservertools.blockbotdiscord.extensions.inline.InlineComman
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.fabricmc.api.ModInitializer
@@ -27,7 +31,6 @@ import java.nio.file.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.notExists
 
-@OptIn(PrivilegedIntent::class)
 object BlockBotDiscord : ModInitializer, CoroutineScope {
     const val MOD_ID = "blockbot-discord"
 
@@ -35,6 +38,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
     val CONFIG_FOLDER: Path = FabricLoader.getInstance().configDir.resolve("blockbot")
     lateinit var bot: ExtensibleBot
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun onInitialize() {
         logInfo("Initializing")
 
@@ -48,6 +52,16 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
                 CONFIG_FOLDER.resolve(CONFIG_PATH)
             )
         }
+        if (CONFIG_FOLDER.resolve(MESSAGES_PATH).notExists()) {
+            logInfo("No messages file, creating...")
+            CONFIG_FOLDER.resolve(MESSAGES_PATH).toFile().writeText(
+                Json { prettyPrint = true }.encodeToString(
+                    DEFAULT_MESSAGE_CONFIG
+                )
+            )
+        } else {
+            messagesConfig = Json { ignoreUnknownKeys = true; isLenient = true } .decodeFromString(CONFIG_FOLDER.resolve(MESSAGES_PATH).toFile().readText())
+        }
         if (!config.isCorrect()) {
             logFatal("Config invalid. Disabling mod...")
             return
@@ -56,12 +70,6 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
         ServerLifecycleEvents.SERVER_STARTING.register(BlockBotDiscord::serverStarting)
 
         DiscordConsoleAppender().start()
-
-        if (CONFIG_FOLDER.resolve(MESSAGES_PATH).notExists()) {
-            logInfo("No messages file, creating...")
-            val format = Json { prettyPrint = true }
-            logInfo(format.encodeToString(DEFAULT_MESSAGE_CONFIG))
-        }
     }
 
     private fun serverStarting(server: MinecraftServer) {

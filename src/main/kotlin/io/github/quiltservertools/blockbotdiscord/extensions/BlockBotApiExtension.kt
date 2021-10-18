@@ -16,16 +16,14 @@ import dev.kord.core.entity.Webhook
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import dev.kord.rest.builder.message.EmbedBuilder
+import eu.pb4.placeholders.PlaceholderAPI
 import io.github.quiltservertools.blockbotapi.Bot
 import io.github.quiltservertools.blockbotapi.Channels
 import io.github.quiltservertools.blockbotapi.event.RelayMessageEvent
-import io.github.quiltservertools.blockbotapi.sender.MessageSender
-import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender
-import io.github.quiltservertools.blockbotapi.sender.RelayMessageSender
+import io.github.quiltservertools.blockbotapi.sender.*
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import io.github.quiltservertools.blockbotdiscord.MentionToMinecraftRenderer
 import io.github.quiltservertools.blockbotdiscord.config.*
-import io.github.quiltservertools.blockbotdiscord.utility.Colors
 import io.github.quiltservertools.blockbotdiscord.utility.convertEmojiToTranslatable
 import io.github.quiltservertools.blockbotdiscord.utility.convertStringToMention
 import io.github.quiltservertools.blockbotdiscord.utility.literal
@@ -35,7 +33,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.minecraft.advancement.Advancement
 import net.minecraft.server.MinecraftServer
@@ -149,37 +146,103 @@ class BlockBotApiExtension : Extension(), Bot {
         return config.getMinecraftChatRelayMsg(username, topRoleMessage, content, server)
     }
 
-    public suspend fun createDiscordEmbed(builder: EmbedBuilder.() -> Unit) {
-        if (config[ChatRelaySpec.WebhookSpec.useWebhook]) {
-            chatWebhook.execute(chatWebhook.token!!) {
-                allowedMentions = mentions
-                embeds.add(EmbedBuilder().apply(builder).toRequest())
+    public fun sendDiscordMessage(webhookMessage: WebhookMessage, regularMessage: RegularMessage, sender: MessageSender, additionalPlaceholders: Map<String, Text> = mapOf()) {
+        val placeholders = mutableMapOf(
+            "sender" to sender.name,
+            "sender_display" to sender.displayName,
+            "sender_avatar" to sender.getAvatar()?.literal()
+        ) + additionalPlaceholders
+
+        fun String?.placeholders(): String? {
+            if (this == null) return this
+
+            return if (sender is PlayerMessageSender) {
+                PlaceholderAPI.parseText(
+                    PlaceholderAPI.parsePredefinedText(
+                        this.literal(),
+                        PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+                        placeholders
+                    ),
+                    sender.player
+                ).string
+            } else {
+                PlaceholderAPI.parseText(
+                    PlaceholderAPI.parsePredefinedText(
+                        this.literal(),
+                        PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+                        placeholders
+                    ),
+                    server
+                ).string
             }
-        } else {
-            val messageChannel = config.getChannel(Channels.CHAT, bot)
-            messageChannel.createMessage {
-                allowedMentions = mentions
-                embed(builder)
+        }
+
+        fun createEmbed(embed: MessageEmbed): EmbedBuilder {
+            return EmbedBuilder().apply {
+                title = embed.title.placeholders()
+                description = embed.description.placeholders()
+                url = embed.url.placeholders()
+                color = embed.color
+                embed.footer?.let {
+                    footer {
+                        text = it.text.placeholders()!!
+                        icon = it.iconUrl.placeholders()
+                    }
+                }
+                image = embed.image.placeholders()
+                embed.thumbnail?.let {
+                    thumbnail { url = it.placeholders()!! }
+                }
+                embed.author?.let {
+                    author {
+                        name = it.name.placeholders()
+                        url = it.url.placeholders()
+                        icon = it.iconUrl.placeholders()
+                    }
+                }
+                for (field in embed.fields) {
+                    field {
+                        name = field.name.placeholders()!!
+                        value = field.value.placeholders()!!
+                        inline = inline
+                    }
+                }
+            }
+        }
+
+        BlockBotDiscord.launch {
+            //TODO allow disabling
+            if (config[ChatRelaySpec.WebhookSpec.useWebhook]) {
+                val message = webhookMessage
+
+                chatWebhook.execute(chatWebhook.token!!) {
+                    allowedMentions = mentions;
+
+                    content = message.content.placeholders()
+                    username = message.username.placeholders()
+                    avatarUrl = message.avatar.placeholders()
+                    tts = message.tts
+                    for (embed in message.embeds) {
+                        embeds.add(createEmbed(embed).toRequest())
+                    }
+                }
+
+            } else {
+                val message = regularMessage
+
+                val messageChannel = config.getChannel(Channels.CHAT, bot)
+                messageChannel.createMessage {
+                    allowedMentions = mentions
+
+                    content = message.content.placeholders()
+                    tts = message.tts
+                    message.embed?.let { embed = createEmbed(message.embed) }
+                }
             }
         }
     }
 
-    public suspend fun createDiscordMessage(content: String) {
-        if (config[ChatRelaySpec.WebhookSpec.useWebhook]) {
-            chatWebhook.execute(chatWebhook.token!!) {
-                allowedMentions = mentions
-                this.content = content
-            }
-        } else {
-            val messageChannel = config.getChannel(Channels.CHAT, bot)
-            messageChannel.createMessage {
-                allowedMentions = mentions
-                this.content = content
-            }
-        }
-    }
-
-    override fun onChatMessage(sender: MessageSender, message: String) {
+    override fun onChatMessage(sender: MessageSender, type: MessageType, message: String) {
         BlockBotDiscord.launch {
             var content = message
             if (config[ChatRelaySpec.escapeIngameMarkdown]) {
@@ -189,102 +252,44 @@ class BlockBotApiExtension : Extension(), Bot {
                 content = convertStringToMention(content, config.getGuild(bot))
             }
 
-            if (config[ChatRelaySpec.WebhookSpec.useWebhook]) {
-                if (sender.formatWebhookContent(content).isEmpty()) return@launch
-                chatWebhook.execute(chatWebhook.token!!) {
-                    this.allowedMentions = mentions
-                    this.username = config.formatWebhookAuthor(sender)
-                    this.content = sender.formatWebhookContent(content)
-                    this.avatarUrl = sender.getAvatar()
-                }
-            } else {
-                if (sender.formatMessageContent(content).isEmpty()) return@launch
-
-                val messageChannel = config.getChannel(Channels.CHAT, bot)
-                messageChannel.createMessage {
-                    allowedMentions = mentions
-                    this.content = sender.formatMessageContent(content)
-                }
+            val regularMessage = when (type) {
+                MessageType.REGULAR -> messagesConfig.regularFormat.chat
+                MessageType.EMOTE -> messagesConfig.regularFormat.emote
+                MessageType.ANNOUNCEMENT -> messagesConfig.regularFormat.announcement
             }
+            val webhookMessage = when (type) {
+                MessageType.REGULAR -> messagesConfig.webhookFormat.chat
+                MessageType.EMOTE -> messagesConfig.webhookFormat.emote
+                MessageType.ANNOUNCEMENT -> messagesConfig.webhookFormat.announcement
+            }
+
+            sendDiscordMessage(webhookMessage, regularMessage, sender, mapOf("message" to content.literal()))
         }
     }
 
     override fun onPlayerConnect(handler: ServerPlayNetworkHandler, sender: PacketSender, server: MinecraftServer) {
-        if (config.formatPlayerJoinMessage(handler.player).isEmpty()) return
-        BlockBotDiscord.launch {
-            createDiscordEmbed {
-                author {
-                    name = config.formatPlayerJoinMessage(handler.player)
-                    icon = config.getWebhookChatRelayAvatar(handler.player.gameProfile)
-                }
-                color = Colors.green
-            }
-        }
+        sendDiscordMessage(messagesConfig.webhookFormat.join, messagesConfig.regularFormat.join, PlayerMessageSender(handler.player))
     }
 
     override fun onPlayerDisconnect(handler: ServerPlayNetworkHandler, server: MinecraftServer) {
-        if (config.formatPlayerLeaveMessage(handler.player).isEmpty()) return
-        BlockBotDiscord.launch {
-            createDiscordEmbed {
-                author {
-                    name = config.formatPlayerLeaveMessage(handler.player)
-                    icon = config.getWebhookChatRelayAvatar(handler.player.gameProfile)
-                }
-                color = Colors.red
-            }
-        }
+        sendDiscordMessage(messagesConfig.webhookFormat.leave, messagesConfig.regularFormat.leave, PlayerMessageSender(handler.player))
     }
 
     override fun onPlayerDeath(player: ServerPlayerEntity, message: Text) {
-        BlockBotDiscord.launch {
-            createDiscordEmbed {
-                author {
-                    name = message.string
-                    icon = config.getWebhookChatRelayAvatar(player.gameProfile)
-                }
-                color = Colors.orange
-            }
-        }
+        sendDiscordMessage(messagesConfig.webhookFormat.death, messagesConfig.regularFormat.death, PlayerMessageSender(player))
     }
 
     override fun onAdvancementGrant(player: ServerPlayerEntity, advancement: Advancement) {
-        if (config.formatPlayerAdvancementMessage(player, advancement).isEmpty()) return
-        BlockBotDiscord.launch {
-            createDiscordEmbed {
-                author {
-                    name = config.formatPlayerAdvancementMessage(player, advancement)
-                    icon = config.getWebhookChatRelayAvatar(player.gameProfile)
-                }
-                footer {
-                    text = advancement.display!!.description.string
-                }
-                color = Colors.blue
-            }
-        }
+        sendDiscordMessage(messagesConfig.webhookFormat.advancement, messagesConfig.regularFormat.advancement, PlayerMessageSender(player))
     }
 
     override fun onServerStart(server: MinecraftServer) {
-        if (config.formatServerStartMessage(server).isEmpty()) return
-        BlockBotDiscord.launch {
-            createDiscordEmbed {
-                author {
-                    name = config.formatServerStartMessage(server)
-                }
-                color = Colors.green
-            }
-        }
+        sendDiscordMessage(messagesConfig.webhookFormat.serverStart, messagesConfig.regularFormat.serverStart, ServerMessageSender(server))
     }
 
     override fun onServerStop(server: MinecraftServer) {
-        if (config.formatServerStopMessage(server).isEmpty()) return
-        runBlocking {
-            createDiscordEmbed {
-                author {
-                    name = config.formatServerStopMessage(server)
-                }
-                color = Colors.red
-            }
-        }
+        sendDiscordMessage(messagesConfig.webhookFormat.serverStop, messagesConfig.regularFormat.serverStop, ServerMessageSender(server))
+
     }
 
     override fun onServerTick(server: MinecraftServer) {
@@ -314,22 +319,6 @@ class BlockBotApiExtension : Extension(), Bot {
 fun MessageSender.getAvatar(): String? {
     return if (this is PlayerMessageSender) config.getWebhookChatRelayAvatar(this.profile)
     else null
-}
-
-fun MessageSender.formatMessageContent(content: String): String {
-    return when (this.type) {
-        MessageSender.MessageType.REGULAR -> config.formatDiscordMessage(this, content)
-        MessageSender.MessageType.EMOTE -> config.formatDiscordEmote(this, content)
-        MessageSender.MessageType.ANNOUNCEMENT -> config.formatDiscordAnnouncement(this, content)
-    }
-}
-
-fun MessageSender.formatWebhookContent(content: String): String {
-    return when (this.type) {
-        MessageSender.MessageType.REGULAR -> config.formatWebhookMessage(this, content)
-        MessageSender.MessageType.EMOTE -> config.formatWebhookEmote(this, content)
-        MessageSender.MessageType.ANNOUNCEMENT -> config.formatWebhookAnnouncement(this, content)
-    }
 }
 
 suspend fun Member.getDisplayColor() =
