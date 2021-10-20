@@ -52,16 +52,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
                 CONFIG_FOLDER.resolve(CONFIG_PATH)
             )
         }
-        if (CONFIG_FOLDER.resolve(MESSAGES_PATH).notExists()) {
-            logInfo("No messages file, creating...")
-            CONFIG_FOLDER.resolve(MESSAGES_PATH).toFile().writeText(
-                Json { prettyPrint = true }.encodeToString(
-                    DEFAULT_MESSAGE_CONFIG
-                )
-            )
-        } else {
-            messagesConfig = Json { ignoreUnknownKeys = true; isLenient = true } .decodeFromString(CONFIG_FOLDER.resolve(MESSAGES_PATH).toFile().readText())
-        }
+        messagesConfig = loadMessages()
         if (!config.isCorrect()) {
             logFatal("Config invalid. Disabling mod...")
             return

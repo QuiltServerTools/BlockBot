@@ -1,8 +1,15 @@
 package io.github.quiltservertools.blockbotdiscord.config
 
 import dev.kord.common.Color
+import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
+import io.github.quiltservertools.blockbotdiscord.logInfo
 import io.github.quiltservertools.blockbotdiscord.utility.Colors
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlin.io.path.notExists
 
 @Serializable
 data class WebhookFormat(
@@ -36,12 +43,15 @@ data class RegularFormat(
 
 @Serializable
 data class MessageConfig(
+    @SerialName("DO_NOT_TOUCH")
+    val version: Int,
     val help: String,
     val webhookFormat: WebhookFormat,
     val regularFormat: RegularFormat
 )
 
 val DEFAULT_MESSAGE_CONFIG = MessageConfig(
+    version = 0,
     help = "Check docs for explanation: docs.com",
     webhookFormat = WebhookFormat(
         example = WebhookMessage(
@@ -81,25 +91,25 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             )
         ),
         chat = WebhookMessage(
-            username = "{sender}",
+            username = "{sender_display}",
             avatar = "{sender_avatar}",
             content = "{message}"
         ),
         announcement = WebhookMessage(
-            username = "{sender}",
+            username = "{sender_display}",
             avatar = "{sender_avatar}",
             content = "**{message}**"
         ),
         emote = WebhookMessage(
-            username = "{sender}",
+            username = "{sender_display}",
             avatar = "{sender_avatar}",
-            content = "*{sender} {message}*"
+            content = "*{sender_display} {message}*"
         ),
         advancement = WebhookMessage(
             embeds = listOf(
                 MessageEmbed(
                     author = EmbedAuthor(
-                        name = "%player:displayname% has made the advancement [{advancement}]",
+                        name = "{sender_display} has made the advancement [{advancement}]",
                         iconUrl = "{sender_avatar}"
                     ),
                     color = Colors.blue
@@ -110,7 +120,7 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             embeds = listOf(
                 MessageEmbed(
                     author = EmbedAuthor(
-                        name = "%player:displayname% joined the game",
+                        name = "{sender_display} joined the game",
                         iconUrl = "{player_avatar}"
                     ),
                     color = Colors.green
@@ -121,7 +131,7 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             embeds = listOf(
                 MessageEmbed(
                     author = EmbedAuthor(
-                        name = "%player:displayname% left the game",
+                        name = "{sender_display} left the game",
                         iconUrl = "{player_avatar}"
                     ),
                     color = Colors.red
@@ -200,7 +210,7 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
         join = RegularMessage(
             embed = MessageEmbed(
                 author = EmbedAuthor(
-                    name = "%player:displayname% joined the game",
+                    name = "{sender_display} joined the game",
                     iconUrl = "{player_avatar}"
                 ),
                 color = Colors.green
@@ -209,7 +219,7 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
         leave = RegularMessage(
             embed = MessageEmbed(
                 author = EmbedAuthor(
-                    name = "%player:displayname% left the game",
+                    name = "{sender_display} left the game",
                     iconUrl = "{player_avatar}"
                 ),
                 color = Colors.red
@@ -218,7 +228,7 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
         advancement = RegularMessage(
             embed = MessageEmbed(
                 author = EmbedAuthor(
-                    name = "%player:displayname% has made the advancement [{advancement}]",
+                    name = "{sender_display} has made the advancement [{advancement}]",
                     iconUrl = "{sender_avatar}"
                 ),
                 color = Colors.blue
@@ -298,3 +308,23 @@ data class EmbedAuthor(
     val url: String? = null,
     val iconUrl: String? = null,
 )
+
+private val JSON = Json { ignoreUnknownKeys = true; isLenient = true; prettyPrint = true; }
+
+fun loadMessages(): MessageConfig {
+    return if (BlockBotDiscord.CONFIG_FOLDER.resolve(MESSAGES_PATH).notExists()) {
+        logInfo("No messages file, creating...")
+        createMessagesFile()
+        loadMessages()
+    } else {
+        JSON.decodeFromString(BlockBotDiscord.CONFIG_FOLDER.resolve(MESSAGES_PATH).toFile().readText())
+    }
+}
+
+private fun createMessagesFile() {
+    BlockBotDiscord.CONFIG_FOLDER.resolve(MESSAGES_PATH).toFile().writeText(
+        JSON.encodeToString(
+            DEFAULT_MESSAGE_CONFIG
+        )
+    )
+}

@@ -280,7 +280,10 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onAdvancementGrant(player: ServerPlayerEntity, advancement: Advancement) {
-        sendDiscordMessage(messagesConfig.webhookFormat.advancement, messagesConfig.regularFormat.advancement, PlayerMessageSender(player))
+        sendDiscordMessage(messagesConfig.webhookFormat.advancement, messagesConfig.regularFormat.advancement, PlayerMessageSender(player), mapOf(
+            "advancement_title" to advancement.display!!.title,
+            "advancement_desc" to advancement.display!!.description
+        ))
     }
 
     override fun onServerStart(server: MinecraftServer) {
