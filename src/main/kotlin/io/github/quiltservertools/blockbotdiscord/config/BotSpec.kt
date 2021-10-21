@@ -13,7 +13,7 @@ import io.github.quiltservertools.blockbotdiscord.logWarn
 
 object BotSpec : ConfigSpec() {
     val token by required<String>()
-    val guild by required<Long>()
+    val guild by required<ULong>()
     val channels by required<Map<String, ULong>>()
 }
 
