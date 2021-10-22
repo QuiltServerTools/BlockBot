@@ -1,6 +1,9 @@
 package io.github.quiltservertools.blockbotdiscord.extensions
 
+import com.kotlindiscord.kord.extensions.checks.inGuild
+import com.kotlindiscord.kord.extensions.checks.isNotBot
 import com.kotlindiscord.kord.extensions.extensions.Extension
+import com.kotlindiscord.kord.extensions.extensions.event
 import com.kotlindiscord.kord.extensions.utils.ensureWebhook
 import com.kotlindiscord.kord.extensions.utils.getTopRole
 import com.kotlindiscord.kord.extensions.utils.hasPermission
@@ -8,14 +11,17 @@ import com.vdurmont.emoji.EmojiParser
 import dev.kord.common.entity.ActivityType
 import dev.kord.common.entity.AllowedMentionType
 import dev.kord.common.entity.Permission
+import dev.kord.common.entity.Snowflake
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.execute
 import dev.kord.core.entity.Member
 import dev.kord.core.entity.Message
 import dev.kord.core.entity.Webhook
+import dev.kord.core.entity.channel.TopGuildMessageChannel
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import dev.kord.rest.builder.message.EmbedBuilder
+import dev.kord.rest.builder.message.create.embed
 import io.github.quiltservertools.blockbotapi.Bot
 import io.github.quiltservertools.blockbotapi.Channels
 import io.github.quiltservertools.blockbotapi.event.RelayMessageEvent
@@ -64,15 +70,15 @@ class BlockBotApiExtension : Extension(), Bot {
     override suspend fun setup() {
         val channel = config.getChannel(Channels.CHAT, bot)
 
-        chatWebhook = ensureWebhook(channel, config[ChatRelaySpec.WebhookSpec.webhookName])
+        chatWebhook = ensureWebhook(channel as TopGuildMessageChannel, config[ChatRelaySpec.WebhookSpec.webhookName])
         mentions.add(AllowedMentionType.UserMentions)
         mentions.roles.addAll(config.getGuild(bot).roles.filter { it.mentionable }.map { it.id }
             .toList())
 
         event<MessageCreateEvent> {
-            check { it.message.getAuthorAsMember() != null }
-            check { it.message.author?.isBot == false }
-            check { config.getChannelsBi().containsValue(it.message.channelId.value) }
+            check { isNotBot() }
+            check { inGuild(Snowflake(config[BotSpec.guild])) }
+            check { failIfNot(config.getChannelsBi().containsValue(event.message.channelId.value)) }
 
             action {
                 val sender = event.message.getAuthorAsMember()!!
@@ -103,6 +109,9 @@ class BlockBotApiExtension : Extension(), Bot {
                 }
             }
         }
+
+        // Send server started message if the server has already started. isLoading should be named isRunning
+        if (server.isLoading) onServerStart(server)
     }
 
     public suspend fun getChatMessage(sender: Member, message: Message): Text {
@@ -152,7 +161,7 @@ class BlockBotApiExtension : Extension(), Bot {
             chatWebhook.execute(chatWebhook.token!!) {
                 avatarUrl = config[ChatRelaySpec.WebhookSpec.webhookAvatar]
                 allowedMentions = mentions
-                embeds.add(EmbedBuilder().apply(builder).toRequest())
+                embeds.add(EmbedBuilder().apply(builder))
             }
         } else {
             val messageChannel = config.getChannel(Channels.CHAT, bot)
@@ -182,6 +191,9 @@ class BlockBotApiExtension : Extension(), Bot {
         BlockBotDiscord.launch {
             var content = message
             content = MinecraftSerializer.INSTANCE.escapeMarkdown(content) // TODO config
+            if (config[ChatRelaySpec.escapeIngameMarkdown]) {
+                content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
+            }
             if (config[ChatRelaySpec.allowMentions]) {
                 content = convertStringToMention(content, config.getGuild(bot))
             }
@@ -190,7 +202,7 @@ class BlockBotApiExtension : Extension(), Bot {
                 if (sender.formatWebhookContent(content).isEmpty()) return@launch
                 chatWebhook.execute(chatWebhook.token!!) {
                     this.allowedMentions = mentions
-                    this.username = sender.name.string
+                    this.username = config.formatWebhookAuthor(sender)
                     this.content = sender.formatWebhookContent(content)
                     this.avatarUrl = sender.getAvatar()
                 }
@@ -212,7 +224,7 @@ class BlockBotApiExtension : Extension(), Bot {
             createDiscordEmbed {
                 author {
                     name = config.formatPlayerJoinMessage(handler.player)
-                    icon = config.getWebhookChatRelayAvatar(handler.player.uuid)
+                    icon = config.getWebhookChatRelayAvatar(handler.player.gameProfile)
                 }
                 color = Colors.green
             }
@@ -225,7 +237,7 @@ class BlockBotApiExtension : Extension(), Bot {
             createDiscordEmbed {
                 author {
                     name = config.formatPlayerLeaveMessage(handler.player)
-                    icon = config.getWebhookChatRelayAvatar(handler.player.uuid)
+                    icon = config.getWebhookChatRelayAvatar(handler.player.gameProfile)
                 }
                 color = Colors.red
             }
@@ -237,7 +249,7 @@ class BlockBotApiExtension : Extension(), Bot {
             createDiscordEmbed {
                 author {
                     name = message.string
-                    icon = config.getWebhookChatRelayAvatar(player.uuid)
+                    icon = config.getWebhookChatRelayAvatar(player.gameProfile)
                 }
                 color = Colors.orange
             }
@@ -250,7 +262,7 @@ class BlockBotApiExtension : Extension(), Bot {
             createDiscordEmbed {
                 author {
                     name = config.formatPlayerAdvancementMessage(player, advancement)
-                    icon = config.getWebhookChatRelayAvatar(player.uuid)
+                    icon = config.getWebhookChatRelayAvatar(player.gameProfile)
                 }
                 footer {
                     text = advancement.display!!.description.string
@@ -281,6 +293,7 @@ class BlockBotApiExtension : Extension(), Bot {
                 }
                 color = Colors.red
             }
+            kord.shutdown()
         }
     }
 
@@ -309,7 +322,7 @@ class BlockBotApiExtension : Extension(), Bot {
 }
 
 fun MessageSender.getAvatar(): String {
-    return if (this is PlayerMessageSender) config.getWebhookChatRelayAvatar(this.uuid)
+    return if (this is PlayerMessageSender) config.getWebhookChatRelayAvatar(this.profile)
     else config[ChatRelaySpec.WebhookSpec.webhookAvatar]
 }
 

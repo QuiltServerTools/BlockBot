@@ -129,7 +129,9 @@ tasks {
         exclude("com/google/gson/**")
         exclude("net/kyori/**")
         exclude("org/slf4j/**")
-        exclude("com/ibm/**")
+        exclude("dev/kord/voice/**")
+        exclude("org/bouncycastle/**")
+        exclude("com/codahale/**")
 
         val relocPath = "io.github.quiltservertools.blockbotdiscord.libs."
         relocate("com.fasterxml", relocPath + "com.fasterxml")
@@ -140,6 +142,7 @@ tasks {
         relocate("com.sun", relocPath + "com.sun")
         relocate("com.typesafe", relocPath + "com.typesafe")
         relocate("com.vdurmont", relocPath + "com.vdurmont")
+        relocate("com.ibm.icu", relocPath + "com.ibm.icu")
         relocate("javassist", relocPath + "javassist")
         relocate("dev.kord", relocPath + "dev.kord")
         relocate("io.ktor", relocPath + "io.ktor")
@@ -155,7 +158,8 @@ tasks {
         relocate("org.xmlpull", relocPath + "org.xmlpull")
         relocate("org.yaml", relocPath + "org.yaml")
         relocate("org.dom4j", relocPath + "org.dom4j")
-
+        relocate("kotlinx.atomicfu", relocPath + "kotlinx.atomicfu")
+        relocate("kotlinx.datetime", relocPath + "kotlinx.datetime")
         relocate("org.reflections", relocPath + "org.reflections")
     }
 }

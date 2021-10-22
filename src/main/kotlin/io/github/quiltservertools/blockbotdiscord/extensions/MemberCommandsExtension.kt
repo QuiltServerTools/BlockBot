@@ -1,11 +1,13 @@
 package io.github.quiltservertools.blockbotdiscord.extensions
 
+import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
-import com.kotlindiscord.kord.extensions.commands.parser.Arguments
-import com.kotlindiscord.kord.extensions.commands.slash.AutoAckType
 import com.kotlindiscord.kord.extensions.extensions.Extension
+import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
+import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
+import com.kotlindiscord.kord.extensions.types.respond
 import dev.kord.common.annotation.KordPreview
-import dev.kord.rest.builder.interaction.embed
+import dev.kord.rest.builder.message.create.embed
 import io.github.quiltservertools.blockbotdiscord.config.MemberCommandsSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.getGuild
@@ -22,14 +24,14 @@ class MemberCommandsExtension : Extension() {
     @OptIn(KordPreview::class)
     override suspend fun setup() {
         if (config[MemberCommandsSpec.playerList]) {
-            slashCommand {
+            ephemeralSlashCommand {
                 name = "playerlist"
                 description = "Gets the online players"
 
                 guild(config.getGuild(bot))
 
                 action {
-                    ephemeralFollowUp {
+                    respond {
                         embed {
                             title = "${server.playerManager.playerList.size}/${server.playerManager.maxPlayerCount}"
                             description = server.playerManager.playerList.joinToString(", ") { it.name.string }
@@ -40,29 +42,28 @@ class MemberCommandsExtension : Extension() {
         }
 
         if (config[MemberCommandsSpec.whitelist]) {
-            slashCommand(::WhitelistArgs) {
+            publicSlashCommand(::WhitelistArgs) {
                 name = "whitelist"
                 description = "whitelists a player"
 
                 guild(config.getGuild(bot))
-                autoAck = AutoAckType.PUBLIC
 
                 action {
                     val profile = server.userCache.findByName(arguments.player).unwrap()
                     if (profile == null) {
-                        publicFollowUp {
+                        respond {
                             content = "Unknown player: ${arguments.player}"
                         }
                         return@action
                     }
 
                     if (server.playerManager.isWhitelisted(profile)) {
-                        publicFollowUp {
+                        respond {
                             content = "Player already whitelisted"
                         }
                     } else {
                         server.playerManager.whitelist.add(WhitelistEntry(profile))
-                        publicFollowUp {
+                        respond {
                             content = "Whitelisted ${arguments.player}"
                         }
                     }

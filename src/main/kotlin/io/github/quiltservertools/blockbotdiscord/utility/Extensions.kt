@@ -15,6 +15,4 @@ fun Message.summary(): String {
     return this.content
 }
 
-fun GameProfile.getTextures() {
-    val textureProperty = Iterables.getFirst(this.properties.get("textures"), null)
-}
+fun GameProfile.getTextures() = Iterables.getFirst(this.properties.get("textures"), null)?.value

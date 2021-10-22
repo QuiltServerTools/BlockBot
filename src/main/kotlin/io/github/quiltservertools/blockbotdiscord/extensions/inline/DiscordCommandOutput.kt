@@ -1,14 +1,15 @@
 package io.github.quiltservertools.blockbotdiscord.extensions.inline
 
-import com.kotlindiscord.kord.extensions.commands.slash.SlashCommandContext
+import com.kotlindiscord.kord.extensions.commands.application.slash.EphemeralSlashCommandContext
+import com.kotlindiscord.kord.extensions.types.respond
 import kotlinx.coroutines.runBlocking
 import net.minecraft.server.command.CommandOutput
 import net.minecraft.text.Text
 import java.util.*
 
-class DiscordCommandOutput(private val commandContext: SlashCommandContext<out InlineCommandsExtension.InlineCommandsArgs>) :
+class DiscordCommandOutput(private val commandContext: EphemeralSlashCommandContext<out InlineCommandsExtension.InlineCommandsArgs>) :
     CommandOutput {
-    val buffer = StringBuffer()
+    private val buffer = StringBuffer()
 
     override fun sendSystemMessage(message: Text, sender: UUID) {
         val content = message.string
@@ -29,7 +30,7 @@ class DiscordCommandOutput(private val commandContext: SlashCommandContext<out I
 
     fun sendBuffer() {
         runBlocking {
-            commandContext.ephemeralFollowUp {
+            commandContext.respond {
                 content = if (buffer.isEmpty()) "Done" else buffer.toString().take(2000)
             }
         }

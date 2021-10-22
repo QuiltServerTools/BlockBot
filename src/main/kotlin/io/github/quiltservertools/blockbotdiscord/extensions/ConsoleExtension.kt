@@ -10,6 +10,7 @@ import io.github.quiltservertools.blockbotdiscord.config.ConsoleRelaySpec
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.getChannel
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DateTimeUnit
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.dedicated.MinecraftDedicatedServer
@@ -20,7 +21,6 @@ import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
 import org.koin.core.component.inject
 import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.TimeUnit
 
 class ConsoleExtension : Extension() {
     override val name = "console"
@@ -32,7 +32,7 @@ class ConsoleExtension : Extension() {
             val channel = config.getChannel(Channels.CONSOLE, bot)
 
             while (true) {
-                val deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10L)
+                val deadline = System.nanoTime() + (DateTimeUnit.SECOND * 60).nanoseconds
                 var message = ""
 
                 while (message.length <= 2000) {
@@ -81,6 +81,9 @@ class ConsoleExtension : Extension() {
     }
 
     companion object {
-        val consoleQueue = LinkedBlockingQueue<String>()
+        private val consoleQueue = LinkedBlockingQueue<String>()
+        fun addToQueue(message: String) {
+            consoleQueue.addAll(message.chunked(2000))
+        }
     }
 }
