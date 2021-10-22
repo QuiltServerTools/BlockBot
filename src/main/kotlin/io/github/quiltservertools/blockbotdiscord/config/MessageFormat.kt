@@ -108,9 +108,9 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
         advancement = WebhookMessage(
             embeds = listOf(
                 MessageEmbed(
-                    author = EmbedAuthor(
-                        name = "{sender_display} has made the advancement [{advancement}]",
-                        iconUrl = "{sender_avatar}"
+                    title = "{sender_display} has made the advancement [{advancement_title}]",
+                    footer = EmbedFooter (
+                        text = "{advancement_desc}"
                     ),
                     color = Colors.blue
                 )
@@ -121,7 +121,7 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
                 MessageEmbed(
                     author = EmbedAuthor(
                         name = "{sender_display} joined the game",
-                        iconUrl = "{player_avatar}"
+                        iconUrl = "{sender_avatar}"
                     ),
                     color = Colors.green
                 )
@@ -132,7 +132,7 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
                 MessageEmbed(
                     author = EmbedAuthor(
                         name = "{sender_display} left the game",
-                        iconUrl = "{player_avatar}"
+                        iconUrl = "{sender_avatar}"
                     ),
                     color = Colors.red
                 )
@@ -143,7 +143,7 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
                 MessageEmbed(
                     author = EmbedAuthor(
                         name = "{death_message}",
-                        iconUrl = "{player_avatar}"
+                        iconUrl = "{sender_avatar}"
                     ),
                     color = Colors.orange
                 )
@@ -211,7 +211,7 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             embed = MessageEmbed(
                 author = EmbedAuthor(
                     name = "{sender_display} joined the game",
-                    iconUrl = "{player_avatar}"
+                    iconUrl = "{sender_avatar}"
                 ),
                 color = Colors.green
             )
@@ -220,17 +220,17 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             embed = MessageEmbed(
                 author = EmbedAuthor(
                     name = "{sender_display} left the game",
-                    iconUrl = "{player_avatar}"
+                    iconUrl = "{sender_avatar}"
                 ),
                 color = Colors.red
             )
         ),
         advancement = RegularMessage(
             embed = MessageEmbed(
-                author = EmbedAuthor(
-                    name = "{sender_display} has made the advancement [{advancement}]",
-                    iconUrl = "{sender_avatar}"
-                ),
+                title = "{sender_display} has made the advancement [{advancement_title}]",
+                footer = EmbedFooter (
+                    text = "{advancement_desc}"
+                    ),
                 color = Colors.blue
             )
         ),
@@ -238,7 +238,7 @@ val DEFAULT_MESSAGE_CONFIG = MessageConfig(
             embed = MessageEmbed(
                 author = EmbedAuthor(
                     name = "{death_message}",
-                    iconUrl = "{player_avatar}"
+                    iconUrl = "{sender_avatar}"
                 ),
                 color = Colors.orange
             )
