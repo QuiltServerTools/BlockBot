@@ -18,6 +18,7 @@ import io.github.quiltservertools.blockbotdiscord.config.LinkingSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.getGuild
 import io.github.quiltservertools.blockbotdiscord.extensions.unwrap
+import io.github.quiltservertools.blockbotdiscord.logInfo
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -52,11 +53,12 @@ class LinkingExtension : Extension() {
                     val uuid = linkCodes[arguments.code]!!
 
                     BlockBotDiscord.linkedAccounts.add(snowflake, uuid)
+                    logInfo("Linked $uuid to $snowflake")
                     linkCodes.remove(arguments.code)
                     val profile = server.userCache.getByUuid(uuid).unwrap()
 
                     respond {
-                        content = "Successfully linked to: ${profile?.name}"
+                        content = config[LinkingSpec.MessagesSpec.successfulLink].replace("{player}", profile?.name ?: "Unknown")
                     }
                 }
             }

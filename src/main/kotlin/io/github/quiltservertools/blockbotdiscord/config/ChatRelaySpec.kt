@@ -18,7 +18,6 @@ import net.minecraft.text.LiteralText
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
-import java.util.*
 
 object ChatRelaySpec : ConfigSpec() {
     val allowMentions by required<Boolean>()
@@ -82,17 +81,17 @@ fun Config.formatWebhookAuthor(sender: MessageSender): String =
     ))
 
 fun Config.formatPlayerJoinMessage(player: ServerPlayerEntity): String =
-    formatDiscordRelayMessage(player, config[ChatRelaySpec.DiscordMessageFormatSpec.playerJoin])
+    formatDiscordRelayMessage(player, config[ChatRelaySpec.DiscordMessageFormatSpec.playerJoin]).string
 
 fun Config.formatPlayerLeaveMessage(player: ServerPlayerEntity): String =
-    formatDiscordRelayMessage(player, config[ChatRelaySpec.DiscordMessageFormatSpec.playerLeave])
+    formatDiscordRelayMessage(player, config[ChatRelaySpec.DiscordMessageFormatSpec.playerLeave]).string
 
 fun Config.formatPlayerAdvancementMessage(player: ServerPlayerEntity, advancement: Advancement): String =
     formatDiscordRelayMessage(
         player,
         config[ChatRelaySpec.DiscordMessageFormatSpec.playerAdvancement],
         mapOf("advancement" to advancement.display!!.title)
-    )
+    ).string
 
 fun Config.formatServerStartMessage(server: MinecraftServer): String =
     formatDiscordRelayMessage(server, config[ChatRelaySpec.DiscordMessageFormatSpec.serverStart])
@@ -120,7 +119,7 @@ fun formatDiscordRelayMessage(
     player: ServerPlayerEntity,
     format: String,
     placeholders: Map<String, Text> = mapOf()
-): String =
+): Text =
     PlaceholderAPI.parseText(
         PlaceholderAPI.parsePredefinedText(
             format.literal(),
@@ -128,7 +127,7 @@ fun formatDiscordRelayMessage(
             placeholders
         ),
         player
-    ).string
+    )
 
 fun formatDiscordRelayMessage(
     server: MinecraftServer,

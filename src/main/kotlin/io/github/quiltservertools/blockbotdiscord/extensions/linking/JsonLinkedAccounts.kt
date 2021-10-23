@@ -40,12 +40,13 @@ class JsonLinkedAccounts : LinkedAccountData {
         val id = linkedIds[uuid]
         if (id != null) {
             linkedIds.remove(uuid)
-            linked.remove(id) != null
+            linked[id]?.remove(uuid)
 
-            logInfo("Unlinked $uuid from ${id.value}")
+            save()
             return true
         }
 
+        save()
         return false
     }
 
@@ -57,8 +58,6 @@ class JsonLinkedAccounts : LinkedAccountData {
         }
 
         linkedIds[uuid] = id
-
-        logInfo("Linked $uuid to ${id.value}")
     }
 
     override fun load() {

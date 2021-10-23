@@ -6,11 +6,13 @@ import com.mojang.brigadier.arguments.LongArgumentType
 import com.mojang.brigadier.context.CommandContext
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
+import eu.pb4.placeholders.TextParser
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import io.github.quiltservertools.blockbotdiscord.config.LinkingSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.formatUnlinkedDisconnectMessage
 import io.github.quiltservertools.blockbotdiscord.extensions.unwrap
+import io.github.quiltservertools.blockbotdiscord.logInfo
 import kotlinx.coroutines.launch
 import net.minecraft.command.argument.GameProfileArgumentType
 import net.minecraft.server.command.CommandManager.argument
@@ -57,14 +59,22 @@ class LinkCommand(private val dispatcher: Dispatcher) {
     }
 
     private fun unlinkAccount(context: Context, player: ServerPlayerEntity): Int {
+        val id = BlockBotDiscord.linkedAccounts.get(player.uuid)
+
         if (BlockBotDiscord.linkedAccounts.remove(player.uuid)) {
-            context.source.sendFeedback(LiteralText("Successfully unlinked"), false)
+            logInfo("Unlinked ${player.name} from $id")
+            context.source.sendFeedback(TextParser.parse(config[LinkingSpec.MessagesSpec.successfulUnlink]), false)
 
             if (config[LinkingSpec.requireLinking]) {
-                context.source.player.networkHandler.disconnect(config.formatUnlinkedDisconnectMessage(player.gameProfile, context.source.server))
+                context.source.player.networkHandler.disconnect(
+                    config.formatUnlinkedDisconnectMessage(
+                        player.gameProfile,
+                        context.source.server
+                    )
+                )
             }
         } else {
-            context.source.sendFeedback(LiteralText("Failed to unlink"), false)
+            context.source.sendFeedback(TextParser.parse(config[LinkingSpec.MessagesSpec.failedUnlink]), false)
         }
 
         return 1
@@ -94,7 +104,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                     source.sendFeedback(LiteralText("    - ${account?.name ?: uuid.toString()}"), false)
                 }
             } else {
-                source.sendFeedback(LiteralText("No linked accounts"), false)
+                source.sendFeedback(TextParser.parse(config[LinkingSpec.MessagesSpec.noLinkedAccounts]), false)
             }
         }
 
@@ -106,9 +116,23 @@ class LinkCommand(private val dispatcher: Dispatcher) {
             val user = player.getLinkedAccount()
 
             if (user != null) {
-                context.source.sendFeedback(LiteralText("Already linked to ${user.tag}"), false)
+                context.source.sendFeedback(
+                    TextParser.parse(
+                        config[LinkingSpec.MessagesSpec.alreadyLinked].replace(
+                            "{user}",
+                            user.tag
+                        )
+                    ), false
+                )
             } else {
-                context.source.sendFeedback(LiteralText(player.gameProfile.linkCode), false)
+                context.source.sendFeedback(
+                    TextParser.parse(
+                        config[LinkingSpec.MessagesSpec.linkCode].replace(
+                            "{code}",
+                            player.gameProfile.linkCode
+                        )
+                    ), false
+                )
                 player.syncLinkedName(BlockBotDiscord.bot.getKoin().get())
             }
         }

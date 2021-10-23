@@ -14,6 +14,15 @@ object LinkingSpec : ConfigSpec() {
     val enabled by required<Boolean>()
     val requireLinking by required<Boolean>()
     val unlinkedDisconnectMessage by required<List<String>>()
+
+    object MessagesSpec : ConfigSpec() {
+        val noLinkedAccounts by required<String>()
+        val alreadyLinked by required<String>()
+        val failedUnlink by required<String>()
+        val successfulUnlink by required<String>()
+        val successfulLink by required<String>()
+        val linkCode by required<String>()
+    }
 }
 
 fun Config.formatUnlinkedDisconnectMessage(gameProfile: GameProfile, server: MinecraftServer) =
