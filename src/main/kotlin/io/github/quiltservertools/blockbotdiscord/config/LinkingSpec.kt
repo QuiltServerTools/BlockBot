@@ -14,6 +14,7 @@ object LinkingSpec : ConfigSpec() {
     val enabled by required<Boolean>()
     val requireLinking by required<Boolean>()
     val unlinkedDisconnectMessage by required<List<String>>()
+    val allowedRoles by required<List<Long>>()
 
     object MessagesSpec : ConfigSpec() {
         val noLinkedAccounts by required<String>()

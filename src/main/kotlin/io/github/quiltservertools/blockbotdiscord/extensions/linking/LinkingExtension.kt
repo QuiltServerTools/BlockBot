@@ -43,6 +43,12 @@ class LinkingExtension : Extension() {
 
             guild(config.getGuild(bot))
 
+            val roles = config[LinkingSpec.allowedRoles]
+            if (roles.isNotEmpty()) {
+                allowByDefault = false
+                allowedRoles.addAll(roles.map { Snowflake(it) })
+            }
+
             action {
                 if (!linkCodes.containsKey(arguments.code)) {
                     respond {

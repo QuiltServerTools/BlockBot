@@ -100,9 +100,11 @@ whitelist = false
 
 [Linking]
 # Enable account linking between Minecraft and discord. Enables /link in game and in discord
-enabled = true
+enabled = false
 # Requires a linked account to join (Like a whitelist) Shows linking code on disconnect screen
 requireLinking = false
+# Comma seperated list of role ID's allowed to use /link discord command. Leave empty to allow allow roles
+allowedRoles = []
 # Message to show when unlinked players try to join and requireLinking is true
 unlinkedDisconnectMessage = [
     "<yellow>A linked Discord account is required to join",
