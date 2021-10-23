@@ -7,6 +7,9 @@ import com.mojang.brigadier.context.CommandContext
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
+import io.github.quiltservertools.blockbotdiscord.config.LinkingSpec
+import io.github.quiltservertools.blockbotdiscord.config.config
+import io.github.quiltservertools.blockbotdiscord.config.formatUnlinkedDisconnectMessage
 import io.github.quiltservertools.blockbotdiscord.extensions.unwrap
 import kotlinx.coroutines.launch
 import net.minecraft.command.argument.GameProfileArgumentType
@@ -24,6 +27,9 @@ class LinkCommand(private val dispatcher: Dispatcher) {
         dispatcher.register(
             literal("link")
                 .executes { linkAccount(it, it.source.player) }
+                .then(literal("unlink")
+                    .requires { it.player.gameProfile.isLinked() }
+                    .executes { unlinkAccount(it, it.source.player) })
                 .then(literal("get")
                     .requires { it.hasPermissionLevel(2) }
                     .then(literal("minecraft")
@@ -48,6 +54,20 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                     )
                 )
         )
+    }
+
+    private fun unlinkAccount(context: Context, player: ServerPlayerEntity): Int {
+        if (BlockBotDiscord.linkedAccounts.remove(player.uuid)) {
+            context.source.sendFeedback(LiteralText("Successfully unlinked"), false)
+
+            if (config[LinkingSpec.requireLinking]) {
+                context.source.player.networkHandler.disconnect(config.formatUnlinkedDisconnectMessage(player.gameProfile, context.source.server))
+            }
+        } else {
+            context.source.sendFeedback(LiteralText("Failed to unlink"), false)
+        }
+
+        return 1
     }
 
     private fun getLinkedPlayer(context: Context, profiles: Collection<GameProfile>): Int {
@@ -88,9 +108,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
             if (user != null) {
                 context.source.sendFeedback(LiteralText("Already linked to ${user.tag}"), false)
             } else {
-                val code = "%05d".format(player.random.nextInt(100000))
-                LinkingExtension.linkCodes[code] = player.uuid
-                context.source.sendFeedback(LiteralText(code), false)
+                context.source.sendFeedback(LiteralText(player.gameProfile.linkCode), false)
                 player.syncLinkedName(BlockBotDiscord.bot.getKoin().get())
             }
         }

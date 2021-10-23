@@ -1,5 +1,6 @@
 package io.github.quiltservertools.blockbotdiscord.extensions.linking
 
+import com.mojang.authlib.GameProfile
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.entity.User
@@ -30,12 +31,25 @@ class JsonLinkedAccounts : LinkedAccountData {
     override fun get(id: Snowflake): Set<UUID>? = linked[id]
 
     override fun add(id: Snowflake, uuid: UUID) {
-        addAccounts(id, uuid)
+        addAccount(id, uuid)
 
         save()
     }
 
-    private fun addAccounts(id: Snowflake, uuid: UUID) {
+    override fun remove(uuid: UUID): Boolean {
+        val id = linkedIds[uuid]
+        if (id != null) {
+            linkedIds.remove(uuid)
+            linked.remove(id) != null
+
+            logInfo("Unlinked $uuid from ${id.value}")
+            return true
+        }
+
+        return false
+    }
+
+    private fun addAccount(id: Snowflake, uuid: UUID) {
         if (linked.contains(id)) {
             linked[id]!!.add(uuid)
         } else {
@@ -43,6 +57,8 @@ class JsonLinkedAccounts : LinkedAccountData {
         }
 
         linkedIds[uuid] = id
+
+        logInfo("Linked $uuid to ${id.value}")
     }
 
     override fun load() {
@@ -56,7 +72,7 @@ class JsonLinkedAccounts : LinkedAccountData {
             val accounts = json.decodeFromString<List<LinkedAccount>>(file.readText())
             for (account in accounts) {
                 for (uuid in account.uuids) {
-                    addAccounts(account.snowflake, uuid)
+                    addAccount(account.snowflake, uuid)
                 }
             }
 
@@ -78,8 +94,22 @@ suspend fun ServerPlayerEntity.getLinkedAccount(): User? {
     return null
 }
 
+fun GameProfile.isLinked(): Boolean = BlockBotDiscord.linkedAccounts.get(this.id) != null
+
+suspend fun GameProfile.linkedAccount(): User? {
+    val id = BlockBotDiscord.linkedAccounts.get(this.id)
+    if (id != null) {
+        return BlockBotDiscord.bot.getKoin().get<Kord>().getUser(id)
+    }
+
+    return null
+}
+
 @Serializable
-private data class LinkedAccount(val uuids: Set<@Serializable(with = UUIDSerializer::class) UUID>, val snowflake: Snowflake)
+private data class LinkedAccount(
+    val uuids: Set<@Serializable(with = UUIDSerializer::class) UUID>,
+    val snowflake: Snowflake
+)
 
 private object UUIDSerializer : KSerializer<UUID> {
     override val descriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)

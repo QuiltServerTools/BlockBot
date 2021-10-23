@@ -97,3 +97,9 @@ activityText = "Minecraft | %server:online%/%server:max_players%"
 playerList = true
 # Enables the /whitelist discord slash command to allow discord users to whitelist players
 whitelist = false
+
+[Linking]
+#
+enabled = true
+#
+requireLinking = true

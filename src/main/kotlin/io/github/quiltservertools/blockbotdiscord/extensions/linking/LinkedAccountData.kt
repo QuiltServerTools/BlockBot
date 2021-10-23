@@ -8,6 +8,7 @@ interface LinkedAccountData {
     fun get(id: Snowflake): Set<UUID>?
 
     fun add(id: Snowflake, uuid: UUID)
+    fun remove(uuid: UUID): Boolean
 
     fun load()
 
