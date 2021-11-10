@@ -81,7 +81,7 @@ requireAdmin = true
 [InlineCommands]
 # Enables the /mc discord slash command to run in game commands from discord
 enabled = true
-# Comma separated list of the role ID's allowed to use the command
+# Comma separated list of the role ID's allowed to use inline commands
 allowedRoles = []
 # OP permission level to restrict commands
 opLevel = 3
