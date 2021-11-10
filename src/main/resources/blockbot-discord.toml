@@ -75,7 +75,7 @@ replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
 pattern = "[%level] (%logger{1}) %msg%n"
 # Minimum logger level to show in the console relay. OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
 minLevel = "INFO"
-# Require administrator on discord to use console
+# Require administrator permissions on discord to use console
 requireAdmin = true
 
 [InlineCommands]
