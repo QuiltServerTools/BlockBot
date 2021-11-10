@@ -36,7 +36,7 @@ replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
     # Supports discord markdown and Placeholder API with player context
     # Minecraft -> Discord message format
     messageFormat = "{sender_display} » {message}"
-    # Minecraft -> Discord annoucement format (/say)
+    # Minecraft -> Discord announcement format (/say)
     announcementFormat = "{sender_display} » **{message}**"
     # Minecraft -> Discord emote format (/me)
     emoteFormat = "*{sender_display} {message}*"
@@ -45,7 +45,7 @@ replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
     playerJoin = "%player:displayname% joined the game"
     playerLeave = "%player:displayname% left the game"
     # Placeholders: {advancement}
-    playerAdvancement = "%player:displayname% has made the advancment [{advancement}]"
+    playerAdvancement = "%player:displayname% has made the advancement [{advancement}]"
 
     serverStart = "🟢 Server Started"
     serverStop = "🛑 Server Stopped"
@@ -73,15 +73,15 @@ replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
 [ConsoleRelay]
 # Format to use for the console relay
 pattern = "[%level] (%logger{1}) %msg%n"
-# Minium logger level to show in the console relay. OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
+# Minimum logger level to show in the console relay. OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
 minLevel = "INFO"
-# Require administator on discord to use console
+# Require administrator permissions on discord to use console
 requireAdmin = true
 
 [InlineCommands]
 # Enables the /mc discord slash command to run in game commands from discord
 enabled = true
-# Comma seperated list of the role ID's allowed to use the command
+# Comma separated list of the role ID's allowed to use inline commands
 allowedRoles = []
 # OP permission level to restrict commands
 opLevel = 3
@@ -103,7 +103,7 @@ whitelist = false
 enabled = false
 # Requires a linked account to join (Like a whitelist) Shows linking code on disconnect screen
 requireLinking = false
-# Comma seperated list of role ID's allowed to use /link discord command. Leave empty to allow allow roles
+# Comma separated list of role ID's allowed to use /link discord command. Leave empty to allow all roles
 allowedRoles = []
 # Message to show when unlinked players try to join and requireLinking is true
 unlinkedDisconnectMessage = [
