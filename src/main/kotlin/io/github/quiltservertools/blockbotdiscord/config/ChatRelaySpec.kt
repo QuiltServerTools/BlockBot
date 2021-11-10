@@ -22,7 +22,7 @@ import net.minecraft.util.Formatting
 object ChatRelaySpec : ConfigSpec() {
     val allowMentions by required<Boolean>()
     val convertMarkdown by required<Boolean>()
-    val escapeIngameMarkdown by required<Boolean>()
+    val escapeInGameMarkdown by required<Boolean>()
 
     object MinecraftFormatSpec : ConfigSpec() {
         val messageFormat by required<String>()

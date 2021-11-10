@@ -191,7 +191,7 @@ class BlockBotApiExtension : Extension(), Bot {
         BlockBotDiscord.launch {
             var content = message
             content = MinecraftSerializer.INSTANCE.escapeMarkdown(content) // TODO config
-            if (config[ChatRelaySpec.escapeIngameMarkdown]) {
+            if (config[ChatRelaySpec.escapeInGameMarkdown]) {
                 content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
             }
             if (config[ChatRelaySpec.allowMentions]) {

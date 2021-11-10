@@ -103,10 +103,25 @@ suspend fun ServerPlayerEntity.syncLinkedName(kord: Kord) {
     }
 }
 
-fun GameProfile.canJoin(): Boolean {
+fun GameProfile.checkLink(): Boolean {
     return runBlocking {
         if (config[LinkingSpec.enabled] && config[LinkingSpec.requireLinking]) {
-            return@runBlocking this@canJoin.linkedAccount() != null;
+            return@runBlocking this@checkLink.linkedAccount() != null;
+        } else {
+            return@runBlocking true
+        }
+    }
+}
+
+fun GameProfile.checkRoles(): Boolean {
+    return runBlocking {
+        if (config[LinkingSpec.enabled] && config[LinkingSpec.requireLinking] && config[LinkingSpec.connectableRoles].isNotEmpty()) {
+            val memberRoles = linkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild]))?.roles?.toList();
+            val rolesIDs = ArrayList<Long>();
+
+            memberRoles?.forEach { role -> rolesIDs.add(role.id.value.toLong())}
+
+            return@runBlocking rolesIDs.containsAll(config[LinkingSpec.connectableRoles])
         } else {
             return@runBlocking true
         }

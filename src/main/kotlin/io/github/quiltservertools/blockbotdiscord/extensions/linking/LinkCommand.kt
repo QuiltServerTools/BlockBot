@@ -10,7 +10,7 @@ import eu.pb4.placeholders.TextParser
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import io.github.quiltservertools.blockbotdiscord.config.LinkingSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
-import io.github.quiltservertools.blockbotdiscord.config.formatUnlinkedDisconnectMessage
+import io.github.quiltservertools.blockbotdiscord.config.formatNotLinkedDisconnectMessage
 import io.github.quiltservertools.blockbotdiscord.extensions.unwrap
 import io.github.quiltservertools.blockbotdiscord.logInfo
 import kotlinx.coroutines.launch
@@ -67,7 +67,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
 
             if (config[LinkingSpec.requireLinking]) {
                 context.source.player.networkHandler.disconnect(
-                    config.formatUnlinkedDisconnectMessage(
+                    config.formatNotLinkedDisconnectMessage(
                         player.gameProfile,
                         context.source.server
                     )

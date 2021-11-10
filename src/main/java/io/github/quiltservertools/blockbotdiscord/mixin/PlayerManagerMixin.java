@@ -23,9 +23,12 @@ public abstract class PlayerManagerMixin {
     private MinecraftServer server;
 
     @Inject(method = "checkCanJoin", at = @At("HEAD"), cancellable = true)
-    private void enforceAccountLinking(SocketAddress address, GameProfile profile, CallbackInfoReturnable<Text> cir) {
-        if (!LinkingExtensionKt.canJoin(profile)) {
-            cir.setReturnValue(LinkingSpecKt.formatUnlinkedDisconnectMessage(ConfigKt.getConfig(), profile, server));
+    private void checkCanJoin(SocketAddress address, GameProfile profile, CallbackInfoReturnable<Text> cir) {
+        if (!LinkingExtensionKt.checkLink(profile)) {
+            cir.setReturnValue(LinkingSpecKt.formatNotLinkedDisconnectMessage(ConfigKt.getConfig(), profile, server));
+        }
+        if (!LinkingExtensionKt.checkRoles(profile)) {
+            cir.setReturnValue(LinkingSpecKt.formatNoRequiredRolesDisconnectMessage(ConfigKt.getConfig()));
         }
     }
 }

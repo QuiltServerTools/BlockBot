@@ -13,8 +13,10 @@ import net.minecraft.text.LiteralText
 object LinkingSpec : ConfigSpec() {
     val enabled by required<Boolean>()
     val requireLinking by required<Boolean>()
-    val unlinkedDisconnectMessage by required<List<String>>()
+    val notLinkedDisconnectMessage by required<List<String>>()
     val allowedRoles by required<List<Long>>()
+    val connectableRoles by required<List<Long>>()
+    val noRolesDisconnectMessage by required<List<String>>()
 
     object MessagesSpec : ConfigSpec() {
         val noLinkedAccounts by required<String>()
@@ -26,15 +28,25 @@ object LinkingSpec : ConfigSpec() {
     }
 }
 
-fun Config.formatUnlinkedDisconnectMessage(gameProfile: GameProfile, server: MinecraftServer) =
+fun Config.formatNotLinkedDisconnectMessage(gameProfile: GameProfile, server: MinecraftServer) =
     LiteralText("").apply {
-        config[LinkingSpec.unlinkedDisconnectMessage].forEach {
+        config[LinkingSpec.notLinkedDisconnectMessage].forEach {
             this.append(
                 formatLine(
                     it,
                     server,
                     gameProfile.linkCode
                 )
+            )
+            this.append(LiteralText("\n"))
+        }
+    }
+
+fun Config.formatNoRequiredRolesDisconnectMessage() =
+    LiteralText("").apply {
+        config[LinkingSpec.noRolesDisconnectMessage].forEach {
+            this.append(
+                TextParser.parse(it)
             )
             this.append(LiteralText("\n"))
         }
