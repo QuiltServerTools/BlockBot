@@ -103,7 +103,7 @@ whitelist = false
 enabled = false
 # Requires a linked account to join (Like a whitelist) Shows linking code on disconnect screen
 requireLinking = false
-# Comma separated list of role ID's allowed to use /link discord command. Leave empty to allow roles
+# Comma separated list of role ID's allowed to use /link discord command. Leave empty to allow all roles
 allowedRoles = []
 # Message to show when unlinked players try to join and requireLinking is true
 unlinkedDisconnectMessage = [
