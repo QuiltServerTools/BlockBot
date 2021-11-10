@@ -26,9 +26,9 @@ public abstract class PlayerManagerMixin {
     private void checkCanJoin(SocketAddress address, GameProfile profile, CallbackInfoReturnable<Text> cir) {
         if (!LinkingExtensionKt.checkLink(profile)) {
             cir.setReturnValue(LinkingSpecKt.formatNotLinkedDisconnectMessage(ConfigKt.getConfig(), profile, server));
-        }
-        if (!LinkingExtensionKt.checkRoles(profile)) {
-            cir.setReturnValue(LinkingSpecKt.formatNoRequiredRolesDisconnectMessage(ConfigKt.getConfig()));
-        }
+        } else {
+            if (!LinkingExtensionKt.checkRoles(profile)) {
+                cir.setReturnValue(LinkingSpecKt.formatNoRequiredRolesDisconnectMessage(ConfigKt.getConfig()));
+            }
     }
 }
