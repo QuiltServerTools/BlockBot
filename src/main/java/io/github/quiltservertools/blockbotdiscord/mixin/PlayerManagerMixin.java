@@ -30,5 +30,6 @@ public abstract class PlayerManagerMixin {
             if (!LinkingExtensionKt.checkRoles(profile)) {
                 cir.setReturnValue(LinkingSpecKt.formatNoRequiredRolesDisconnectMessage(ConfigKt.getConfig()));
             }
+        }
     }
 }
