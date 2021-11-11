@@ -12,11 +12,9 @@ import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.edit
 import dev.kord.core.entity.Member
+import eu.pb4.placeholders.TextParser
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
-import io.github.quiltservertools.blockbotdiscord.config.BotSpec
-import io.github.quiltservertools.blockbotdiscord.config.LinkingSpec
-import io.github.quiltservertools.blockbotdiscord.config.config
-import io.github.quiltservertools.blockbotdiscord.config.getGuild
+import io.github.quiltservertools.blockbotdiscord.config.*
 import io.github.quiltservertools.blockbotdiscord.extensions.unwrap
 import io.github.quiltservertools.blockbotdiscord.logInfo
 import kotlinx.coroutines.flow.map
@@ -26,6 +24,7 @@ import kotlinx.coroutines.runBlocking
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.Text
 import org.koin.core.component.inject
 import java.util.*
 import kotlin.random.Random
@@ -43,7 +42,7 @@ class LinkingExtension : Extension() {
 
             guild(config.getGuild(bot))
 
-            val roles = config[LinkingSpec.allowedRoles]
+            val roles = config[LinkingSpec.requiredRoles]
             if (roles.isNotEmpty()) {
                 allowByDefault = false
                 allowedRoles.addAll(roles.map { Snowflake(it) })
@@ -103,13 +102,25 @@ suspend fun ServerPlayerEntity.syncLinkedName(kord: Kord) {
     }
 }
 
-fun GameProfile.canJoin(): Boolean {
+fun GameProfile.canJoin(server: MinecraftServer): Text? {
     return runBlocking {
         if (config[LinkingSpec.enabled] && config[LinkingSpec.requireLinking]) {
-            return@runBlocking this@canJoin.linkedAccount() != null;
-        } else {
-            return@runBlocking true
+            val account = this@canJoin.linkedAccount();
+            if (account != null) {
+                val requiredRoles = config[LinkingSpec.requiredRoles]
+                if (requiredRoles.isEmpty()) return@runBlocking null
+
+                return@runBlocking if (account.asMemberOrNull(Snowflake(config[BotSpec.guild]))?.roleIds?.any { requiredRoles.contains(it.value) } == true) {
+                    null
+                } else {
+                    TextParser.parse(config[LinkingSpec.requiredRoleDisconnectMessage])
+                }
+            }
+
+            return@runBlocking config.formatUnlinkedDisconnectMessage(this@canJoin, server)
         }
+
+        return@runBlocking null
     }
 }
 

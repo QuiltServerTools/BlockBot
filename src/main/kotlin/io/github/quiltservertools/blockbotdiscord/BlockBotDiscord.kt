@@ -72,7 +72,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
                     if (config.getChannelsBi().containsKey("console")) add(::ConsoleExtension)
                     if (config[InlineCommandsSpec.enabled]) add(::InlineCommandsExtension)
                     add(::MemberCommandsExtension)
-                    add(::LinkingExtension)
+                    if (config[LinkingSpec.enabled]) add(::LinkingExtension)
                 }
 
                 intents {

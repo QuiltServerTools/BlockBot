@@ -1,11 +1,10 @@
 package io.github.quiltservertools.blockbotdiscord.mixin;
 
 import com.mojang.authlib.GameProfile;
-import io.github.quiltservertools.blockbotdiscord.config.ConfigKt;
-import io.github.quiltservertools.blockbotdiscord.config.LinkingSpecKt;
 import io.github.quiltservertools.blockbotdiscord.extensions.linking.LinkingExtensionKt;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
+import net.minecraft.server.Whitelist;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,10 +21,20 @@ public abstract class PlayerManagerMixin {
     @Final
     private MinecraftServer server;
 
+    @Shadow
+    private boolean whitelistEnabled;
+
+    @Shadow
+    @Final
+    private Whitelist whitelist;
+
     @Inject(method = "checkCanJoin", at = @At("HEAD"), cancellable = true)
     private void enforceAccountLinking(SocketAddress address, GameProfile profile, CallbackInfoReturnable<Text> cir) {
-        if (!LinkingExtensionKt.canJoin(profile)) {
-            cir.setReturnValue(LinkingSpecKt.formatUnlinkedDisconnectMessage(ConfigKt.getConfig(), profile, server));
+        if (whitelistEnabled && whitelist.isAllowed(profile)) return;
+
+        var message = LinkingExtensionKt.canJoin(profile, server);
+        if (message != null) {
+            cir.setReturnValue(message);
         }
     }
 }

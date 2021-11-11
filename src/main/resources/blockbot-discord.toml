@@ -103,8 +103,10 @@ whitelist = false
 enabled = false
 # Requires a linked account to join (Like a whitelist) Shows linking code on disconnect screen
 requireLinking = false
-# Comma seperated list of role ID's allowed to use /link discord command. Leave empty to allow allow roles
-allowedRoles = []
+# Comma seperated list of role ID's allowed to join the server. Leave blank to allow any linked account to join. Also restricts /link command in discord
+requiredRoles = []
+# Message to show when linked players try to join without the required role
+requiredRoleDisconnectMessage = "<red>You don't have the required discord role to join"
 # Message to show when unlinked players try to join and requireLinking is true
 unlinkedDisconnectMessage = [
     "<yellow>A linked Discord account is required to join",
