@@ -25,9 +25,7 @@ import dev.kord.rest.builder.message.create.embed
 import io.github.quiltservertools.blockbotapi.Bot
 import io.github.quiltservertools.blockbotapi.Channels
 import io.github.quiltservertools.blockbotapi.event.RelayMessageEvent
-import io.github.quiltservertools.blockbotapi.sender.MessageSender
-import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender
-import io.github.quiltservertools.blockbotapi.sender.RelayMessageSender
+import io.github.quiltservertools.blockbotapi.sender.*
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import io.github.quiltservertools.blockbotdiscord.MentionToMinecraftRenderer
 import io.github.quiltservertools.blockbotdiscord.config.*
@@ -99,7 +97,7 @@ class BlockBotApiExtension : Extension(), Bot {
                         val message = getChatMessage(sender, event.message)
 
                         server.submit {
-                            server.playerManager.broadcastChatMessage(
+                            server.playerManager.broadcast(
                                 message,
                                 net.minecraft.network.MessageType.CHAT,
                                 Util.NIL_UUID
@@ -152,7 +150,7 @@ class BlockBotApiExtension : Extension(), Bot {
         return config.getMinecraftChatRelayMsg(username, topRoleMessage, content, server)
     }
 
-    public suspend fun createDiscordEmbed(builder: EmbedBuilder.() -> Unit) {
+    suspend fun createDiscordEmbed(builder: EmbedBuilder.() -> Unit) {
         if (config[ChatRelaySpec.WebhookSpec.useWebhook]) {
             chatWebhook.execute(chatWebhook.token!!) {
                 avatarUrl = config[ChatRelaySpec.WebhookSpec.webhookAvatar]
@@ -168,7 +166,7 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    public suspend fun createDiscordMessage(content: String) {
+    suspend fun createDiscordMessage(content: String) {
         if (config[ChatRelaySpec.WebhookSpec.useWebhook]) {
             chatWebhook.execute(chatWebhook.token!!) {
                 allowedMentions = mentions

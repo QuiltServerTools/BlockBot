@@ -1,8 +1,8 @@
 plugins {
     java
     id("maven-publish")
-    id("fabric-loom") version "0.9.+"
-    kotlin("jvm") version "1.5.21"
+    id("fabric-loom") version "0.10.+"
+    kotlin("jvm") version "1.6.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
@@ -98,7 +98,7 @@ dependencies {
     shadow(libs.konf.toml)
 
     subprojects.forEach {
-        implementation(project(":${it.name}"))
+        implementation(project(":${it.name}", "namedElements"))
         include(project("${it.name}:")) // nest within distribution
     }
 }
