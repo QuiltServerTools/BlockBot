@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 17
-          distribution: adoptium
+          distribution: temurin
       - name: 📷 Begin Gradle cache
         uses: actions/cache@v2
         with:
