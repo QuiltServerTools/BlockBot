@@ -77,9 +77,9 @@ allprojects {
 }
 
 repositories {
+    mavenCentral()
     maven("https://maven.nucleoid.xyz/")
     maven("https://maven.kotlindiscord.com/repository/maven-public/")
-    maven("https://maven.tomthegeek.ml/releases/")
 }
 
 dependencies {
@@ -88,8 +88,9 @@ dependencies {
     modImplementation(libs.placeholder.api)
     include(libs.placeholder.api)
 
-    modImplementation(libs.mcDiscordReserializer)
-    include(libs.mcDiscordReserializer)
+    shadow(libs.mcDiscordReserializer)
+    modImplementation(libs.adventure.fabric)
+    include(libs.adventure.fabric)
 
     shadow(libs.kord.extensions)
     shadow(libs.emoji)

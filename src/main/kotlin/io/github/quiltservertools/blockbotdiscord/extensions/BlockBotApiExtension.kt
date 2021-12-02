@@ -22,6 +22,8 @@ import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.embed
+import dev.vankka.mcdiscordreserializer.minecraft.MinecraftSerializer
+import dev.vankka.mcdiscordreserializer.minecraft.MinecraftSerializerOptions
 import io.github.quiltservertools.blockbotapi.Bot
 import io.github.quiltservertools.blockbotapi.Channels
 import io.github.quiltservertools.blockbotapi.event.RelayMessageEvent
@@ -29,12 +31,7 @@ import io.github.quiltservertools.blockbotapi.sender.*
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import io.github.quiltservertools.blockbotdiscord.MentionToMinecraftRenderer
 import io.github.quiltservertools.blockbotdiscord.config.*
-import io.github.quiltservertools.blockbotdiscord.utility.Colors
-import io.github.quiltservertools.blockbotdiscord.utility.convertEmojiToTranslatable
-import io.github.quiltservertools.blockbotdiscord.utility.convertStringToMention
-import io.github.quiltservertools.blockbotdiscord.utility.literal
-import io.github.quiltservertools.mcdiscordreserializer.minecraft.MinecraftSerializer
-import io.github.quiltservertools.mcdiscordreserializer.minecraft.MinecraftSerializerOptions
+import io.github.quiltservertools.blockbotdiscord.utility.*
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
@@ -115,7 +112,8 @@ class BlockBotApiExtension : Extension(), Bot {
     public suspend fun getChatMessage(sender: Member, message: Message): Text {
         val emojiString = EmojiParser.parseToAliases(message.content)
         var content: MutableText =
-            if (config[ChatRelaySpec.convertMarkdown]) minecraftSerializer.serialize(emojiString) else emojiString.literal()
+            if (config[ChatRelaySpec.convertMarkdown]) minecraftSerializer.serialize(emojiString)
+                .toNative(server) else emojiString.literal()
         content = convertEmojiToTranslatable(content)
         if (message.referencedMessage != null) {
             val reply = config.getReplyMsg(
