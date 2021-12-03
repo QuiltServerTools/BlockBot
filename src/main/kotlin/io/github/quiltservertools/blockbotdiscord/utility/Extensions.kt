@@ -22,6 +22,6 @@ fun Message.summary(): String {
 
 fun GameProfile.getTextures() = Iterables.getFirst(this.properties.get("textures"), null)?.value
 
-fun Component.toNative(server: MinecraftServer): MutableText = FabricServerAudiences.of(server).toNative(this).copy()
+fun Component.toNative(server: MinecraftServer): MutableText = FabricServerAudiences.of(server).toNative(this).shallowCopy()
 
 fun Text.toAdventure(server: MinecraftServer) = FabricServerAudiences.of(server).toAdventure(this)
