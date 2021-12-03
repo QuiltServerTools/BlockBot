@@ -24,7 +24,7 @@ public abstract class SayCommandMixin {
     )
     private static void relaySayToDiscord(CommandContext<ServerCommandSource> context, CallbackInfoReturnable<Integer> cir, Text message, Text formatted) {
         var entity = context.getSource().getEntity();
-        MessageSender sender = null;
+        MessageSender sender;
         if (entity instanceof ServerPlayerEntity player) {
             sender = new PlayerMessageSender(
                 player,
@@ -40,7 +40,7 @@ public abstract class SayCommandMixin {
 
         ChatMessageEvent.EVENT.invoker().message(
             sender,
-            message.getString()
+            message
         );
     }
 }

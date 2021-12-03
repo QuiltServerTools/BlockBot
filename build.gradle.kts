@@ -21,8 +21,18 @@ allprojects {
     version = "$modVersion${getVersionMetadata()}"
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_16
-        targetCompatibility = JavaVersion.VERSION_16
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    repositories {
+        mavenCentral()
+        maven {
+            name = "Fabric"
+            url = uri("https://maven.fabricmc.net/")
+        }
+        maven("https://api.modrinth.com/maven")
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
     }
 
     // Declare dependencies
@@ -34,6 +44,10 @@ allprojects {
 
         // Mods
         modImplementation(rootProject.libs.fabric.api)
+
+        // Optional deps
+        modImplementation(rootProject.libs.styled.chat)
+        modRuntime(rootProject.libs.permission.api)
     }
 
     // Produce a sources distribution
@@ -66,14 +80,6 @@ allprojects {
         }
     }
 
-    // Add any additional repositories
-    repositories {
-        mavenCentral()
-        maven {
-            name = "Fabric"
-            url = uri("https://maven.fabricmc.net/")
-        }
-    }
 }
 
 repositories {

@@ -9,7 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 public interface Bot {
-    void onChatMessage(MessageSender sender, String message);
+    void onChatMessage(MessageSender sender, Text message);
     void onPlayerConnect(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server);
     void onPlayerDisconnect(ServerPlayNetworkHandler handler, MinecraftServer server);
     void onPlayerDeath(ServerPlayerEntity player, Text message);

@@ -22,12 +22,15 @@ import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.embed
+import dev.vankka.mcdiscordreserializer.discord.DiscordSerializer
 import dev.vankka.mcdiscordreserializer.minecraft.MinecraftSerializer
 import dev.vankka.mcdiscordreserializer.minecraft.MinecraftSerializerOptions
 import io.github.quiltservertools.blockbotapi.Bot
 import io.github.quiltservertools.blockbotapi.Channels
 import io.github.quiltservertools.blockbotapi.event.RelayMessageEvent
-import io.github.quiltservertools.blockbotapi.sender.*
+import io.github.quiltservertools.blockbotapi.sender.MessageSender
+import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender
+import io.github.quiltservertools.blockbotapi.sender.RelayMessageSender
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import io.github.quiltservertools.blockbotdiscord.MentionToMinecraftRenderer
 import io.github.quiltservertools.blockbotdiscord.config.*
@@ -179,12 +182,11 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onChatMessage(sender: MessageSender, message: String) {
+    override fun onChatMessage(sender: MessageSender, message: Text) {
         BlockBotDiscord.launch {
-            var content = message
-            content = MinecraftSerializer.INSTANCE.escapeMarkdown(content) // TODO config
+            var content = DiscordSerializer.INSTANCE.serialize(message.toAdventure(server))
             if (config[ChatRelaySpec.escapeIngameMarkdown]) {
-                content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
+                //content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
             }
             if (config[ChatRelaySpec.allowMentions]) {
                 content = convertStringToMention(content, config.getGuild(bot))

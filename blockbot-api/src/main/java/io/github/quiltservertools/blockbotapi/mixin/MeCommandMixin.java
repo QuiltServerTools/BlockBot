@@ -8,6 +8,7 @@ import net.minecraft.server.command.MeCommand;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,7 +40,7 @@ public abstract class MeCommandMixin {
 
         ChatMessageEvent.EVENT.invoker().message(
             sender,
-            message
+            Text.of(message)
         );
     }
 }

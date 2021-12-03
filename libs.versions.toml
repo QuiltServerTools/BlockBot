@@ -1,9 +1,9 @@
 [versions]
 minecraft = "1.18"
-fabric-loader = "0.12.6"
+fabric-loader = "0.12.8"
 yarn-mappings = "1.18+build.1"
 
-fabric-api = "0.41.3+1.18"
+fabric-api = "0.43.1+1.18"
 
 # Kotlin
 kotlin = "1.6.0"
@@ -16,7 +16,10 @@ emoji-java = "5.1.1"
 adventure-fabric = "5.0.0-SNAPSHOT"
 
 placeholder-api = "1.1.1+1.17.1"
+permission-api = "0.1-SNAPSHOT"
 konf = "1.1.2"
+
+styled-chat = "1.2.2+1.18"
 
 [libraries]
 minecraft = { module = "net.minecraft:minecraft", version.ref = "minecraft" }
@@ -32,5 +35,8 @@ mcDiscordReserializer = { module = "dev.vankka:MCDiscordReserializer", version.r
 adventure-fabric = { module = "net.kyori:adventure-platform-fabric", version.ref = "adventure-fabric"}
 
 placeholder-api = { module = "eu.pb4:placeholder-api", version.ref = "placeholder-api" }
-konf-base = { module = "com.uchuhimo:konf-core", version.ref = "konf"}
-konf-toml = { module = "com.uchuhimo:konf-toml", version.ref = "konf"}
+permission-api = { module = "me.lucko:fabric-permissions-api", version.ref = "permission-api"}
+konf-base = { module = "com.uchuhimo:konf-core", version.ref = "konf" }
+konf-toml = { module = "com.uchuhimo:konf-toml", version.ref = "konf" }
+
+styled-chat = { module = "maven.modrinth:styled-chat", version.ref = "styled-chat" }
