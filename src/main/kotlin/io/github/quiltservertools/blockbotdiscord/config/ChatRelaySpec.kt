@@ -28,6 +28,8 @@ object ChatRelaySpec : ConfigSpec() {
     object MinecraftFormatSpec : ConfigSpec() {
         val messageFormat by required<String>()
         val replyFormat by required<String>()
+        val appendImages by required<Boolean>()
+        val imageInterpolation by required<Boolean>()
     }
 
     object DiscordMessageFormatSpec : ConfigSpec() {

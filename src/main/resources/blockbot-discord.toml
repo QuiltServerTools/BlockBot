@@ -28,6 +28,10 @@ messageFormat = "[<color:#7289DA>Discord</color> | {sender_colored}] {message}"
 # Placeholders: {sender}, {summary}
 # Supports Simplified Text Format and Placeholder API with server context
 replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
+# Try to add images to messages
+appendImages = false
+# Use image interpolation
+imageInterpolation = false
 
     # Used when not using Webhook
     [ChatRelay.DiscordMessageFormat]

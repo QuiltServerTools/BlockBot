@@ -41,17 +41,27 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.fabricmc.fabric.api.networking.v1.PacketSender
+import net.kyori.adventure.platform.fabric.FabricServerAudiences
+import net.kyori.adventure.text.Component
 import net.minecraft.advancement.Advancement
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
+import net.minecraft.nbt.NbtList
+import net.minecraft.nbt.NbtString
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.ClickEvent
-import net.minecraft.text.MutableText
-import net.minecraft.text.Text
+import net.minecraft.text.*
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
 import net.minecraft.util.Util
+import net.minecraft.util.math.MathHelper.clamp
 import org.koin.core.component.inject
+import java.awt.Color.*
+import java.net.URL
+import javax.imageio.ImageIO
+import kotlin.math.ceil
+
 
 class BlockBotApiExtension : Extension(), Bot {
     override val name = "BlockBot Api Impl"
@@ -94,14 +104,16 @@ class BlockBotApiExtension : Extension(), Bot {
 
                 if (result == ActionResult.PASS) {
                     if (configChannel == Channels.CHAT) {
-                        val message = getChatMessage(sender, event.message)
+                        val messages = getChatMessage(sender, event.message)
 
                         server.submit {
-                            server.playerManager.broadcast(
-                                message,
-                                net.minecraft.network.MessageType.CHAT,
-                                Util.NIL_UUID
-                            )
+                            for (message in messages) {
+                                server.playerManager.broadcast(
+                                    message,
+                                    net.minecraft.network.MessageType.CHAT,
+                                    Util.NIL_UUID
+                                )
+                            }
                         }
                     }
                 }
@@ -112,7 +124,7 @@ class BlockBotApiExtension : Extension(), Bot {
         if (server.isLoading) onServerStart(server)
     }
 
-    public suspend fun getChatMessage(sender: Member, message: Message): Text {
+    public suspend fun getChatMessage(sender: Member, message: Message): List<Text> {
         val emojiString = EmojiParser.parseToAliases(message.content)
         var content: MutableText =
             if (config[ChatRelaySpec.convertMarkdown]) minecraftSerializer.serialize(emojiString)
@@ -127,11 +139,77 @@ class BlockBotApiExtension : Extension(), Bot {
             content = "".literal().append(reply).append("\n").append(content)
         }
 
+        val attachments = ArrayList<Text>()
+
         if (message.attachments.isNotEmpty()) {
+            val appendImages = config[ChatRelaySpec.MinecraftFormatSpec.appendImages]
+            val interpolateImages = config[ChatRelaySpec.MinecraftFormatSpec.imageInterpolation]
+
             for (attachment in message.attachments) {
-                content.append("\n[${attachment.filename}]".literal().styled {
+                var hoverEvent: HoverEvent? = null
+
+                if (appendImages && attachment.isImage && attachment.size < 8 * 1024 * 1024) {
+                    val image = ImageIO.read(URL(attachment.data.proxyUrl))
+
+                    val stepSize = (ceil(image.width.toDouble() / 48).toInt()).coerceAtLeast(1)
+                    val stepSquared = stepSize * stepSize;
+                    val width = image.width
+                    val height = image.height
+
+                    var x = 0;
+                    var y = 0
+
+                    val list = NbtList()
+
+                    while (y < height) {
+                        val text = LiteralText("").setStyle(Style.EMPTY.withItalic(false))
+                        while (x < width) {
+                            var rgb: Int
+
+                            if (interpolateImages && stepSize != 1) {
+                                var r = 0;
+                                var g = 0;
+                                var b = 0;
+
+                                for (x2 in 0 until stepSize) {
+                                    for (y2 in 0 until stepSize) {
+                                        val color = image.getRGB(clamp(x + x2, 0, width - 1), clamp(y + y2, 0, height - 1))
+                                        r += color.and(0xff0000).shr(16)
+                                        g += color.and(0x00ff00).shr(8)
+                                        b += color.and(0x0000ff)
+                                    }
+                                }
+
+                                rgb = r / stepSquared
+                                rgb = (rgb.shl( 8)) + g / stepSquared
+                                rgb = (rgb.shl(8)) + b / stepSquared
+                            } else {
+                                rgb = image.getRGB(x, y).and(0xffffff)
+                            }
+                            val pixel = LiteralText("█").setStyle(Style.EMPTY.withColor(rgb))
+                            text.append(pixel)
+                            x += stepSize
+                        }
+
+                        list.add(NbtString.of(Text.Serializer.toJson(text)))
+                        y += stepSize
+                        x = 0
+                    }
+
+                    val stack = ItemStack(Items.STICK)
+                    val display = stack.getOrCreateSubNbt("display")
+
+                    display.put("Lore", list)
+
+
+                    stack.setCustomName(LiteralText.EMPTY)
+                    hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, HoverEvent.ItemStackContent(stack))
+                }
+
+                attachments.add("[${attachment.filename}]".literal().styled {
                     it.withColor(Formatting.BLUE)
                         .withClickEvent(ClickEvent(ClickEvent.Action.OPEN_URL, attachment.url))
+                        .withHoverEvent(hoverEvent)
                 })
             }
         }
@@ -148,7 +226,7 @@ class BlockBotApiExtension : Extension(), Bot {
             }
         }
 
-        return config.getMinecraftChatRelayMsg(username, topRoleMessage, content, server)
+        return listOf(config.getMinecraftChatRelayMsg(username, topRoleMessage, content, server), *attachments.toTypedArray())
     }
 
     suspend fun createDiscordEmbed(builder: EmbedBuilder.() -> Unit) {
@@ -338,3 +416,4 @@ fun MessageSender.formatWebhookContent(content: String): String {
 
 suspend fun Member.getDisplayColor() =
     this.roles.toList().sortedByDescending { it.rawPosition }.firstOrNull { it.color.rgb != 0 }?.color
+
