@@ -23,6 +23,7 @@ import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.embed
 import dev.vankka.mcdiscordreserializer.discord.DiscordSerializer
+import dev.vankka.mcdiscordreserializer.discord.DiscordSerializerOptions
 import dev.vankka.mcdiscordreserializer.minecraft.MinecraftSerializer
 import dev.vankka.mcdiscordreserializer.minecraft.MinecraftSerializerOptions
 import io.github.quiltservertools.blockbotapi.Bot
@@ -41,8 +42,6 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.fabricmc.fabric.api.networking.v1.PacketSender
-import net.kyori.adventure.platform.fabric.FabricServerAudiences
-import net.kyori.adventure.text.Component
 import net.minecraft.advancement.Advancement
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -57,7 +56,6 @@ import net.minecraft.util.Formatting
 import net.minecraft.util.Util
 import net.minecraft.util.math.MathHelper.clamp
 import org.koin.core.component.inject
-import java.awt.Color.*
 import java.net.URL
 import javax.imageio.ImageIO
 import kotlin.math.ceil
@@ -72,6 +70,9 @@ class BlockBotApiExtension : Extension(), Bot {
             .addRenderer(MentionToMinecraftRenderer(bot)),
         MinecraftSerializerOptions.escapeDefaults()
     )
+    private val discordSerializer = DiscordSerializer(
+        DiscordSerializerOptions.defaults().keybindProvider
+    ) { TranslatableText(it.key()).string }
     private val server: MinecraftServer by inject()
     private val mentions = AllowedMentionsBuilder()
 
@@ -173,7 +174,8 @@ class BlockBotApiExtension : Extension(), Bot {
 
                                 for (x2 in 0 until stepSize) {
                                     for (y2 in 0 until stepSize) {
-                                        val color = image.getRGB(clamp(x + x2, 0, width - 1), clamp(y + y2, 0, height - 1))
+                                        val color =
+                                            image.getRGB(clamp(x + x2, 0, width - 1), clamp(y + y2, 0, height - 1))
                                         r += color.and(0xff0000).shr(16)
                                         g += color.and(0x00ff00).shr(8)
                                         b += color.and(0x0000ff)
@@ -181,7 +183,7 @@ class BlockBotApiExtension : Extension(), Bot {
                                 }
 
                                 rgb = r / stepSquared
-                                rgb = (rgb.shl( 8)) + g / stepSquared
+                                rgb = (rgb.shl(8)) + g / stepSquared
                                 rgb = (rgb.shl(8)) + b / stepSquared
                             } else {
                                 rgb = image.getRGB(x, y).and(0xffffff)
@@ -226,7 +228,10 @@ class BlockBotApiExtension : Extension(), Bot {
             }
         }
 
-        return listOf(config.getMinecraftChatRelayMsg(username, topRoleMessage, content, server), *attachments.toTypedArray())
+        return listOf(
+            config.getMinecraftChatRelayMsg(username, topRoleMessage, content, server),
+            *attachments.toTypedArray()
+        )
     }
 
     suspend fun createDiscordEmbed(builder: EmbedBuilder.() -> Unit) {
@@ -262,7 +267,7 @@ class BlockBotApiExtension : Extension(), Bot {
 
     override fun onChatMessage(sender: MessageSender, message: Text) {
         BlockBotDiscord.launch {
-            var content = DiscordSerializer.INSTANCE.serialize(message.toAdventure(server))
+            var content = discordSerializer.serialize(message.toAdventure(server))
             if (config[ChatRelaySpec.escapeIngameMarkdown]) {
                 content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
             }
