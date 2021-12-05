@@ -140,7 +140,7 @@ class BlockBotApiExtension : Extension(), Bot {
             content = "".literal().append(reply).append("\n").append(content)
         }
 
-        val attachments = ArrayList<Text>()
+        val attachments = mutableListOf<Text>()
 
         if (message.attachments.isNotEmpty()) {
             val appendImages = config[ChatRelaySpec.MinecraftFormatSpec.appendImages]
@@ -214,6 +214,11 @@ class BlockBotApiExtension : Extension(), Bot {
                         .withHoverEvent(hoverEvent)
                 })
             }
+        }
+
+        for (sticker in message.stickers) {
+            if (content.string.isNotEmpty()) content.append("\n")
+            attachments.add("[Sticker: ${sticker.name}]".literal())
         }
 
         val topRole = sender.getTopRole()
@@ -421,4 +426,3 @@ fun MessageSender.formatWebhookContent(content: String): String {
 
 suspend fun Member.getDisplayColor() =
     this.roles.toList().sortedByDescending { it.rawPosition }.firstOrNull { it.color.rgb != 0 }?.color
-

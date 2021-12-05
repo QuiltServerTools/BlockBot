@@ -4,7 +4,7 @@
   "package": "io.github.quiltservertools.blockbotdiscord.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-
+    "PlayerManagerMixin"
   ],
   "server": [],
   "injectors": {

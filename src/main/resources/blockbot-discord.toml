@@ -101,3 +101,28 @@ activityText = "Minecraft | %server:online%/%server:max_players%"
 playerList = true
 # Enables the /whitelist discord slash command to allow discord users to whitelist players
 whitelist = false
+
+[Linking]
+# Enable account linking between Minecraft and discord. Enables /link in game and in discord
+enabled = false
+# Requires a linked account to join (Like a whitelist) Shows linking code on disconnect screen
+requireLinking = false
+# Comma seperated list of role ID's allowed to join the server. Leave blank to allow any linked account to join. Also restricts /link command in discord
+requiredRoles = []
+# Message to show when linked players try to join without the required role
+requiredRoleDisconnectMessage = "<red>You don't have the required discord role to join"
+# Message to show when unlinked players try to join and requireLinking is true
+unlinkedDisconnectMessage = [
+    "<yellow>A linked Discord account is required to join",
+    "<yellow>Use <gray>/link</gray> in discord to link your account",
+    "<gray>Link Code: <green><bold>{code}",
+    "<gray>Discord: <blue><underline>discord.gg/INVITECODE"
+]
+    # Messages for the /link minecraft and discord commands
+    [Linking.Messages]
+    noLinkedAccounts = "<red>There are no matching linked accounts"
+    alreadyLinked = "<red>This account is already linked to <blue>{user}"
+    failedUnlink = "<red>Failed to unlink these accounts!"
+    successfulUnlink = "<blue>Successfully unlinked your account"
+    successfulLink = "Account successfully linked to: {player}"
+    linkCode = "<blue>Link your account with <gray>/link</gray> in discord. Code: <green><bold>{code}"

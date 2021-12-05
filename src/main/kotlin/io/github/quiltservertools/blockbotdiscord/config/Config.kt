@@ -15,6 +15,7 @@ val config = Config {
     addSpec(InlineCommandsSpec)
     addSpec(PresenceSpec)
     addSpec(MemberCommandsSpec)
+    addSpec(LinkingSpec)
 }.from.toml.resource(CONFIG_PATH)
     .from.toml.resource(CONFIG_PATH)
     .from.toml.watchFile(FabricLoader.getInstance().configDir.resolve(CONFIG_PATH).toFile())

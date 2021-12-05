@@ -11,10 +11,14 @@ import io.github.quiltservertools.blockbotdiscord.extensions.BlockBotApiExtensio
 import io.github.quiltservertools.blockbotdiscord.extensions.ConsoleExtension
 import io.github.quiltservertools.blockbotdiscord.extensions.MemberCommandsExtension
 import io.github.quiltservertools.blockbotdiscord.extensions.inline.InlineCommandsExtension
+import io.github.quiltservertools.blockbotdiscord.extensions.linking.JsonLinkedAccounts
+import io.github.quiltservertools.blockbotdiscord.extensions.linking.LinkCommand
+import io.github.quiltservertools.blockbotdiscord.extensions.linking.LinkingExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.MinecraftServer
@@ -28,6 +32,8 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
 
     val logger: Logger = LogManager.getLogger()
     lateinit var bot: ExtensibleBot
+
+    val linkedAccounts = JsonLinkedAccounts()
 
     override fun onInitialize() {
         logInfo("Initializing")
@@ -44,7 +50,12 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
             return
         }
 
+        linkedAccounts.load()
+
         ServerLifecycleEvents.SERVER_STARTING.register(BlockBotDiscord::serverStarting)
+        CommandRegistrationCallback.EVENT.register { dispatcher, dedicated ->
+            LinkCommand(dispatcher).register()
+        }
 
         DiscordConsoleAppender().start()
     }
@@ -61,6 +72,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
                     if (config.getChannelsBi().containsKey("console")) add(::ConsoleExtension)
                     if (config[InlineCommandsSpec.enabled]) add(::InlineCommandsExtension)
                     add(::MemberCommandsExtension)
+                    if (config[LinkingSpec.enabled]) add(::LinkingExtension)
                 }
 
                 intents {
