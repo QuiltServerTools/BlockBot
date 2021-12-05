@@ -358,9 +358,7 @@ class BlockBotApiExtension : Extension(), Bot {
         if (config.formatServerStartMessage(server).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
-                author {
-                    name = config.formatServerStartMessage(server)
-                }
+                title = config.formatServerStartMessage(server)
                 color = Colors.green
             }
         }
@@ -370,9 +368,7 @@ class BlockBotApiExtension : Extension(), Bot {
         if (config.formatServerStopMessage(server).isEmpty()) return
         runBlocking {
             createDiscordEmbed {
-                author {
-                    name = config.formatServerStopMessage(server)
-                }
+                title = config.formatServerStopMessage(server)
                 color = Colors.red
             }
             kord.shutdown()

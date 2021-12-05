@@ -48,7 +48,7 @@ allprojects {
 
         // Optional deps
         modImplementation(rootProject.libs.styled.chat)
-        modRuntime(rootProject.libs.permission.api)
+        modRuntimeOnly(rootProject.libs.permission.api)
     }
 
     // Produce a sources distribution
@@ -131,6 +131,10 @@ tasks {
         )
         archiveClassifier.set("dev-all")
 
+        minimize {
+            exclude(project(":blockbot-api"))
+        }
+
         exclude("kotlin/**", "kotlinx/coroutines/**", "kotlinx/serialization/**", "javax/**", "META-INF")
         exclude("org/checkerframework/**", "org/intellij/**", "org/jetbrains/annotations/**")
         exclude("com/google/gson/**")
@@ -139,36 +143,40 @@ tasks {
         exclude("dev/kord/voice/**")
         exclude("org/bouncycastle/**")
         exclude("com/codahale/**")
+        relocate("com.ibm/**")
 
-        val relocPath = "io.github.quiltservertools.blockbotdiscord.libs."
-        relocate("com.fasterxml", relocPath + "com.fasterxml")
-        relocate("com.moandjiezana", relocPath + "com.moandjiezana")
-        relocate("com.uchuhimo", relocPath + "com.uchuhimo")
-        relocate("com.googlecode", relocPath + "com.googlecode")
-        relocate("com.kotlindiscord", relocPath + "com.kotlindiscord")
-        relocate("com.sun", relocPath + "com.sun")
-        relocate("com.typesafe", relocPath + "com.typesafe")
-        relocate("com.vdurmont", relocPath + "com.vdurmont")
-        relocate("com.ibm.icu", relocPath + "com.ibm.icu")
-        relocate("javassist", relocPath + "javassist")
-        relocate("dev.kord", relocPath + "dev.kord")
-        relocate("io.ktor", relocPath + "io.ktor")
-        relocate("io.sentry", relocPath + "io.sentry")
-        relocate("org.apache.commons", relocPath + "org.apache.commons")
-        relocate("org.eclipse", relocPath + "org.eclipse")
-        relocate("org.gjt", relocPath + "org.gjt")
-        relocate("org.jaxen", relocPath + "org.jaxen")
-        relocate("org.json", relocPath + "org.json")
-        relocate("org.koin", relocPath + "org.koin")
-        relocate("org.relaxng", relocPath + "org.relaxng")
-        relocate("org.xml", relocPath + "org.xml")
-        relocate("org.xmlpull", relocPath + "org.xmlpull")
-        relocate("org.yaml", relocPath + "org.yaml")
-        relocate("org.dom4j", relocPath + "org.dom4j")
-        relocate("kotlinx.atomicfu", relocPath + "kotlinx.atomicfu")
-        relocate("kotlinx.datetime", relocPath + "kotlinx.datetime")
-        relocate("org.reflections", relocPath + "org.reflections")
+        relocate("com.fasterxml")
+        relocate("com.moandjiezana")
+        relocate("com.uchuhimo")
+        relocate("com.googlecode")
+        relocate("com.kotlindiscord")
+        relocate("com.sun")
+        relocate("com.typesafe")
+        relocate("com.vdurmont")
+        relocate("javassist")
+        relocate("dev.kord")
+        relocate("dev.vankka")
+        relocate("io.ktor")
+        relocate("io.sentry")
+        relocate("org.apache.commons")
+        relocate("org.eclipse")
+        relocate("org.gjt")
+        relocate("org.jaxen")
+        relocate("org.json")
+        relocate("org.koin")
+        relocate("org.relaxng")
+        relocate("org.xml")
+        relocate("org.xmlpull")
+        relocate("org.yaml")
+        relocate("org.dom4j")
+        relocate("kotlinx.atomicfu")
+        relocate("kotlinx.datetime")
+        relocate("org.reflections")
     }
+}
+
+fun com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar.relocate(pattern: String) {
+    this.relocate(pattern, "io.github.quiltservertools.blockbotdiscord.libs.$pattern")
 }
 
 fun getVersionMetadata(): String {

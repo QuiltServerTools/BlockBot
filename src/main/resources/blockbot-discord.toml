@@ -51,8 +51,8 @@ imageInterpolation = false
     # Placeholders: {advancement}
     playerAdvancement = "%player:displayname% has made the advancment [{advancement}]"
 
-    serverStart = "🟢 Server Started"
-    serverStop = "🛑 Server Stopped"
+    serverStart = ":green_circle: Server Started"
+    serverStop = ":octagonal_sign: Server Stopped"
 
     [ChatRelay.Webhook]
     # Use a webhook (less compact) to display player names and avatars
