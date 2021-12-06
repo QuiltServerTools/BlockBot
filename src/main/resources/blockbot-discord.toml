@@ -49,7 +49,7 @@ imageInterpolation = false
     playerJoin = "%player:displayname% joined the game"
     playerLeave = "%player:displayname% left the game"
     # Placeholders: {advancement}
-    playerAdvancement = "%player:displayname% has made the advancment [{advancement}]"
+    playerAdvancement = "%player:displayname% has made the advancement [{advancement}]"
 
     serverStart = ":green_circle: Server Started"
     serverStop = ":octagonal_sign: Server Stopped"
