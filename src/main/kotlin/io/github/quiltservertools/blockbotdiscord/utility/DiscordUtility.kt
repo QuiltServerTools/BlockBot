@@ -2,8 +2,11 @@ package io.github.quiltservertools.blockbotdiscord.utility
 
 import com.vdurmont.emoji.EmojiManager
 import dev.kord.core.entity.Guild
+import dev.kord.core.entity.User
 import dev.kord.core.firstOrNull
 import eu.pb4.placeholders.PlaceholderAPI
+import io.github.quiltservertools.blockbotdiscord.config.config
+import io.github.quiltservertools.blockbotdiscord.config.guildId
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -50,3 +53,5 @@ fun convertEmojiToTranslatable(
         emojiAliases as Map<String, Text>
     ) as MutableText
 }
+
+suspend fun User.asMemberOrNull() = this.asMemberOrNull(config.guildId)

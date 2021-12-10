@@ -30,4 +30,6 @@ suspend fun Config.getChannel(name: String, bot: ExtensibleBot): GuildMessageCha
 }
 
 suspend fun Config.getGuild(bot: ExtensibleBot) = bot.getKoin().get<Kord>().getGuild(Snowflake(this[BotSpec.guild]))!!
+val Config.guildId: Snowflake
+    get() = Snowflake(this[BotSpec.guild])
 

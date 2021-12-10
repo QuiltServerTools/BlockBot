@@ -13,9 +13,12 @@ import net.minecraft.text.LiteralText
 object LinkingSpec : ConfigSpec() {
     val enabled by required<Boolean>()
     val requireLinking by required<Boolean>()
+    val nicknameSync by required<Boolean>()
     val unlinkedDisconnectMessage by required<List<String>>()
     val requiredRoles by required<List<ULong>>()
     val requiredRoleDisconnectMessage by required<String>()
+    val requireInServer by required<Boolean>()
+    val notInServerMessage by required<String>()
 
     object MessagesSpec : ConfigSpec() {
         val noLinkedAccounts by required<String>()

@@ -6,17 +6,24 @@ import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.types.respond
+import com.kotlindiscord.kord.extensions.utils.getTopRole
 import com.mojang.authlib.GameProfile
 import dev.kord.common.annotation.KordPreview
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.edit
 import dev.kord.core.entity.Member
+import eu.pb4.placeholders.PlaceholderAPI
+import eu.pb4.placeholders.PlaceholderResult
 import eu.pb4.placeholders.TextParser
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import io.github.quiltservertools.blockbotdiscord.config.*
+import io.github.quiltservertools.blockbotdiscord.extensions.getDisplayColor
 import io.github.quiltservertools.blockbotdiscord.extensions.unwrap
+import io.github.quiltservertools.blockbotdiscord.id
 import io.github.quiltservertools.blockbotdiscord.logInfo
+import io.github.quiltservertools.blockbotdiscord.utility.asMemberOrNull
+import io.github.quiltservertools.blockbotdiscord.utility.literal
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -70,10 +77,14 @@ class LinkingExtension : Extension() {
         }
 
         ServerPlayConnectionEvents.JOIN.register { handler, sender, server ->
-            BlockBotDiscord.launch {
-                handler.player.syncLinkedName(kord)
+            if (config[LinkingSpec.nicknameSync]) {
+                BlockBotDiscord.launch {
+                    handler.player.syncLinkedName(kord)
+                }
             }
         }
+
+        registerPlaceholders()
     }
 
     inner class LinkingArgs : Arguments() {
@@ -82,6 +93,45 @@ class LinkingExtension : Extension() {
 
     companion object {
         val linkCodes: HashBiMap<String, UUID> = HashBiMap.create()
+    }
+}
+
+private fun registerPlaceholders() {
+    PlaceholderAPI.register(id("linked_username")) { ctx ->
+        runBlocking {
+            val user = ctx.player.getLinkedAccount()
+            val color = if (ctx.argument == "colored") user?.asMemberOrNull()?.getDisplayColor() else null
+
+            PlaceholderResult.value(user?.username?.literal()?.styled { color?.let { _ -> it.withColor(color.rgb) } })
+        }
+    }
+
+    PlaceholderAPI.register(id("linked_display")) { ctx ->
+        runBlocking {
+            val user = ctx.player.getLinkedAccount()
+            val color = if (ctx.argument == "colored") user?.asMemberOrNull()?.getDisplayColor() else null
+
+            PlaceholderResult.value(
+                (user?.asMemberOrNull(config.guildId)?.displayName ?: user?.username)?.literal()
+                    ?.styled { color?.let { _ -> it.withColor(color.rgb) } }
+            )
+        }
+    }
+
+    PlaceholderAPI.register(id("linked_discriminator")) { ctx ->
+        runBlocking {
+            PlaceholderResult.value(ctx.player.getLinkedAccount()?.discriminator)
+        }
+    }
+
+    PlaceholderAPI.register(id("linked_role")) { ctx ->
+        runBlocking {
+            val member = ctx.player.getLinkedAccount()?.asMemberOrNull(config.guildId)
+            val color = member?.getTopRole()?.color
+            val text = member?.getTopRole()?.data?.name?.literal()
+
+            PlaceholderResult.value(text?.styled { color?.let { _ -> it.withColor(color.rgb) } })
+        }
     }
 }
 
@@ -107,10 +157,12 @@ fun GameProfile.canJoin(server: MinecraftServer): Text? {
         if (config[LinkingSpec.enabled] && config[LinkingSpec.requireLinking]) {
             val account = this@canJoin.linkedAccount();
             if (account != null) {
+                if (account.asMemberOrNull() == null) return@runBlocking TextParser.parse(config[LinkingSpec.notInServerMessage])
+
                 val requiredRoles = config[LinkingSpec.requiredRoles]
                 if (requiredRoles.isEmpty()) return@runBlocking null
 
-                return@runBlocking if (account.asMemberOrNull(Snowflake(config[BotSpec.guild]))?.roleIds?.any { requiredRoles.contains(it.value) } == true) {
+                return@runBlocking if (account.asMemberOrNull()?.roleIds?.any { requiredRoles.contains(it.value) } == true) {
                     null
                 } else {
                     TextParser.parse(config[LinkingSpec.requiredRoleDisconnectMessage])

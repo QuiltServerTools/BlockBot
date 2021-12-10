@@ -107,8 +107,12 @@ whitelist = false
 enabled = false
 # Requires a linked account to join (Like a whitelist) Shows linking code on disconnect screen
 requireLinking = false
+# Sync the linked users discord nickname to their minecraft username
+nicknameSync = false
 # Comma seperated list of role ID's allowed to join the server. Leave blank to allow any linked account to join. Also restricts /link command in discord
 requiredRoles = []
+# Require linked players to be in the main discord
+requireInServer = false
 # Message to show when linked players try to join without the required role
 requiredRoleDisconnectMessage = "<red>You don't have the required discord role to join"
 # Message to show when unlinked players try to join and requireLinking is true
@@ -126,3 +130,4 @@ unlinkedDisconnectMessage = [
     successfulUnlink = "<blue>Successfully unlinked your account"
     successfulLink = "Account successfully linked to: {player}"
     linkCode = "<blue>Link your account with <gray>/link</gray> in discord. Code: <green><bold>{code}"
+    notInServer = "<red>You must be in the discord server to join"
