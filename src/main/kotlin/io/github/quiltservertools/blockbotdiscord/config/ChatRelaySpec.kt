@@ -35,9 +35,9 @@ object ChatRelaySpec : ConfigSpec() {
         val messageFormat by required<String>()
         val announcementFormat by required<String>()
         val emoteFormat by required<String>()
-
         val playerJoin by required<String>()
         val playerLeave by required<String>()
+        val playerDeath by required<String>()
         val playerAdvancement by required<String>()
         val serverStart by required<String>()
         val serverStop by required<String>()
@@ -87,6 +87,13 @@ fun Config.formatPlayerJoinMessage(player: ServerPlayerEntity): String =
 
 fun Config.formatPlayerLeaveMessage(player: ServerPlayerEntity): String =
     formatDiscordRelayMessage(player, config[ChatRelaySpec.DiscordMessageFormatSpec.playerLeave]).string
+
+fun Config.formatPlayerDeathMessage(player: ServerPlayerEntity, message: Text): String =
+    formatDiscordRelayMessage(
+        player,
+        config[ChatRelaySpec.DiscordMessageFormatSpec.playerDeath],
+        mapOf("message" to message)
+    ).string
 
 fun Config.formatPlayerAdvancementMessage(player: ServerPlayerEntity, advancement: Advancement): String =
     formatDiscordRelayMessage(

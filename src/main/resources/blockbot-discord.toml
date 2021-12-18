@@ -48,8 +48,10 @@ imageInterpolation = false
     # Supports discord markdown and Placeholder API with player context
     playerJoin = "%player:displayname% joined the game"
     playerLeave = "%player:displayname% left the game"
+    # Placeholders: {message}
+    playerDeath = "{message}"
     # Placeholders: {advancement}
-    playerAdvancement = "%player:displayname% has made the advancment [{advancement}]"
+    playerAdvancement = "%player:displayname% has made the advancement [{advancement}]"
 
     serverStart = ":green_circle: Server Started"
     serverStop = ":octagonal_sign: Server Stopped"
@@ -122,12 +124,13 @@ unlinkedDisconnectMessage = [
     "<gray>Link Code: <green><bold>{code}",
     "<gray>Discord: <blue><underline>discord.gg/INVITECODE"
 ]
-    # Messages for the /link minecraft and discord commands
-    [Linking.Messages]
-    noLinkedAccounts = "<red>There are no matching linked accounts"
-    alreadyLinked = "<red>This account is already linked to <blue>{user}"
-    failedUnlink = "<red>Failed to unlink these accounts!"
-    successfulUnlink = "<blue>Successfully unlinked your account"
-    successfulLink = "Account successfully linked to: {player}"
-    linkCode = "<blue>Link your account with <gray>/link</gray> in discord. Code: <green><bold>{code}"
-    notInServer = "<red>You must be in the discord server to join"
+# Message to inform players they must be in the discord server to join
+notInServerMessage = "<red>You must be in the discord server to join"
+# Messages for the /link minecraft and discord commands
+[Linking.Messages]
+noLinkedAccounts = "<red>There are no matching linked accounts"
+alreadyLinked = "<red>This account is already linked to <blue>{user}"
+failedUnlink = "<red>Failed to unlink these accounts!"
+successfulUnlink = "<blue>Successfully unlinked your account"
+successfulLink = "Account successfully linked to: {player}"
+linkCode = "<blue>Link your account with <gray>/link</gray> in discord. Code: <green><bold>{code}"
