@@ -126,11 +126,11 @@ unlinkedDisconnectMessage = [
 ]
 # Message to inform players they must be in the discord server to join
 notInServerMessage = "<red>You must be in the discord server to join"
-# Messages for the /link minecraft and discord commands
-[Linking.Messages]
-noLinkedAccounts = "<red>There are no matching linked accounts"
-alreadyLinked = "<red>This account is already linked to <blue>{user}"
-failedUnlink = "<red>Failed to unlink these accounts!"
-successfulUnlink = "<blue>Successfully unlinked your account"
-successfulLink = "Account successfully linked to: {player}"
-linkCode = "<blue>Link your account with <gray>/link</gray> in discord. Code: <green><bold>{code}"
+    # Messages for the /link minecraft and discord commands
+    [Linking.Messages]
+    noLinkedAccounts = "<red>There are no matching linked accounts"
+    alreadyLinked = "<red>This account is already linked to <blue>{user}"
+    failedUnlink = "<red>Failed to unlink these accounts!"
+    successfulUnlink = "<blue>Successfully unlinked your account"
+    successfulLink = "Account successfully linked to: {player}"
+    linkCode = "<blue>Link your account with <gray>/link</gray> in discord. Code: <green><bold>{code}"
