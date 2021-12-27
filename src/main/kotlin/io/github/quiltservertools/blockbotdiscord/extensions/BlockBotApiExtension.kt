@@ -327,10 +327,11 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onPlayerDeath(player: ServerPlayerEntity, message: Text) {
+        if (config.formatPlayerDeathMessage(player, message).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
-                    name = message.string
+                    name = config.formatPlayerDeathMessage(player, message)
                     icon = config.getWebhookChatRelayAvatar(player.gameProfile)
                 }
                 color = Colors.orange
