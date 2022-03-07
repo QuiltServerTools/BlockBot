@@ -2,7 +2,7 @@ plugins {
     java
     id("maven-publish")
     id("fabric-loom") version "0.10.+"
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     kotlin("plugin.serialization") version "1.5.21"
 }
@@ -87,6 +87,7 @@ repositories {
     mavenCentral()
     maven("https://maven.nucleoid.xyz/")
     maven("https://maven.kotlindiscord.com/repository/maven-public/")
+    maven("https://maven.bymartrixx.me")
 }
 
 dependencies {

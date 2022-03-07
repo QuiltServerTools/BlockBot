@@ -216,10 +216,13 @@ class BlockBotApiExtension : Extension(), Bot {
             }
         }
 
+        /* TODO update kordex
         for (sticker in message.stickers) {
+            val a = sticker.getSticker()
             if (content.string.isNotEmpty()) content.append("\n")
-            attachments.add("[Sticker: ${sticker.name}]".literal())
+            attachments.add("[Sticker: ${a.name}]".literal())
         }
+         */
 
         val topRole = sender.getTopRole()
         val topColor = sender.getDisplayColor()
