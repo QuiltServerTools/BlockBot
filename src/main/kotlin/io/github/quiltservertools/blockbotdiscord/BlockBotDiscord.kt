@@ -63,6 +63,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
 
     private fun serverStarting(server: MinecraftServer) {
         launch {
+            println(config[BotSpec.token])
             bot = ExtensibleBot(config[BotSpec.token]) {
                 applicationCommands {
                     enabled = true

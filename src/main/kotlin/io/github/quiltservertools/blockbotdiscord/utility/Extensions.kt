@@ -3,8 +3,8 @@ package io.github.quiltservertools.blockbotdiscord.utility
 import com.google.common.collect.Iterables
 import com.mojang.authlib.GameProfile
 import dev.kord.core.entity.Message
-import net.kyori.adventure.platform.fabric.FabricServerAudiences
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.server.MinecraftServer
 import net.minecraft.text.LiteralText
 import net.minecraft.text.MutableText
@@ -22,6 +22,6 @@ fun Message.summary(): String {
 
 fun GameProfile.getTextures() = Iterables.getFirst(this.properties.get("textures"), null)?.value
 
-fun Component.toNative(server: MinecraftServer): MutableText = FabricServerAudiences.of(server).toNative(this).shallowCopy()
+fun Component.toNative(): MutableText = Text.Serializer.fromJson(GsonComponentSerializer.gson().serialize(this))?: LiteralText("")
 
-fun Text.toAdventure(server: MinecraftServer) = FabricServerAudiences.of(server).toAdventure(this)
+fun Text.toAdventure() = GsonComponentSerializer.gson().deserialize(Text.Serializer.toJson(this))

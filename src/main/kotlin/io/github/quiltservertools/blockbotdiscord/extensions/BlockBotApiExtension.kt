@@ -129,7 +129,7 @@ class BlockBotApiExtension : Extension(), Bot {
         val emojiString = EmojiParser.parseToAliases(message.content)
         var content: MutableText =
             if (config[ChatRelaySpec.convertMarkdown]) minecraftSerializer.serialize(emojiString)
-                .toNative(server) else emojiString.literal()
+                .toNative() else emojiString.literal()
         content = convertEmojiToTranslatable(content)
         if (message.referencedMessage != null) {
             val reply = config.getReplyMsg(
@@ -275,7 +275,7 @@ class BlockBotApiExtension : Extension(), Bot {
 
     override fun onChatMessage(sender: MessageSender, message: Text) {
         BlockBotDiscord.launch {
-            var content = discordSerializer.serialize(message.toAdventure(server))
+            var content = discordSerializer.serialize(message.toAdventure())
             if (config[ChatRelaySpec.escapeIngameMarkdown]) {
                 content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
             }

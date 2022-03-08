@@ -97,8 +97,9 @@ dependencies {
     include(libs.placeholder.api)
 
     shadow(libs.mcDiscordReserializer)
-    modImplementation(libs.adventure.fabric)
-    include(libs.adventure.fabric)
+    shadow(libs.adventure.gson)
+    //modImplementation(libs.adventure.fabric)
+    //include(libs.adventure.fabric)
 
     shadow(libs.kord.extensions)
     shadow(libs.emoji)

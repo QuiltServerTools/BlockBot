@@ -14,6 +14,7 @@ kord-extensions = "1.5.1-RC1"
 mc-discord-reserializer = "4.2.2"
 emoji-java = "5.1.1"
 adventure-fabric = "5.2.0"
+adventure-gson = "4.10.1"
 
 placeholder-api = "1.1.3+1.17.1"
 permission-api = "0.1-SNAPSHOT"
@@ -33,6 +34,7 @@ kord-extensions = { module = "com.kotlindiscord.kord.extensions:kord-extensions"
 emoji = { module = "com.vdurmont:emoji-java", version.ref = "emoji-java"}
 mcDiscordReserializer = { module = "dev.vankka:MCDiscordReserializer", version.ref = "mc-discord-reserializer"}
 adventure-fabric = { module = "net.kyori:adventure-platform-fabric", version.ref = "adventure-fabric"}
+adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure-gson"}
 
 placeholder-api = { module = "eu.pb4:placeholder-api", version.ref = "placeholder-api" }
 permission-api = { module = "me.lucko:fabric-permissions-api", version.ref = "permission-api"}
