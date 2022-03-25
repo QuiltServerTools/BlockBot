@@ -42,7 +42,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
         if (!Files.exists(FabricLoader.getInstance().configDir.resolve(CONFIG_PATH))) {
             logInfo("No config file, creating...")
             Files.copy(
-                FabricLoader.getInstance().getModContainer(MOD_ID).get().getPath(CONFIG_PATH),
+                FabricLoader.getInstance().getModContainer(MOD_ID).get().findPath(CONFIG_PATH).get(),
                 FabricLoader.getInstance().configDir.resolve(CONFIG_PATH)
             )
         }
@@ -63,7 +63,6 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
 
     private fun serverStarting(server: MinecraftServer) {
         launch {
-            println(config[BotSpec.token])
             bot = ExtensibleBot(config[BotSpec.token]) {
                 applicationCommands {
                     enabled = true

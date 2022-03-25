@@ -73,7 +73,10 @@ class MemberCommandsExtension : Extension() {
     }
 
     inner class WhitelistArgs : Arguments() {
-        val player by string("player", "The name of the player to whitelist")
+        val player by string {
+            name = "username"
+            description = "The username of the player to whitelist"
+        }
     }
 }
 

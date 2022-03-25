@@ -53,6 +53,8 @@ class InlineCommandsExtension : Extension() {
     }
 
     inner class InlineCommandsArgs : Arguments() {
-        val command by string("command", "The command to run (gamemode creative steve)")
+        val command by string {
+            name = "command"
+            description = "The command to run"}
     }
 }

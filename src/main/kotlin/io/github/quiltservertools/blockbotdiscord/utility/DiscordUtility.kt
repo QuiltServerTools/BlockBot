@@ -3,10 +3,10 @@ package io.github.quiltservertools.blockbotdiscord.utility
 import com.vdurmont.emoji.EmojiManager
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.User
-import dev.kord.core.firstOrNull
 import eu.pb4.placeholders.PlaceholderAPI
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.guildId
+import kotlinx.coroutines.flow.firstOrNull
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText

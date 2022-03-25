@@ -88,7 +88,10 @@ class LinkingExtension : Extension() {
     }
 
     inner class LinkingArgs : Arguments() {
-        val code by string("code", "The linking code received in-game")
+        val code by string {
+            name = "code"
+            description = "The linking code received in-game"
+        }
     }
 
     companion object {
@@ -155,7 +158,7 @@ suspend fun ServerPlayerEntity.syncLinkedName(kord: Kord) {
 fun GameProfile.canJoin(server: MinecraftServer): Text? {
     return runBlocking {
         if (config[LinkingSpec.enabled] && config[LinkingSpec.requireLinking]) {
-            val account = this@canJoin.linkedAccount();
+            val account = this@canJoin.linkedAccount()
             if (account != null) {
                 if (account.asMemberOrNull() == null) return@runBlocking TextParser.parse(config[LinkingSpec.notInServerMessage])
 

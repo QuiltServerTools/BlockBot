@@ -10,7 +10,7 @@ kotlin = "1.6.10"
 fabric-kotlin = "1.7.1+kotlin.1.6.10"
 
 # Discord
-kord-extensions = "1.5.1-RC1"
+kord-extensions = "1.5.2-SNAPSHOT"
 mc-discord-reserializer = "4.2.2"
 emoji-java = "5.1.1"
 adventure-fabric = "5.2.0"

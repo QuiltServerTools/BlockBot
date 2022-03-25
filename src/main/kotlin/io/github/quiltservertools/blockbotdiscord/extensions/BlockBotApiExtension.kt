@@ -153,11 +153,11 @@ class BlockBotApiExtension : Extension(), Bot {
                     val image = ImageIO.read(URL(attachment.data.proxyUrl))
 
                     val stepSize = (ceil(image.width.toDouble() / 48).toInt()).coerceAtLeast(1)
-                    val stepSquared = stepSize * stepSize;
+                    val stepSquared = stepSize * stepSize
                     val width = image.width
                     val height = image.height
 
-                    var x = 0;
+                    var x = 0
                     var y = 0
 
                     val list = NbtList()
@@ -168,9 +168,9 @@ class BlockBotApiExtension : Extension(), Bot {
                             var rgb: Int
 
                             if (interpolateImages && stepSize != 1) {
-                                var r = 0;
-                                var g = 0;
-                                var b = 0;
+                                var r = 0
+                                var g = 0
+                                var b = 0
 
                                 for (x2 in 0 until stepSize) {
                                     for (y2 in 0 until stepSize) {
@@ -216,13 +216,12 @@ class BlockBotApiExtension : Extension(), Bot {
             }
         }
 
-        /* TODO update kordex
-        for (sticker in message.stickers) {
-            val a = sticker.getSticker()
-            if (content.string.isNotEmpty()) content.append("\n")
-            attachments.add("[Sticker: ${a.name}]".literal())
+        for (stickerItem in message.stickers) {
+            val sticker = stickerItem.getSticker()
+            attachments.add("[Sticker: ${sticker.name}]".literal().styled {
+                it.withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, (sticker.description ?: "").literal()))
+            })
         }
-         */
 
         val topRole = sender.getTopRole()
         val topColor = sender.getDisplayColor()
