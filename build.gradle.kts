@@ -4,7 +4,7 @@ plugins {
     id("fabric-loom") version "0.10.+"
     kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    kotlin("plugin.serialization") version "1.5.21"
+    kotlin("plugin.serialization") version "1.6.10"
 }
 
 configurations.implementation.get().extendsFrom(configurations.shadow.get())

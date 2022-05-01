@@ -123,7 +123,7 @@ private fun registerPlaceholders() {
 
     PlaceholderAPI.register(id("linked_discriminator")) { ctx ->
         runBlocking {
-            PlaceholderResult.value(ctx.player.getLinkedAccount()?.discriminator)
+            PlaceholderResult.value(ctx.player.getLinkedAccount()?.discriminator?.literal())
         }
     }
 
