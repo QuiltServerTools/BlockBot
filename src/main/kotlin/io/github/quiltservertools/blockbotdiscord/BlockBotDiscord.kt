@@ -66,6 +66,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
             bot = ExtensibleBot(config[BotSpec.token]) {
                 applicationCommands {
                     enabled = true
+                    syncPermissions = false
                 }
 
                 extensions {
