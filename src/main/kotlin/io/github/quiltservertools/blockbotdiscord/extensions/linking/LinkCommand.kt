@@ -19,7 +19,7 @@ import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.CommandManager.literal
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
 
 typealias Dispatcher = CommandDispatcher<ServerCommandSource>
 typealias Context = CommandContext<ServerCommandSource>
@@ -97,11 +97,11 @@ class LinkCommand(private val dispatcher: Dispatcher) {
 
             if (id != null && BlockBotDiscord.linkedAccounts.get(id) != null) {
                 val user = kord.getUser(id)
-                source.sendFeedback(LiteralText(user?.tag ?: id.asString), false)
+                source.sendFeedback(Text.literal(user?.tag ?: id.asString), false)
 
                 for (uuid in BlockBotDiscord.linkedAccounts.get(id)!!) {
                     val account = source.server.userCache.getByUuid(uuid).unwrap()
-                    source.sendFeedback(LiteralText("    - ${account?.name ?: uuid.toString()}"), false)
+                    source.sendFeedback(Text.literal("    - ${account?.name ?: uuid.toString()}"), false)
                 }
             } else {
                 source.sendFeedback(TextParser.parse(config[LinkingSpec.MessagesSpec.noLinkedAccounts]), false)

@@ -1,7 +1,7 @@
 plugins {
     java
     id("maven-publish")
-    id("fabric-loom") version "0.10.+"
+    id("fabric-loom") version "0.12.+"
     kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     kotlin("plugin.serialization") version "1.6.10"

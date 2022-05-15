@@ -72,7 +72,7 @@ class BlockBotApiExtension : Extension(), Bot {
     )
     private val discordSerializer = DiscordSerializer(
         DiscordSerializerOptions.defaults().keybindProvider
-    ) { TranslatableText(it.key()).string }
+    ) { Text.translatable(it.key()).string }
     private val server: MinecraftServer by inject()
     private val mentions = AllowedMentionsBuilder()
 
@@ -111,8 +111,7 @@ class BlockBotApiExtension : Extension(), Bot {
                             for (message in messages) {
                                 server.playerManager.broadcast(
                                     message,
-                                    net.minecraft.network.MessageType.CHAT,
-                                    Util.NIL_UUID
+                                    net.minecraft.network.MessageType.SYSTEM
                                 )
                             }
                         }
@@ -163,7 +162,7 @@ class BlockBotApiExtension : Extension(), Bot {
                     val list = NbtList()
 
                     while (y < height) {
-                        val text = LiteralText("").setStyle(Style.EMPTY.withItalic(false))
+                        val text = Text.empty().setStyle(Style.EMPTY.withItalic(false))
                         while (x < width) {
                             var rgb: Int
 
@@ -188,7 +187,7 @@ class BlockBotApiExtension : Extension(), Bot {
                             } else {
                                 rgb = image.getRGB(x, y).and(0xffffff)
                             }
-                            val pixel = LiteralText("█").setStyle(Style.EMPTY.withColor(rgb))
+                            val pixel = Text.literal("█").setStyle(Style.EMPTY.withColor(rgb))
                             text.append(pixel)
                             x += stepSize
                         }
@@ -204,7 +203,7 @@ class BlockBotApiExtension : Extension(), Bot {
                     display.put("Lore", list)
 
 
-                    stack.setCustomName(LiteralText.EMPTY)
+                    stack.setCustomName(Text.empty())
                     hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, HoverEvent.ItemStackContent(stack))
                 }
 

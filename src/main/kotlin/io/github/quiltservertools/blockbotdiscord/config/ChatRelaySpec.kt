@@ -14,7 +14,6 @@ import io.github.quiltservertools.blockbotdiscord.utility.summary
 import net.minecraft.advancement.Advancement
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.LiteralText
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
@@ -192,6 +191,6 @@ fun Config.getWebhookChatRelayAvatar(gameProfile: GameProfile): String =
         mapOf(
             "uuid" to gameProfile.id.toString().literal(),
             "username" to gameProfile.name.literal(),
-            "texture" to (gameProfile.getTextures()?.literal() ?: LiteralText(""))
+            "texture" to (gameProfile.getTextures()?.literal() ?: Text.empty())
         )
     ).string

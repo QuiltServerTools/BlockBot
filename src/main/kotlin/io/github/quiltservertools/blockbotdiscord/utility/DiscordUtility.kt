@@ -9,7 +9,6 @@ import io.github.quiltservertools.blockbotdiscord.config.guildId
 import kotlinx.coroutines.flow.firstOrNull
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import java.util.regex.Pattern
 
 
@@ -39,7 +38,7 @@ private val emojiPattern =
 
 private val emojiAliases = EmojiManager.getAll().flatMap { it.aliases }.map {
     it to
-        TranslatableText(":$it:")
+        Text.translatable(":$it:")
 }.toMap(
     mutableMapOf()
 )

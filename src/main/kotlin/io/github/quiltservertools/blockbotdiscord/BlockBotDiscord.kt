@@ -54,7 +54,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
         linkedAccounts.load()
 
         ServerLifecycleEvents.SERVER_STARTING.register(BlockBotDiscord::serverStarting)
-        CommandRegistrationCallback.EVENT.register { dispatcher, dedicated ->
+        CommandRegistrationCallback.EVENT.register { dispatcher, _ ->
             LinkCommand(dispatcher).register()
         }
 

@@ -8,7 +8,7 @@ import eu.pb4.placeholders.TextParser
 import io.github.quiltservertools.blockbotdiscord.extensions.linking.linkCode
 import io.github.quiltservertools.blockbotdiscord.utility.literal
 import net.minecraft.server.MinecraftServer
-import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
 
 object LinkingSpec : ConfigSpec() {
     val enabled by required<Boolean>()
@@ -31,7 +31,7 @@ object LinkingSpec : ConfigSpec() {
 }
 
 fun Config.formatUnlinkedDisconnectMessage(gameProfile: GameProfile, server: MinecraftServer) =
-    LiteralText("").apply {
+    Text.empty().apply {
         config[LinkingSpec.unlinkedDisconnectMessage].forEach {
             this.append(
                 formatLine(
@@ -40,7 +40,7 @@ fun Config.formatUnlinkedDisconnectMessage(gameProfile: GameProfile, server: Min
                     gameProfile.linkCode
                 )
             )
-            this.append(LiteralText("\n"))
+            this.append(Text.literal("\n"))
         }
     }
 

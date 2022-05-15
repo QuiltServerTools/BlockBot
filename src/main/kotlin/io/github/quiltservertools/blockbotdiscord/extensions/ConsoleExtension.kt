@@ -15,7 +15,7 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.dedicated.MinecraftDedicatedServer
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
@@ -67,7 +67,7 @@ class ConsoleExtension : Extension() {
                     serverWorld,
                     4,
                     sender.id,
-                    LiteralText(sender.id),
+                    Text.literal(sender.id),
                     server,
                     null
                 )
