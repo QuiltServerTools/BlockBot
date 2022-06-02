@@ -26,7 +26,6 @@
   ],
   "depends": {
     "java": ">=16",
-    "minecraft": "1.18.x",
     "fabricloader": ">=${fabricLoader}",
     "fabric": ">=${fabricApi}"
   }

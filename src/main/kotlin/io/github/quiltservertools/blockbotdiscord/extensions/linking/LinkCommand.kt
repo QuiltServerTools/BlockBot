@@ -28,10 +28,10 @@ class LinkCommand(private val dispatcher: Dispatcher) {
     fun register() {
         dispatcher.register(
             literal("link")
-                .executes { linkAccount(it, it.source.player) }
+                .executes { linkAccount(it, it.source.playerOrThrow) }
                 .then(literal("unlink")
-                    .requires { it.player.gameProfile.isLinked() }
-                    .executes { unlinkAccount(it, it.source.player) })
+                    .requires { it.playerOrThrow.gameProfile.isLinked() }
+                    .executes { unlinkAccount(it, it.source.playerOrThrow) })
                 .then(literal("get")
                     .requires { it.hasPermissionLevel(2) }
                     .then(literal("minecraft")
@@ -66,7 +66,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
             context.source.sendFeedback(TextParser.parse(config[LinkingSpec.MessagesSpec.successfulUnlink]), false)
 
             if (config[LinkingSpec.requireLinking]) {
-                context.source.player.networkHandler.disconnect(
+                context.source.playerOrThrow.networkHandler.disconnect(
                     config.formatUnlinkedDisconnectMessage(
                         player.gameProfile,
                         context.source.server

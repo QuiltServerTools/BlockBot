@@ -47,6 +47,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.NbtList
 import net.minecraft.nbt.NbtString
+import net.minecraft.network.message.MessageType
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
@@ -111,7 +112,7 @@ class BlockBotApiExtension : Extension(), Bot {
                             for (message in messages) {
                                 server.playerManager.broadcast(
                                     message,
-                                    net.minecraft.network.MessageType.SYSTEM
+                                    MessageType.SYSTEM
                                 )
                             }
                         }

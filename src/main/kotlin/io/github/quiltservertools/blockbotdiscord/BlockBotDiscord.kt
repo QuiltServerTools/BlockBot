@@ -18,7 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.MinecraftServer
@@ -54,7 +54,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
         linkedAccounts.load()
 
         ServerLifecycleEvents.SERVER_STARTING.register(BlockBotDiscord::serverStarting)
-        CommandRegistrationCallback.EVENT.register { dispatcher, _ ->
+        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
             LinkCommand(dispatcher).register()
         }
 
