@@ -25,7 +25,7 @@ public abstract class TellRawCommandMixin {
     )
     private static void relayMeToDiscord(CommandContext<ServerCommandSource> context, CallbackInfoReturnable<Integer> cir) throws CommandSyntaxException {
         // Check if tellraw is sent to every online player
-        if (EntityArgumentType.getPlayers(context, "targets").size() == context.getSource().getPlayerNames().size()) {
+        if (context.getInput().replace("/tellraw ", "").startsWith("@a")) {
             var entity = context.getSource().getEntity();
             MessageSender sender;
             if (entity instanceof ServerPlayerEntity player) {
