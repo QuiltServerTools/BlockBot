@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.quiltservertools.blockbotapi.event.ChatMessageEvent;
 import io.github.quiltservertools.blockbotapi.sender.MessageSender;
 import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender;
+import net.minecraft.command.EntitySelector;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
@@ -25,7 +26,7 @@ public abstract class TellRawCommandMixin {
     )
     private static void relayMeToDiscord(CommandContext<ServerCommandSource> context, CallbackInfoReturnable<Integer> cir) throws CommandSyntaxException {
         // Check if tellraw is sent to every online player
-        if (context.getInput().replace("/tellraw ", "").startsWith("@a")) {
+        if (context.getArgument("targets", EntitySelector.class).getLimit() > 1 && EntityArgumentType.getPlayers(context, "targets").size() == context.getSource().getPlayerNames().size()) {
             var entity = context.getSource().getEntity();
             MessageSender sender;
             if (entity instanceof ServerPlayerEntity player) {
