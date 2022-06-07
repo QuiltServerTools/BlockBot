@@ -3,8 +3,9 @@ package io.github.quiltservertools.blockbotdiscord.config
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.ConfigSpec
 import dev.kord.common.entity.ActivityType
-import eu.pb4.placeholders.PlaceholderAPI
-import eu.pb4.placeholders.TextParser
+import eu.pb4.placeholders.api.PlaceholderContext
+import eu.pb4.placeholders.api.Placeholders
+import eu.pb4.placeholders.api.TextParserUtils
 import net.minecraft.server.MinecraftServer
 
 object PresenceSpec : ConfigSpec() {
@@ -14,9 +15,9 @@ object PresenceSpec : ConfigSpec() {
 
 fun Config.formatPresenceText(
     server: MinecraftServer
-): String = PlaceholderAPI.parseText(
-    TextParser.parse(
+): String = Placeholders.parseText(
+    TextParserUtils.formatText(
         this[PresenceSpec.activityText]
     ),
-    server
+    PlaceholderContext.of(server)
 ).string

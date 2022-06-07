@@ -4,8 +4,9 @@ import com.mojang.authlib.GameProfile
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.ConfigSpec
 import dev.kord.core.entity.Message
-import eu.pb4.placeholders.PlaceholderAPI
-import eu.pb4.placeholders.TextParser
+import eu.pb4.placeholders.api.PlaceholderContext
+import eu.pb4.placeholders.api.Placeholders
+import eu.pb4.placeholders.api.TextParserUtils
 import io.github.quiltservertools.blockbotapi.sender.MessageSender
 import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender
 import io.github.quiltservertools.blockbotdiscord.utility.getTextures
@@ -113,28 +114,31 @@ private fun formatDiscordRelayMessage(
         "sender_display" to sender.displayName,
         "message" to message.literal()
     )
-): String =
-    PlaceholderAPI.parseText(
-        PlaceholderAPI.parsePredefinedText(
-            format.literal(),
-            PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
-            placeholders
-            ),
-        if (sender is PlayerMessageSender) sender.player else null
-    ).string
+): String {
+    var parsedText = Placeholders.parseText(
+        format.literal(),
+        Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+        placeholders
+    )
+    if (sender is PlayerMessageSender) parsedText = Placeholders.parseText(
+        parsedText,
+        PlaceholderContext.of(sender.player)
+    )
+    return parsedText.string
+}
 
 fun formatDiscordRelayMessage(
     player: ServerPlayerEntity,
     format: String,
     placeholders: Map<String, Text> = mapOf()
 ): Text =
-    PlaceholderAPI.parseText(
-        PlaceholderAPI.parsePredefinedText(
+    Placeholders.parseText(
+        Placeholders.parseText(
             format.literal(),
-            PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+            Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
             placeholders
         ),
-        player
+        PlaceholderContext.of(player)
     )
 
 fun formatDiscordRelayMessage(
@@ -142,13 +146,13 @@ fun formatDiscordRelayMessage(
     format: String,
     placeholders: Map<String, Text> = mapOf()
 ): String =
-    PlaceholderAPI.parseText(
-        PlaceholderAPI.parsePredefinedText(
+    Placeholders.parseText(
+        Placeholders.parseText(
             format.literal(),
-            PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+            Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
             placeholders
         ),
-        server
+        PlaceholderContext.of(server)
     ).string
 
 fun Config.getMinecraftChatRelayMsg(
@@ -156,38 +160,38 @@ fun Config.getMinecraftChatRelayMsg(
     topRole: MutableText,
     message: Text,
     server: MinecraftServer
-): Text = PlaceholderAPI.parseText(
-    PlaceholderAPI.parsePredefinedText(
-        TextParser.parse(this[ChatRelaySpec.MinecraftFormatSpec.messageFormat]),
-        PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+): Text = Placeholders.parseText(
+    Placeholders.parseText(
+        TextParserUtils.formatText(this[ChatRelaySpec.MinecraftFormatSpec.messageFormat]),
+        Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
         mapOf(
             "sender" to sender.copy().formatted(Formatting.RESET),
             "sender_colored" to sender,
             "top_role" to topRole,
             "message" to message
         )
-    ), server
+    ), PlaceholderContext.of(server)
 )
 
 fun Config.getReplyMsg(
     sender: String,
     message: Message,
     server: MinecraftServer
-): Text = PlaceholderAPI.parseText(
-    PlaceholderAPI.parsePredefinedText(
-        TextParser.parse(this[ChatRelaySpec.MinecraftFormatSpec.replyFormat]),
-        PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+): Text = Placeholders.parseText(
+    Placeholders.parseText(
+        TextParserUtils.formatText(this[ChatRelaySpec.MinecraftFormatSpec.replyFormat]),
+        Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
         mapOf(
             "sender" to (sender).literal(),
             "summary" to message.summary().literal(),
         )
-    ), server
+    ), PlaceholderContext.of(server)
 )
 
 fun Config.getWebhookChatRelayAvatar(gameProfile: GameProfile): String =
-    PlaceholderAPI.parsePredefinedText(
+    Placeholders.parseText(
         this[ChatRelaySpec.WebhookSpec.playerAvatarUrl].literal(),
-        PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+        Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
         mapOf(
             "uuid" to gameProfile.id.toString().literal(),
             "username" to gameProfile.name.literal(),

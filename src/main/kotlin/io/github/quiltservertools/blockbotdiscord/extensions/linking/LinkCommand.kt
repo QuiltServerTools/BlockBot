@@ -6,7 +6,7 @@ import com.mojang.brigadier.arguments.LongArgumentType
 import com.mojang.brigadier.context.CommandContext
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
-import eu.pb4.placeholders.TextParser
+import eu.pb4.placeholders.api.TextParserUtils
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import io.github.quiltservertools.blockbotdiscord.config.LinkingSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
@@ -63,7 +63,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
 
         if (BlockBotDiscord.linkedAccounts.remove(player.uuid)) {
             logInfo("Unlinked ${player.name} from $id")
-            context.source.sendFeedback(TextParser.parse(config[LinkingSpec.MessagesSpec.successfulUnlink]), false)
+            context.source.sendFeedback(TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.successfulUnlink]), false)
 
             if (config[LinkingSpec.requireLinking]) {
                 context.source.playerOrThrow.networkHandler.disconnect(
@@ -74,7 +74,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                 )
             }
         } else {
-            context.source.sendFeedback(TextParser.parse(config[LinkingSpec.MessagesSpec.failedUnlink]), false)
+            context.source.sendFeedback(TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.failedUnlink]), false)
         }
 
         return 1
@@ -104,7 +104,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                     source.sendFeedback(Text.literal("    - ${account?.name ?: uuid.toString()}"), false)
                 }
             } else {
-                source.sendFeedback(TextParser.parse(config[LinkingSpec.MessagesSpec.noLinkedAccounts]), false)
+                source.sendFeedback(TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.noLinkedAccounts]), false)
             }
         }
 
@@ -117,7 +117,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
 
             if (user != null) {
                 context.source.sendFeedback(
-                    TextParser.parse(
+                    TextParserUtils.formatText(
                         config[LinkingSpec.MessagesSpec.alreadyLinked].replace(
                             "{user}",
                             user.tag
@@ -126,7 +126,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                 )
             } else {
                 context.source.sendFeedback(
-                    TextParser.parse(
+                    TextParserUtils.formatText(
                         config[LinkingSpec.MessagesSpec.linkCode].replace(
                             "{code}",
                             player.gameProfile.linkCode

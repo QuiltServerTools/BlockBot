@@ -3,7 +3,7 @@ package io.github.quiltservertools.blockbotdiscord.utility
 import com.vdurmont.emoji.EmojiManager
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.User
-import eu.pb4.placeholders.PlaceholderAPI
+import eu.pb4.placeholders.api.Placeholders
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.guildId
 import kotlinx.coroutines.flow.firstOrNull
@@ -46,7 +46,7 @@ private val emojiAliases = EmojiManager.getAll().flatMap { it.aliases }.map {
 fun convertEmojiToTranslatable(
     input: MutableText
 ): MutableText {
-    return PlaceholderAPI.parsePredefinedText(
+    return Placeholders.parseText(
         input,
         emojiPattern,
         emojiAliases as Map<String, Text>

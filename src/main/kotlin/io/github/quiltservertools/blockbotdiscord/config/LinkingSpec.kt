@@ -3,8 +3,9 @@ package io.github.quiltservertools.blockbotdiscord.config
 import com.mojang.authlib.GameProfile
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.ConfigSpec
-import eu.pb4.placeholders.PlaceholderAPI
-import eu.pb4.placeholders.TextParser
+import eu.pb4.placeholders.api.PlaceholderContext
+import eu.pb4.placeholders.api.Placeholders
+import eu.pb4.placeholders.api.TextParserUtils
 import io.github.quiltservertools.blockbotdiscord.extensions.linking.linkCode
 import io.github.quiltservertools.blockbotdiscord.utility.literal
 import net.minecraft.server.MinecraftServer
@@ -45,13 +46,13 @@ fun Config.formatUnlinkedDisconnectMessage(gameProfile: GameProfile, server: Min
     }
 
 private fun formatLine(line: String, server: MinecraftServer, code: String) =
-    PlaceholderAPI.parseText(
-        PlaceholderAPI.parsePredefinedText(
-            TextParser.parse(line),
-            PlaceholderAPI.ALT_PLACEHOLDER_PATTERN_CUSTOM,
+    Placeholders.parseText(
+        Placeholders.parseText(
+            TextParserUtils.formatText(line),
+            Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
             mapOf(
                 "code" to code.literal()
             )
         ),
-        server
+        PlaceholderContext.of(server)
     )

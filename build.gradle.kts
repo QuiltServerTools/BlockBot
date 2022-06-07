@@ -47,7 +47,6 @@ allprojects {
         modImplementation(rootProject.libs.fabric.api)
 
         // Optional deps
-        modImplementation(rootProject.libs.styled.chat)
         modRuntimeOnly(rootProject.libs.permission.api)
     }
 

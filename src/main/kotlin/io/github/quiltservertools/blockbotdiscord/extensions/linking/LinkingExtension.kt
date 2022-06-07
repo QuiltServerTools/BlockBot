@@ -13,9 +13,9 @@ import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.edit
 import dev.kord.core.entity.Member
-import eu.pb4.placeholders.PlaceholderAPI
-import eu.pb4.placeholders.PlaceholderResult
-import eu.pb4.placeholders.TextParser
+import eu.pb4.placeholders.api.PlaceholderResult
+import eu.pb4.placeholders.api.Placeholders
+import eu.pb4.placeholders.api.TextParserUtils
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import io.github.quiltservertools.blockbotdiscord.config.*
 import io.github.quiltservertools.blockbotdiscord.extensions.getDisplayColor
@@ -100,19 +100,19 @@ class LinkingExtension : Extension() {
 }
 
 private fun registerPlaceholders() {
-    PlaceholderAPI.register(id("linked_username")) { ctx ->
+    Placeholders.register(id("linked_username")) { ctx, arg ->
         runBlocking {
-            val user = ctx.player.getLinkedAccount()
-            val color = if (ctx.argument == "colored") user?.asMemberOrNull()?.getDisplayColor() else null
+            val user = ctx.player?.getLinkedAccount()
+            val color = if (arg == "colored") user?.asMemberOrNull()?.getDisplayColor() else null
 
             PlaceholderResult.value(user?.username?.literal()?.styled { color?.let { _ -> it.withColor(color.rgb) } })
         }
     }
 
-    PlaceholderAPI.register(id("linked_display")) { ctx ->
+    Placeholders.register(id("linked_display")) { ctx, arg ->
         runBlocking {
-            val user = ctx.player.getLinkedAccount()
-            val color = if (ctx.argument == "colored") user?.asMemberOrNull()?.getDisplayColor() else null
+            val user = ctx.player?.getLinkedAccount()
+            val color = if (arg == "colored") user?.asMemberOrNull()?.getDisplayColor() else null
 
             PlaceholderResult.value(
                 (user?.asMemberOrNull(config.guildId)?.displayName ?: user?.username)?.literal()
@@ -121,15 +121,15 @@ private fun registerPlaceholders() {
         }
     }
 
-    PlaceholderAPI.register(id("linked_discriminator")) { ctx ->
+    Placeholders.register(id("linked_discriminator")) { ctx, arg ->
         runBlocking {
-            PlaceholderResult.value(ctx.player.getLinkedAccount()?.discriminator?.literal())
+            PlaceholderResult.value(ctx.player?.getLinkedAccount()?.discriminator?.literal())
         }
     }
 
-    PlaceholderAPI.register(id("linked_role")) { ctx ->
+    Placeholders.register(id("linked_role")) { ctx, arg ->
         runBlocking {
-            val member = ctx.player.getLinkedAccount()?.asMemberOrNull(config.guildId)
+            val member = ctx.player?.getLinkedAccount()?.asMemberOrNull(config.guildId)
             val color = member?.getTopRole()?.color
             val text = member?.getTopRole()?.data?.name?.literal()
 
@@ -160,7 +160,7 @@ fun GameProfile.canJoin(server: MinecraftServer): Text? {
         if (config[LinkingSpec.enabled] && config[LinkingSpec.requireLinking]) {
             val account = this@canJoin.linkedAccount()
             if (account != null) {
-                if (account.asMemberOrNull() == null) return@runBlocking TextParser.parse(config[LinkingSpec.notInServerMessage])
+                if (account.asMemberOrNull() == null) return@runBlocking TextParserUtils.formatText(config[LinkingSpec.notInServerMessage])
 
                 val requiredRoles = config[LinkingSpec.requiredRoles]
                 if (requiredRoles.isEmpty()) return@runBlocking null
@@ -168,7 +168,7 @@ fun GameProfile.canJoin(server: MinecraftServer): Text? {
                 return@runBlocking if (account.asMemberOrNull()?.roleIds?.any { requiredRoles.contains(it.value) } == true) {
                     null
                 } else {
-                    TextParser.parse(config[LinkingSpec.requiredRoleDisconnectMessage])
+                    TextParserUtils.formatText(config[LinkingSpec.requiredRoleDisconnectMessage])
                 }
             }
 
