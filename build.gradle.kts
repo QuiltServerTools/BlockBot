@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
     id("fabric-loom") version "0.12.+"
     kotlin("jvm") version "1.6.10"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     kotlin("plugin.serialization") version "1.6.10"
 }
 
@@ -24,6 +24,10 @@ allprojects {
     java {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    loom {
+        //serverOnlyMinecraftJar()
     }
 
     repositories {
@@ -79,7 +83,6 @@ allprojects {
             )
         }
     }
-
 }
 
 repositories {
@@ -143,12 +146,14 @@ tasks {
         exclude("dev/kord/voice/**")
         exclude("org/bouncycastle/**")
         exclude("com/codahale/**")
-        relocate("com.ibm/**")
 
         relocate("com.fasterxml")
         relocate("com.moandjiezana")
         relocate("com.uchuhimo")
+        relocate("com.github.zafarkhaja")
         relocate("com.googlecode")
+        relocate("com.ibm")
+        relocate("com.iwebpp")
         relocate("com.kotlindiscord")
         relocate("com.sun")
         relocate("com.typesafe")
@@ -164,14 +169,16 @@ tasks {
         relocate("org.jaxen")
         relocate("org.json")
         relocate("org.koin")
+        relocate("org.pf4j")
         relocate("org.relaxng")
+        relocate("org.reflections")
         relocate("org.xml")
         relocate("org.xmlpull")
         relocate("org.yaml")
         relocate("org.dom4j")
         relocate("kotlinx.atomicfu")
         relocate("kotlinx.datetime")
-        relocate("org.reflections")
+        relocate("mu")
         relocate("net.kyori")
     }
 }

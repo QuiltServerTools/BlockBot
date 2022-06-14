@@ -16,7 +16,7 @@ emoji-java = "5.1.1"
 adventure-fabric = "5.2.0"
 adventure-gson = "4.10.1"
 
-placeholder-api = "2.0.0-beta.4+1.19"
+placeholder-api = "2.0.0-beta.5+1.19"
 permission-api = "0.1-SNAPSHOT"
 konf = "1.1.2"
 
