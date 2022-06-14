@@ -1,9 +1,12 @@
 package io.github.quiltservertools.blockbotdiscord.utility
 
-import com.vdurmont.emoji.EmojiManager
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.User
+import eu.pb4.placeholders.api.ParserContext
+import eu.pb4.placeholders.api.PlaceholderHandler
+import eu.pb4.placeholders.api.PlaceholderResult
 import eu.pb4.placeholders.api.Placeholders
+import eu.pb4.placeholders.api.node.TextNode
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.guildId
 import kotlinx.coroutines.flow.firstOrNull
@@ -36,21 +39,21 @@ suspend fun convertStringToMention(message: String, guild: Guild): String {
 private val emojiPattern =
     Pattern.compile("[:](?<id>[^:\\s]+)[:]")
 
-private val emojiAliases = EmojiManager.getAll().flatMap { it.aliases }.map {
-    it to
-        Text.translatable(":$it:")
-}.toMap(
-    mutableMapOf()
-)
-
 fun convertEmojiToTranslatable(
     input: MutableText
 ): MutableText {
-    return Placeholders.parseText(
-        input,
+    return Placeholders.parseNodes(
+        TextNode.convert(input),
         emojiPattern,
-        emojiAliases as Map<String, Text>
-    ) as MutableText
+        object : Placeholders.PlaceholderGetter {
+            override fun getPlaceholder(placeholder: String): PlaceholderHandler {
+                return PlaceholderHandler { context, argument ->
+                    PlaceholderResult.value(Text.translatable(":$placeholder:"))
+                }
+            }
+            override fun isContextOptional() = true
+        }
+    ).toText(ParserContext.of(), true).copy()
 }
 
 suspend fun User.asMemberOrNull() = this.asMemberOrNull(config.guildId)
