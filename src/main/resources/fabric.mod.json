@@ -27,7 +27,7 @@
   ],
   "depends": {
     "java": ">=16",
-    "minecraft": "1.18.x",
+    "minecraft": ">=1.19.0",
     "blockbot-api": ">=1.0.0",
     "fabric-language-kotlin": ">=1.7.0+kotlin.1.6.0",
     "fabric": ">=${fabricApi}",

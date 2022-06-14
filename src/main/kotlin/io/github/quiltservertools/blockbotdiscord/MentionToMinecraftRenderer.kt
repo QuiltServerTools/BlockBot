@@ -10,8 +10,6 @@ import io.github.quiltservertools.blockbotdiscord.config.getGuild
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
-import net.minecraft.text.LiteralText
-import net.minecraft.text.MutableText
 class MentionToMinecraftRenderer(
     private val bot: ExtensibleBot,
 ) : DefaultMinecraftRenderer() {

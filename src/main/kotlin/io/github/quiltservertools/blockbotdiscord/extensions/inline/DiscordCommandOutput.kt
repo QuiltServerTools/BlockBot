@@ -11,7 +11,7 @@ class DiscordCommandOutput(private val commandContext: EphemeralSlashCommandCont
     CommandOutput {
     private val buffer = StringBuffer()
 
-    override fun sendSystemMessage(message: Text, sender: UUID) {
+    override fun sendMessage(message: Text) {
         val content = message.string
 
         if (content.isNotEmpty()) {

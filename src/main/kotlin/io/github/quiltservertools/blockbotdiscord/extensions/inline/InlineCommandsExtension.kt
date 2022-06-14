@@ -12,7 +12,7 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.dedicated.MinecraftDedicatedServer
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
 import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
 import org.koin.core.component.inject
@@ -41,7 +41,7 @@ class InlineCommandsExtension : Extension() {
                     serverWorld,
                     config[InlineCommandsSpec.opLevel],
                     member!!.asMember().tag,
-                    LiteralText(member!!.asMember().tag),
+                    Text.literal(member!!.asMember().tag),
                     server,
                     null
                 )

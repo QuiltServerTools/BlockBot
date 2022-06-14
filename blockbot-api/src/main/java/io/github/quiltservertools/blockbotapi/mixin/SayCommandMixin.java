@@ -1,29 +1,28 @@
 package io.github.quiltservertools.blockbotapi.mixin;
 
-import com.mojang.brigadier.context.CommandContext;
 import io.github.quiltservertools.blockbotapi.event.ChatMessageEvent;
 import io.github.quiltservertools.blockbotapi.sender.MessageSender;
 import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender;
+import net.minecraft.network.message.SignedMessage;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.SayCommand;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.filter.FilteredMessage;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SayCommand.class)
 public abstract class SayCommandMixin {
     @Inject(
-        method = "method_13563",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/server/command/ServerCommandSource;getEntity()Lnet/minecraft/entity/Entity;"),
-        locals = LocalCapture.CAPTURE_FAILEXCEPTION
+        method = "method_43657",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/server/filter/FilteredMessage;Lnet/minecraft/server/command/ServerCommandSource;Lnet/minecraft/util/registry/RegistryKey;)V")
     )
-    private static void relaySayToDiscord(CommandContext<ServerCommandSource> context, CallbackInfoReturnable<Integer> cir, Text message, Text formatted) {
-        var entity = context.getSource().getEntity();
+    private static void relayPlayerSayToDiscord(PlayerManager playerManager, ServerCommandSource source, FilteredMessage<SignedMessage> message, CallbackInfo ci) {
+        var entity = source.getEntity();
         MessageSender sender;
         if (entity instanceof ServerPlayerEntity player) {
             sender = new PlayerMessageSender(
@@ -32,15 +31,16 @@ public abstract class SayCommandMixin {
             );
         } else {
             sender = new MessageSender(
-                new LiteralText(context.getSource().getName()),
-                context.getSource().getDisplayName(),
+                Text.literal(source.getName()),
+                source.getDisplayName(),
                 MessageSender.MessageType.ANNOUNCEMENT
             );
         }
 
         ChatMessageEvent.EVENT.invoker().message(
             sender,
-            message
+            message.raw().getContent()
         );
     }
+
 }
