@@ -143,7 +143,6 @@ tasks {
         exclude("org/checkerframework/**", "org/intellij/**", "org/jetbrains/annotations/**")
         exclude("com/google/gson/**")
         exclude("org/slf4j/**")
-        exclude("dev/kord/voice/**")
         exclude("org/bouncycastle/**")
         exclude("com/codahale/**")
 
