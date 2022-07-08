@@ -2,9 +2,9 @@ plugins {
     java
     id("maven-publish")
     id("fabric-loom") version "0.12.+"
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("plugin.serialization") version "1.7.10"
 }
 
 configurations.implementation.get().extendsFrom(configurations.shadow.get())
@@ -89,7 +89,6 @@ repositories {
     mavenCentral()
     maven("https://maven.nucleoid.xyz/")
     maven("https://maven.kotlindiscord.com/repository/maven-public/")
-    maven("https://maven.bymartrixx.me")
 }
 
 dependencies {
@@ -100,8 +99,6 @@ dependencies {
 
     shadow(libs.mcDiscordReserializer)
     shadow(libs.adventure.gson)
-    //modImplementation(libs.adventure.fabric)
-    //include(libs.adventure.fabric)
 
     shadow(libs.kord.extensions)
     shadow(libs.emoji)

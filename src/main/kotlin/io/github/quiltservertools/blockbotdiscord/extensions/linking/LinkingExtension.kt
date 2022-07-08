@@ -1,6 +1,7 @@
 package io.github.quiltservertools.blockbotdiscord.extensions.linking
 
 import com.google.common.collect.HashBiMap
+import com.kotlindiscord.kord.extensions.checks.memberFor
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.extensions.Extension
@@ -52,7 +53,7 @@ class LinkingExtension : Extension() {
             val roles = config[LinkingSpec.requiredRoles]
             if (roles.isNotEmpty()) {
                 allowByDefault = false
-                allowedRoles.addAll(roles.map { Snowflake(it) })
+                check { memberFor(this.event)?.asMemberOrNull()?.roleIds?.any { roles.contains(it.value) } }
             }
 
             action {

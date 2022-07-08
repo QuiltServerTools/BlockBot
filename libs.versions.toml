@@ -3,20 +3,19 @@ minecraft = "1.19"
 fabric-loader = "0.14.6"
 yarn-mappings = "1.19+build.1"
 
-fabric-api = "0.55.2+1.19"
+fabric-api = "0.57.0+1.19"
 
 # Kotlin
-kotlin = "1.6.21"
-fabric-kotlin = "1.7.4+kotlin.1.6.21"
+kotlin = "1.7.10"
+fabric-kotlin = "1.8.1+kotlin.1.7.0"
 
 # Discord
-kord-extensions = "1.5.3-SNAPSHOT"
-mc-discord-reserializer = "4.2.2"
+kord-extensions = "1.5.5-SNAPSHOT"
+mc-discord-reserializer = "4.3.0"
 emoji-java = "5.1.1"
-adventure-fabric = "5.2.0"
-adventure-gson = "4.10.1"
+adventure-gson = "4.11.0"
 
-placeholder-api = "2.0.0-beta.5+1.19"
+placeholder-api = "2.0.0-beta.7+1.19"
 permission-api = "0.1-SNAPSHOT"
 konf = "1.1.2"
 
@@ -30,8 +29,7 @@ fabric-kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = 
 
 kord-extensions = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version.ref = "kord-extensions" }
 emoji = { module = "com.vdurmont:emoji-java", version.ref = "emoji-java"}
-mcDiscordReserializer = { module = "dev.vankka:MCDiscordReserializer", version.ref = "mc-discord-reserializer"}
-adventure-fabric = { module = "net.kyori:adventure-platform-fabric", version.ref = "adventure-fabric"}
+mcDiscordReserializer = { module = "dev.vankka:mcdiscordreserializer", version.ref = "mc-discord-reserializer"}
 adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure-gson"}
 
 placeholder-api = { module = "eu.pb4:placeholder-api", version.ref = "placeholder-api" }

@@ -4,6 +4,8 @@ import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
+import dev.kord.common.entity.Permission
+import dev.kord.common.entity.Permissions
 import dev.kord.common.entity.Snowflake
 import io.github.quiltservertools.blockbotdiscord.config.InlineCommandsSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
@@ -29,7 +31,6 @@ class InlineCommandsExtension : Extension() {
 
             guild(config.getGuild(bot))
             allowByDefault = false
-            allowedRoles.addAll(config[InlineCommandsSpec.allowedRoles].map { Snowflake(it) })
 
             action {
                 val serverWorld: ServerWorld? = server.overworld
