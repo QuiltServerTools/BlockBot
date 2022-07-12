@@ -81,7 +81,7 @@ imageInterpolation = false
 pattern = "[%level] (%logger{1}) %msg%n"
 # Minium logger level to show in the console relay. OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
 minLevel = "INFO"
-# Delay in milliseconds between sending each log message
+# Delay in milliseconds before sending each log message
 delay = 1000
 # Require administator on discord to use console
 requireAdmin = true
