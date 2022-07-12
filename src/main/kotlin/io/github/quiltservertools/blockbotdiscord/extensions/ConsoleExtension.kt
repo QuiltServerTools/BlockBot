@@ -9,8 +9,8 @@ import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import io.github.quiltservertools.blockbotdiscord.config.ConsoleRelaySpec
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.getChannel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DateTimeUnit
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.dedicated.MinecraftDedicatedServer
@@ -32,13 +32,10 @@ class ConsoleExtension : Extension() {
             val channel = config.getChannel(Channels.CONSOLE, bot)
 
             while (true) {
-                val deadline = System.nanoTime() + (DateTimeUnit.SECOND * 60).nanoseconds
+                delay(config[ConsoleRelaySpec.delay])
+
                 var message = ""
-
-                while (message.length <= 2000) {
-                    val remainingTime = deadline - System.nanoTime()
-                    if (remainingTime <= 0) break
-
+                while (consoleQueue.isNotEmpty()) {
                     if (consoleQueue.peek()?.let { (message + it).length <= 2000 } == true) {
                         message += consoleQueue.poll()
                     } else {
@@ -46,11 +43,9 @@ class ConsoleExtension : Extension() {
                     }
                 }
 
-                if (message.isNotEmpty()) {
-                    channel.createMessage {
-                        allowedMentions = AllowedMentionsBuilder()
-                        content = message
-                    }
+                channel.createMessage {
+                    allowedMentions = AllowedMentionsBuilder()
+                    content = message
                 }
             }
         }
