@@ -35,7 +35,7 @@ class ConsoleExtension : Extension() {
                 delay(config[ConsoleRelaySpec.delay])
 
                 var message = ""
-                while (consoleQueue.isNotEmpty()) {
+                while (consoleQueue.isNotEmpty() || message.isEmpty()) {
                     if (consoleQueue.peek()?.let { (message + it).length <= 2000 } == true) {
                         message += consoleQueue.poll()
                     } else {
