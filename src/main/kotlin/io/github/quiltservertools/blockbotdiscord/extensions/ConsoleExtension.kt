@@ -32,20 +32,21 @@ class ConsoleExtension : Extension() {
             val channel = config.getChannel(Channels.CONSOLE, bot)
 
             while (true) {
-                delay(config[ConsoleRelaySpec.delay])
-
                 var message = ""
-                while (consoleQueue.isNotEmpty() || message.isEmpty()) {
-                    if (consoleQueue.peek()?.let { (message + it).length <= 2000 } == true) {
+                while (consoleQueue.isNotEmpty()) {
+                    if (consoleQueue.peek().let { (message + it).length <= 2000 }) {
                         message += consoleQueue.poll()
                     } else {
                         break
                     }
                 }
 
-                channel.createMessage {
-                    allowedMentions = AllowedMentionsBuilder()
-                    content = message
+                if (message.isNotEmpty()) {
+                    delay(config[ConsoleRelaySpec.delay])
+                    channel.createMessage {
+                        allowedMentions = AllowedMentionsBuilder()
+                        content = message
+                    }
                 }
             }
         }
