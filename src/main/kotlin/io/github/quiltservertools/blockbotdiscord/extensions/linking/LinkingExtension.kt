@@ -9,7 +9,6 @@ import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.types.respond
 import com.kotlindiscord.kord.extensions.utils.getTopRole
 import com.mojang.authlib.GameProfile
-import dev.kord.common.annotation.KordPreview
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.edit
@@ -42,7 +41,6 @@ class LinkingExtension : Extension() {
 
     private val server: MinecraftServer by inject()
 
-    @OptIn(KordPreview::class)
     override suspend fun setup() {
         ephemeralSlashCommand(::LinkingArgs) {
             name = "link"

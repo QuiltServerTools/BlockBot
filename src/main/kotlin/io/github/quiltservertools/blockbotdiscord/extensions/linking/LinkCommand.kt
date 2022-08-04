@@ -49,7 +49,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                             .executes {
                                 getLinkedPlayer(
                                     it,
-                                    LongArgumentType.getLong(it, "id")?.let { Snowflake(it) }
+                                    Snowflake(LongArgumentType.getLong(it, "id"))
                                 )
                             }
                         )
@@ -97,7 +97,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
 
             if (id != null && BlockBotDiscord.linkedAccounts.get(id) != null) {
                 val user = kord.getUser(id)
-                source.sendFeedback(Text.literal(user?.tag ?: id.asString), false)
+                source.sendFeedback(Text.literal(user?.tag ?: id.toString()), false)
 
                 for (uuid in BlockBotDiscord.linkedAccounts.get(id)!!) {
                     val account = source.server.userCache.getByUuid(uuid).unwrap()

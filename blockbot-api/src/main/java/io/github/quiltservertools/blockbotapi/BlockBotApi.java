@@ -23,12 +23,10 @@ public class BlockBotApi implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        ServerMessageEvents.CHAT_MESSAGE.register((message, sender, typeKey) -> {
-            ChatMessageEvent.EVENT.invoker().message(
-                new PlayerMessageSender(sender, MessageSender.MessageType.REGULAR),
-                message.raw().getContent()
-            );
-        });
+        ServerMessageEvents.CHAT_MESSAGE.register((message, sender, typeKey) -> ChatMessageEvent.EVENT.invoker().message(
+            new PlayerMessageSender(sender, MessageSender.MessageType.REGULAR),
+            message.getContent()
+        ));
     }
 
     public static Set<Bot> getBots() {

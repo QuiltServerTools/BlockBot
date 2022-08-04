@@ -7,7 +7,6 @@ import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.MeCommand;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.filter.FilteredMessage;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,9 +18,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MeCommandMixin {
     @Inject(
         method = "method_43645",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/server/filter/FilteredMessage;Lnet/minecraft/server/command/ServerCommandSource;Lnet/minecraft/util/registry/RegistryKey;)V")
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/network/message/SignedMessage;Lnet/minecraft/server/command/ServerCommandSource;Lnet/minecraft/network/message/MessageType$Parameters;)V")
     )
-    private static void relayPlayerMeToDiscord(PlayerManager playerManager, ServerCommandSource source, FilteredMessage<SignedMessage> message, CallbackInfo ci) {
+    private static void relayPlayerMeToDiscord(PlayerManager playerManager, ServerCommandSource source, SignedMessage message, CallbackInfo ci) {
         var entity = source.getEntity();
         MessageSender sender;
         if (entity instanceof ServerPlayerEntity player) {
@@ -39,7 +38,7 @@ public abstract class MeCommandMixin {
 
         ChatMessageEvent.EVENT.invoker().message(
             sender,
-            message.raw().getContent()
+            message.getContent()
         );
     }
 

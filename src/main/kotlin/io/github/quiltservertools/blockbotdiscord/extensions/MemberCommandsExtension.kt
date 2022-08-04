@@ -6,7 +6,6 @@ import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
 import com.kotlindiscord.kord.extensions.types.respond
-import dev.kord.common.annotation.KordPreview
 import dev.kord.rest.builder.message.create.embed
 import io.github.quiltservertools.blockbotdiscord.config.MemberCommandsSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
@@ -21,7 +20,6 @@ class MemberCommandsExtension : Extension() {
 
     private val server: MinecraftServer by inject()
 
-    @OptIn(KordPreview::class)
     override suspend fun setup() {
         if (config[MemberCommandsSpec.playerList]) {
             ephemeralSlashCommand {
