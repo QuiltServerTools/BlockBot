@@ -9,6 +9,7 @@ import eu.pb4.placeholders.api.TextParserUtils
 import io.github.quiltservertools.blockbotdiscord.extensions.linking.linkCode
 import io.github.quiltservertools.blockbotdiscord.utility.literal
 import net.minecraft.server.MinecraftServer
+import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 
 object LinkingSpec : ConfigSpec() {
@@ -31,7 +32,7 @@ object LinkingSpec : ConfigSpec() {
     }
 }
 
-fun Config.formatUnlinkedDisconnectMessage(gameProfile: GameProfile, server: MinecraftServer) =
+fun Config.formatUnlinkedDisconnectMessage(gameProfile: GameProfile, server: MinecraftServer): MutableText =
     Text.empty().apply {
         config[LinkingSpec.unlinkedDisconnectMessage].forEach {
             this.append(

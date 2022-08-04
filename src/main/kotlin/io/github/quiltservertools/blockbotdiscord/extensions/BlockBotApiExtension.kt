@@ -47,14 +47,12 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.NbtList
 import net.minecraft.nbt.NbtString
-import net.minecraft.network.message.MessageType
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.*
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
-import net.minecraft.util.Util
 import net.minecraft.util.math.MathHelper.clamp
 import org.koin.core.component.inject
 import java.net.URL
@@ -111,7 +109,7 @@ class BlockBotApiExtension : Extension(), Bot {
                             for (message in messages) {
                                 server.playerManager.broadcast(
                                     message,
-                                    MessageType.SYSTEM
+                                    false
                                 )
                             }
                         }

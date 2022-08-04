@@ -37,7 +37,7 @@ suspend fun convertStringToMention(message: String, guild: Guild): String {
 }
 
 private val emojiPattern =
-    Pattern.compile("[:](?<id>[^:\\s]+)[:]")
+    Pattern.compile(":(?<id>[^:\\s]+):")
 
 fun convertEmojiToTranslatable(
     input: MutableText
@@ -47,7 +47,7 @@ fun convertEmojiToTranslatable(
         emojiPattern,
         object : Placeholders.PlaceholderGetter {
             override fun getPlaceholder(placeholder: String): PlaceholderHandler {
-                return PlaceholderHandler { context, argument ->
+                return PlaceholderHandler { _, _ ->
                     PlaceholderResult.value(Text.translatable(":$placeholder:"))
                 }
             }

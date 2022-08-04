@@ -19,7 +19,7 @@ public abstract class MixinPlayerAdvancementTracker {
         method = "grantCriterion",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Lnet/minecraft/util/registry/RegistryKey;)V"
+            target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"
         )
     )
     public void announceAdvancement(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {

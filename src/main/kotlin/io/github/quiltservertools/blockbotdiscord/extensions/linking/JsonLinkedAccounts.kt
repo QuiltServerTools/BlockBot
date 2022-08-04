@@ -16,7 +16,6 @@ import net.minecraft.server.network.ServerPlayerEntity
 import java.io.File
 import java.util.*
 
-@OptIn(ExperimentalSerializationApi::class)
 class JsonLinkedAccounts : LinkedAccountData {
     private val json = Json {
         prettyPrint = true

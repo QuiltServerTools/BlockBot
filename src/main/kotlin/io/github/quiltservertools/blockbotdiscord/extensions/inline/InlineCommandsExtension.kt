@@ -4,9 +4,6 @@ import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
-import dev.kord.common.entity.Permission
-import dev.kord.common.entity.Permissions
-import dev.kord.common.entity.Snowflake
 import io.github.quiltservertools.blockbotdiscord.config.InlineCommandsSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.getGuild
@@ -47,7 +44,7 @@ class InlineCommandsExtension : Extension() {
                     null
                 )
 
-                (server as MinecraftDedicatedServer).commandManager.execute(source, arguments.command)
+                (server as MinecraftDedicatedServer).commandManager.executeWithPrefix(source, arguments.command)
                 output.sendBuffer()
             }
         }
