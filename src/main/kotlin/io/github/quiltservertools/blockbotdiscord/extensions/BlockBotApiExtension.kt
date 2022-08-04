@@ -109,7 +109,7 @@ class BlockBotApiExtension : Extension(), Bot {
                             for (message in messages) {
                                 server.playerManager.broadcast(
                                     message,
-                                    false // This may be incorrect. This method is looking for an overlay boolean. Idk where to get it from though
+                                    false
                                 )
                             }
                         }
