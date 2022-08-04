@@ -75,7 +75,7 @@ class LinkingExtension : Extension() {
             }
         }
 
-        ServerPlayConnectionEvents.JOIN.register { handler, sender, server ->
+        ServerPlayConnectionEvents.JOIN.register { handler, _, _ ->
             if (config[LinkingSpec.nicknameSync]) {
                 BlockBotDiscord.launch {
                     handler.player.syncLinkedName(kord)
@@ -120,13 +120,13 @@ private fun registerPlaceholders() {
         }
     }
 
-    Placeholders.register(id("linked_discriminator")) { ctx, arg ->
+    Placeholders.register(id("linked_discriminator")) { ctx, _ ->
         runBlocking {
             PlaceholderResult.value(ctx.player?.getLinkedAccount()?.discriminator?.literal())
         }
     }
 
-    Placeholders.register(id("linked_role")) { ctx, arg ->
+    Placeholders.register(id("linked_role")) { ctx, _ ->
         runBlocking {
             val member = ctx.player?.getLinkedAccount()?.asMemberOrNull(config.guildId)
             val color = member?.getTopRole()?.color

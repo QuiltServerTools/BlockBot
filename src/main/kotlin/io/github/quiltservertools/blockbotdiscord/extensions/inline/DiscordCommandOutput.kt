@@ -5,7 +5,6 @@ import com.kotlindiscord.kord.extensions.types.respond
 import kotlinx.coroutines.runBlocking
 import net.minecraft.server.command.CommandOutput
 import net.minecraft.text.Text
-import java.util.*
 
 class DiscordCommandOutput(private val commandContext: EphemeralSlashCommandContext<out InlineCommandsExtension.InlineCommandsArgs>) :
     CommandOutput {
@@ -16,9 +15,9 @@ class DiscordCommandOutput(private val commandContext: EphemeralSlashCommandCont
 
         if (content.isNotEmpty()) {
             if (buffer.isNotEmpty()) {
-                buffer.append('\n');
+                buffer.append('\n')
             }
-            buffer.append(content);
+            buffer.append(content)
         }
     }
 
