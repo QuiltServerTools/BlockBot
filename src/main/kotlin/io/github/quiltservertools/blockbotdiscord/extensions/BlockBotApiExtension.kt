@@ -41,14 +41,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.minecraft.advancement.Advancement
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.NbtList
 import net.minecraft.nbt.NbtString
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.*
 import net.minecraft.util.ActionResult
@@ -299,26 +297,26 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onPlayerConnect(handler: ServerPlayNetworkHandler, sender: PacketSender, server: MinecraftServer) {
-        if (config.formatPlayerJoinMessage(handler.player).isEmpty()) return
+    override fun onPlayerConnect(player: ServerPlayerEntity) {
+        if (config.formatPlayerJoinMessage(player).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
-                    name = config.formatPlayerJoinMessage(handler.player)
-                    icon = config.getWebhookChatRelayAvatar(handler.player.gameProfile)
+                    name = config.formatPlayerJoinMessage(player)
+                    icon = config.getWebhookChatRelayAvatar(player.gameProfile)
                 }
                 color = Colors.green
             }
         }
     }
 
-    override fun onPlayerDisconnect(handler: ServerPlayNetworkHandler, server: MinecraftServer) {
-        if (config.formatPlayerLeaveMessage(handler.player).isEmpty()) return
+    override fun onPlayerDisconnect(player: ServerPlayerEntity) {
+        if (config.formatPlayerLeaveMessage(player).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
-                    name = config.formatPlayerLeaveMessage(handler.player)
-                    icon = config.getWebhookChatRelayAvatar(handler.player.gameProfile)
+                    name = config.formatPlayerLeaveMessage(player)
+                    icon = config.getWebhookChatRelayAvatar(player.gameProfile)
                 }
                 color = Colors.red
             }
