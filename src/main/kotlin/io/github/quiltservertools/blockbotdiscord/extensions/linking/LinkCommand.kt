@@ -133,7 +133,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                         )
                     ), false
                 )
-                player.syncLinkedName(BlockBotDiscord.bot.getKoin().get())
+                player.syncDiscord()
             }
         }
         return 1

@@ -113,6 +113,8 @@ requireLinking = false
 nicknameSync = false
 # Comma seperated list of role ID's allowed to join the server. Leave blank to allow any linked account to join. Also restricts /link command in discord
 requiredRoles = []
+# A map of role ID's and minecraft group ID's. Syncs roles if the player has blockbot.sync.<group_id> permission
+syncedRoles = {}
 # Require linked players to be in the main discord
 requireInServer = false
 # Message to show when linked players try to join without the required role

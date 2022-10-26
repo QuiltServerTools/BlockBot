@@ -97,6 +97,9 @@ dependencies {
     modImplementation(libs.placeholder.api)
     include(libs.placeholder.api)
 
+    modImplementation(libs.permission.api)
+    include(libs.permission.api)
+
     shadow(libs.mcDiscordReserializer)
     shadow(libs.adventure.gson)
 
