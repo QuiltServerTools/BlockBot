@@ -36,6 +36,22 @@ suspend fun convertStringToMention(message: String, guild: Guild): String {
     return mentionMessage
 }
 
+suspend fun convertStringToEmoji(message: String, guild: Guild): String {
+    val emojiRegex = Regex(":(?<id>[^:\\s]+):")
+    val emotes = emojiRegex.findAll(message)
+    var emoteMessage = message
+
+    for (emote in emotes) {
+        val id = emote.groupValues[1]
+        val emoji = guild.emojis.firstOrNull { it.name.equals(id, ignoreCase = true) }
+        val emojiString = emoji?.mention
+        if (emojiString != null) {
+            emoteMessage = emoteMessage.replace(emote.value, emojiString)
+        }
+    }
+    return emoteMessage
+}
+
 private val emojiPattern =
     Pattern.compile(":(?<id>[^:\\s]+):")
 
