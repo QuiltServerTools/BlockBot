@@ -17,6 +17,7 @@ adventure-gson = "4.11.0"
 
 placeholder-api = "2.0.0-beta.7+1.19"
 permission-api = "0.2-SNAPSHOT"
+vanish-api = "1.0.2"
 konf = "1.1.2"
 
 [libraries]
@@ -34,5 +35,6 @@ adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.
 
 placeholder-api = { module = "eu.pb4:placeholder-api", version.ref = "placeholder-api" }
 permission-api = { module = "me.lucko:fabric-permissions-api", version.ref = "permission-api"}
+vanish-api = { module = "maven.modrinth:vanish", version.ref = "vanish-api"}
 konf-base = { module = "com.uchuhimo:konf-core", version.ref = "konf" }
 konf-toml = { module = "com.uchuhimo:konf-toml", version.ref = "konf" }

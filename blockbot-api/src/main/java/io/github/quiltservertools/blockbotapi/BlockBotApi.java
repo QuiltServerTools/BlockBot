@@ -21,6 +21,7 @@ public class BlockBotApi implements ModInitializer {
 
     private static final Set<Bot> bots = new HashSet<>();
 
+
     @Override
     public void onInitialize() {
         ServerMessageEvents.CHAT_MESSAGE.register((message, sender, typeKey) -> ChatMessageEvent.EVENT.invoker().message(

@@ -52,6 +52,7 @@ allprojects {
 
         // Optional deps
         modRuntimeOnly(rootProject.libs.permission.api)
+        modImplementation(rootProject.libs.vanish.api)
     }
 
     // Produce a sources distribution
