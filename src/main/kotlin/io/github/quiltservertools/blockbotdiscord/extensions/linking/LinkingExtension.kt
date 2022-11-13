@@ -13,6 +13,7 @@ import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.edit
 import dev.kord.core.entity.Member
+import dev.kord.rest.request.RestRequestException
 import eu.pb4.placeholders.api.PlaceholderResult
 import eu.pb4.placeholders.api.Placeholders
 import eu.pb4.placeholders.api.TextParserUtils
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.lucko.fabric.api.permissions.v0.Permissions
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
@@ -76,10 +78,8 @@ class LinkingExtension : Extension() {
         }
 
         ServerPlayConnectionEvents.JOIN.register { handler, _, _ ->
-            if (config[LinkingSpec.nicknameSync]) {
-                BlockBotDiscord.launch {
-                    handler.player.syncLinkedName(kord)
-                }
+            BlockBotDiscord.launch {
+                handler.player.syncDiscord()
             }
         }
 
@@ -144,13 +144,31 @@ suspend fun Kord.canInteractWith(member: Member): Boolean {
     return highestSelf > highestOther
 }
 
-suspend fun ServerPlayerEntity.syncLinkedName(kord: Kord) {
-    val member = getLinkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild]))
+suspend fun ServerPlayerEntity.syncDiscord() {
+    try {
+        syncLinkedName()
+        syncLinkedRoles()
+    } catch (_: RestRequestException) {
+    }
+}
 
-    if (member?.let { kord.canInteractWith(it) } == true) {
-        member.edit {
-            nickname = name.string
-        }
+suspend fun ServerPlayerEntity.syncLinkedName() {
+    if (!config[LinkingSpec.nicknameSync] || !Permissions.check(this, "blockbot.sync.name", true)) return
+    val member = getLinkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild]))
+    member?.edit {
+        nickname = name.string
+    }
+}
+
+suspend fun ServerPlayerEntity.syncLinkedRoles() {
+    val syncedRoles = config[LinkingSpec.syncedRoles].entries
+        .filter { entry -> Permissions.check(this@syncLinkedRoles, "blockbot.sync.roles.${entry.key}", 4) }
+        .map { entry -> Snowflake(entry.value) }
+        .toMutableSet()
+    if (syncedRoles.isEmpty()) return
+    val member = getLinkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild]))
+    member?.edit {
+        roles = syncedRoles
     }
 }
 

@@ -18,6 +18,7 @@ object LinkingSpec : ConfigSpec() {
     val nicknameSync by required<Boolean>()
     val unlinkedDisconnectMessage by required<List<String>>()
     val requiredRoles by required<List<ULong>>()
+    val syncedRoles by required<Map<String, ULong>>()
     val requiredRoleDisconnectMessage by required<String>()
     val requireInServer by required<Boolean>()
     val notInServerMessage by required<String>()
