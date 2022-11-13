@@ -29,7 +29,7 @@ suspend fun Config.getChannel(name: String, bot: ExtensibleBot): GuildMessageCha
     return channel!!
 }
 
-suspend fun Config.getGuild(bot: ExtensibleBot) = bot.getKoin().get<Kord>().getGuild(Snowflake(this[BotSpec.guild]))!!
+suspend fun Config.getGuild(bot: ExtensibleBot) = bot.getKoin().get<Kord>().getGuildOrThrow(Snowflake(this[BotSpec.guild]))
 val Config.guildId: Snowflake
     get() = Snowflake(this[BotSpec.guild])
 
