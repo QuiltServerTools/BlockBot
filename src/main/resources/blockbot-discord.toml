@@ -19,19 +19,19 @@ convertMarkdown = true
 # Try to escape player markdown sent in game
 escapeIngameMarkdown = false
 
-[ChatRelay.MinecraftFormat]
-# Discord -> Minecraft message format
-# Placeholders: {sender}, {sender_colored}, {top_role}, {message}
-# Supports Simplified Text Format and Placeholder API with server context
-messageFormat = "[<color:#7289DA>Discord</color> | {sender_colored}] {message}"
-# Discord -> Minecraft reply format
-# Placeholders: {sender}, {summary}
-# Supports Simplified Text Format and Placeholder API with server context
-replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
-# Try to add images to messages
-appendImages = false
-# Use image interpolation
-imageInterpolation = false
+    [ChatRelay.MinecraftFormat]
+    # Discord -> Minecraft message format
+    # Placeholders: {sender}, {sender_colored}, {top_role}, {message}
+    # Supports Simplified Text Format and Placeholder API with server context
+    messageFormat = "[<color:#7289DA>Discord</color> | {sender_colored}] {message}"
+    # Discord -> Minecraft reply format
+    # Placeholders: {sender}, {summary}
+    # Supports Simplified Text Format and Placeholder API with server context
+    replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
+    # Try to add images to messages
+    appendImages = false
+    # Use image interpolation
+    imageInterpolation = false
 
     # Used when not using Webhook
     [ChatRelay.DiscordMessageFormat]
@@ -99,10 +99,29 @@ activityType = "Game"
 activityText = "Minecraft | %server:online%/%server:max_players%"
 
 [MemberCommands]
-# Enables the /playerlist discord slash command to get the players online
-playerList = true
-# Enables the /whitelist discord slash command to allow discord users to whitelist players
-whitelist = false
+    [MemberCommands.PlayerList]
+    # Enables the playerlist discord slash command to get the players online
+    enabled = true
+    name = "playerlist"
+    description = "Gets the online players"
+    # Supports discord markdown and Placeholder API with server context
+    title = "%server:online%/%server:max_players%"
+    # Supports discord markdown and Placeholder API with player context
+    playerFormat = "%player:name%"
+
+    [MemberCommands.WhiteList]
+    # Enables the whitelist discord slash command to allow discord users to whitelist players
+    enabled = false
+    name = "whitelist"
+    description = "Whitelist a player"
+        # Messages for the whitelist discord slash command
+        [MemberCommands.WhiteList.Messages]
+        unknownPlayer = "Unknown player: {player}"
+        alreadyWhiteListed = "Player already whitelisted"
+        successful = "Whitelisted {player}"
+        [MemberCommands.WhiteList.PlayerArgument]
+        name = "username"
+        description = "The username of the player to whitelist"
 
 [Linking]
 # Enable account linking between Minecraft and discord. Enables /link in game and in discord

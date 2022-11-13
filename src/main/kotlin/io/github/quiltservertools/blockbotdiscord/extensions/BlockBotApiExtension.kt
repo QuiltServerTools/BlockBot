@@ -41,9 +41,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.drex.vanish.api.VanishEvents
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.kyori.adventure.text.KeybindComponent
 import net.kyori.adventure.text.TranslatableComponent
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.advancement.Advancement
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -117,6 +119,14 @@ class BlockBotApiExtension : Extension(), Bot {
                         }
                     }
                 }
+            }
+        }
+
+        // Vanish fake join/leave messages
+        if (FabricLoader.getInstance().isModLoaded("melius-vanish")) {
+            VanishEvents.VANISH_EVENT.register {player, vanished ->
+                if (vanished) sendPlayerLeaveMessage(player);
+                else sendPlayerJoinMessage(player);
             }
         }
 
@@ -303,12 +313,16 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onPlayerConnect(handler: ServerPlayNetworkHandler, sender: PacketSender, server: MinecraftServer) {
-        if (config.formatPlayerJoinMessage(handler.player).isEmpty()) return
+        if (!handler.player.isVanished()) sendPlayerJoinMessage(handler.player)
+    }
+
+    private fun sendPlayerJoinMessage(player: ServerPlayerEntity) {
+        if (config.formatPlayerJoinMessage(player).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
-                    name = config.formatPlayerJoinMessage(handler.player)
-                    icon = config.getWebhookChatRelayAvatar(handler.player.gameProfile)
+                    name = config.formatPlayerJoinMessage(player)
+                    icon = config.getWebhookChatRelayAvatar(player.gameProfile)
                 }
                 color = Colors.green
             }
@@ -316,12 +330,16 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onPlayerDisconnect(handler: ServerPlayNetworkHandler, server: MinecraftServer) {
-        if (config.formatPlayerLeaveMessage(handler.player).isEmpty()) return
+        if (!handler.player.isVanished()) sendPlayerLeaveMessage(handler.player)
+    }
+
+    private fun sendPlayerLeaveMessage(player: ServerPlayerEntity) {
+        if (config.formatPlayerLeaveMessage(player).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
-                    name = config.formatPlayerLeaveMessage(handler.player)
-                    icon = config.getWebhookChatRelayAvatar(handler.player.gameProfile)
+                    name = config.formatPlayerLeaveMessage(player)
+                    icon = config.getWebhookChatRelayAvatar(player.gameProfile)
                 }
                 color = Colors.red
             }
@@ -329,7 +347,7 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onPlayerDeath(player: ServerPlayerEntity, message: Text) {
-        if (config.formatPlayerDeathMessage(player, message).isEmpty()) return
+        if (config.formatPlayerDeathMessage(player, message).isEmpty() || player.isVanished()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {
@@ -342,7 +360,7 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onAdvancementGrant(player: ServerPlayerEntity, advancement: Advancement) {
-        if (config.formatPlayerAdvancementMessage(player, advancement).isEmpty()) return
+        if (config.formatPlayerAdvancementMessage(player, advancement).isEmpty() || player.isVanished()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
                 author {

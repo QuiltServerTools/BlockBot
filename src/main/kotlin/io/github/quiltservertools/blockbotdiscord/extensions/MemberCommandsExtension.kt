@@ -7,9 +7,7 @@ import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
 import com.kotlindiscord.kord.extensions.types.respond
 import dev.kord.rest.builder.message.create.embed
-import io.github.quiltservertools.blockbotdiscord.config.MemberCommandsSpec
-import io.github.quiltservertools.blockbotdiscord.config.config
-import io.github.quiltservertools.blockbotdiscord.config.getGuild
+import io.github.quiltservertools.blockbotdiscord.config.*
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.WhitelistEntry
 import org.koin.core.component.inject
@@ -21,28 +19,28 @@ class MemberCommandsExtension : Extension() {
     private val server: MinecraftServer by inject()
 
     override suspend fun setup() {
-        if (config[MemberCommandsSpec.playerList]) {
+        if (config[MemberCommandsSpec.PlayerListSpec.enabled]) {
             ephemeralSlashCommand {
-                name = "playerlist"
-                description = "Gets the online players"
+                name = config[MemberCommandsSpec.PlayerListSpec.name]
+                description = config[MemberCommandsSpec.PlayerListSpec.description]
 
                 guild(config.getGuild(bot))
 
                 action {
                     respond {
                         embed {
-                            title = "${server.playerManager.playerList.size}/${server.playerManager.maxPlayerCount}"
-                            description = server.playerManager.playerList.joinToString(", ") { it.name.string }
+                            title = config.formatPlayerListTitle(server)
+                            description = config.formatPlayerListContent(server)
                         }
                     }
                 }
             }
         }
 
-        if (config[MemberCommandsSpec.whitelist]) {
+        if (config[MemberCommandsSpec.WhiteListSpec.enabled]) {
             publicSlashCommand(::WhitelistArgs) {
-                name = "whitelist"
-                description = "whitelists a player"
+                name = config[MemberCommandsSpec.WhiteListSpec.name]
+                description = config[MemberCommandsSpec.WhiteListSpec.description]
 
                 guild(config.getGuild(bot))
 
@@ -50,19 +48,25 @@ class MemberCommandsExtension : Extension() {
                     val profile = server.userCache.findByName(arguments.player).unwrap()
                     if (profile == null) {
                         respond {
-                            content = "Unknown player: ${arguments.player}"
+                            content = config[MemberCommandsSpec.WhiteListSpec.MessagesSpec.unknownPlayer].replace(
+                                "{player}",
+                                arguments.player
+                            )
                         }
                         return@action
                     }
 
                     if (server.playerManager.isWhitelisted(profile)) {
                         respond {
-                            content = "Player already whitelisted"
+                            content = config[MemberCommandsSpec.WhiteListSpec.MessagesSpec.alreadyWhiteListed]
                         }
                     } else {
                         server.playerManager.whitelist.add(WhitelistEntry(profile))
                         respond {
-                            content = "Whitelisted ${arguments.player}"
+                            content = config[MemberCommandsSpec.WhiteListSpec.MessagesSpec.successful].replace(
+                                "{player}",
+                                arguments.player
+                            )
                         }
                     }
                 }
@@ -72,8 +76,8 @@ class MemberCommandsExtension : Extension() {
 
     inner class WhitelistArgs : Arguments() {
         val player by string {
-            name = "username"
-            description = "The username of the player to whitelist"
+            name = config[MemberCommandsSpec.WhiteListSpec.PlayerArgumentSpec.name]
+            description = config[MemberCommandsSpec.WhiteListSpec.PlayerArgumentSpec.description]
         }
     }
 }
