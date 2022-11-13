@@ -43,6 +43,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.drex.vanish.api.VanishEvents
 import net.fabricmc.fabric.api.networking.v1.PacketSender
+import net.kyori.adventure.text.KeybindComponent
+import net.kyori.adventure.text.TranslatableComponent
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.advancement.Advancement
 import net.minecraft.item.ItemStack
@@ -281,13 +283,14 @@ class BlockBotApiExtension : Extension(), Bot {
 
     override fun onChatMessage(sender: MessageSender, message: Text) {
         BlockBotDiscord.launch {
-            var content = discordSerializer.serialize(message.toAdventure())
+            var content = discordSerializer.serialize(message.toAdventure(), DiscordSerializerOptions(false, false, KeybindComponent::keybind, TranslatableComponent::key))
             if (config[ChatRelaySpec.escapeIngameMarkdown]) {
                 content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
             }
             if (config[ChatRelaySpec.allowMentions]) {
                 content = convertStringToMention(content, config.getGuild(bot))
             }
+            content = convertStringToEmoji(content, config.getGuild(bot))
 
             if (config[ChatRelaySpec.WebhookSpec.useWebhook]) {
                 if (sender.formatWebhookContent(content).isEmpty()) return@launch
