@@ -178,8 +178,8 @@ tasks {
         relocate("org.dom4j")
         relocate("kotlinx.atomicfu")
         relocate("kotlinx.datetime")
-        relocate("mu")
         relocate("net.kyori")
+        relocate("net.peanuuutz")
     }
 }
 
