@@ -137,13 +137,6 @@ private fun registerPlaceholders() {
     }
 }
 
-suspend fun Kord.canInteractWith(member: Member): Boolean {
-    val self = member.guild.getMember(selfId)
-    val highestOther = member.roles.map { it.rawPosition }.toList().maxOrNull() ?: 0
-    val highestSelf = self.roles.map { it.rawPosition }.toList().maxOrNull() ?: 0
-    return highestSelf > highestOther
-}
-
 suspend fun ServerPlayerEntity.syncDiscord() {
     try {
         syncLinkedName()
@@ -161,15 +154,12 @@ suspend fun ServerPlayerEntity.syncLinkedName() {
 }
 
 suspend fun ServerPlayerEntity.syncLinkedRoles() {
-    val syncedRoles = config[LinkingSpec.syncedRoles].entries
-        .filter { entry -> Permissions.check(this@syncLinkedRoles, "blockbot.sync.roles.${entry.key}", 4) }
-        .map { entry -> Snowflake(entry.value) }
-        .toMutableSet()
-    if (syncedRoles.isEmpty()) return
     val member = getLinkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild]))
-    member?.edit {
-        roles = syncedRoles
-    }
+    config[LinkingSpec.syncedRoles].entries
+        .filter { entry -> Permissions.check(this@syncLinkedRoles, "blockbot.sync.roles.${entry.key}", 4) }
+        .forEach {
+            member?.addRole(Snowflake(it.value), "blockbot role sync")
+        }
 }
 
 fun GameProfile.canJoin(server: MinecraftServer): Text? {
