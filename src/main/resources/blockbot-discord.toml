@@ -93,7 +93,7 @@ allowedRoles = []
 opLevel = 3
 
 [Presence]
-# The type of presence. Can be "Game", "Listening", "Watching", "Competing"
+# The type of presence. Can be "Game", "Listening", "Watching", "Competing", "Disabled"
 # Updates every 400 ticks (20 seconds)
 activityType = "Game"
 activityText = "Minecraft | %server:online%/%server:max_players%"

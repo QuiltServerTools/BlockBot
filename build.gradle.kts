@@ -52,7 +52,6 @@ allprojects {
 
         // Optional deps
         modRuntimeOnly(rootProject.libs.permission.api)
-        modImplementation(rootProject.libs.vanish.api)
     }
 
     // Produce a sources distribution
@@ -109,6 +108,9 @@ dependencies {
 
     shadow(libs.konf.base)
     shadow(libs.konf.toml)
+
+    // Optional deps
+    modCompileOnly(rootProject.libs.vanish.api)
 
     subprojects.forEach {
         implementation(project(":${it.name}", "namedElements"))

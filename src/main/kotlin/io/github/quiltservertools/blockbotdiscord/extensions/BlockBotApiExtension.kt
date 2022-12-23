@@ -8,7 +8,6 @@ import com.kotlindiscord.kord.extensions.utils.ensureWebhook
 import com.kotlindiscord.kord.extensions.utils.getTopRole
 import com.kotlindiscord.kord.extensions.utils.hasPermission
 import com.vdurmont.emoji.EmojiParser
-import dev.kord.common.entity.ActivityType
 import dev.kord.common.entity.AllowedMentionType
 import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Snowflake
@@ -125,8 +124,8 @@ class BlockBotApiExtension : Extension(), Bot {
         // Vanish fake join/leave messages
         if (FabricLoader.getInstance().isModLoaded("melius-vanish")) {
             VanishEvents.VANISH_EVENT.register {player, vanished ->
-                if (vanished) sendPlayerLeaveMessage(player);
-                else sendPlayerJoinMessage(player);
+                if (vanished) sendPlayerLeaveMessage(player)
+                else sendPlayerJoinMessage(player)
             }
         }
 
@@ -405,7 +404,7 @@ class BlockBotApiExtension : Extension(), Bot {
                         ActivityType.Listening -> listening(config.formatPresenceText(server))
                         ActivityType.Watching -> watching(config.formatPresenceText(server))
                         ActivityType.Competing -> competing(config.formatPresenceText(server))
-                        else -> Unit
+                        ActivityType.Disabled -> Unit
                     }
                 }
             }
