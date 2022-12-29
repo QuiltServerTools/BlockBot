@@ -12,9 +12,9 @@ guild =
     console =
 
 [ChatRelay]
-# Allow minecraft chat to mention/ping users and roles
+# Allow Minecraft chat to mention/ping users and roles
 allowMentions = true
-# Convert discord formatting to minecraft formatting
+# Convert Discord formatting to Minecraft formatting
 convertMarkdown = true
 # Try to escape player markdown sent in game
 escapeIngameMarkdown = false
@@ -37,7 +37,7 @@ escapeIngameMarkdown = false
     [ChatRelay.DiscordMessageFormat]
 
     # Placeholders: {sender}, {sender_display}, {message}
-    # Supports discord markdown and Placeholder API with player context
+    # Supports Discord markdown and Placeholder API with player context
     # Minecraft -> Discord message format
     messageFormat = "{sender_display} » {message}"
     # Minecraft -> Discord annoucement format (/say)
@@ -45,7 +45,7 @@ escapeIngameMarkdown = false
     # Minecraft -> Discord emote format (/me)
     emoteFormat = "*{sender_display} {message}*"
 
-    # Supports discord markdown and Placeholder API with player context
+    # Supports Discord markdown and Placeholder API with player context
     playerJoin = "%player:displayname% joined the game"
     playerLeave = "%player:displayname% left the game"
     # Placeholders: {message}
@@ -67,7 +67,7 @@ escapeIngameMarkdown = false
     playerAvatarUrl = "https://cravatar.eu/helmavatar/{uuid}/128.png?{texture}"
 
     # Placeholders: {sender}, {sender_display}, {message}
-    # Supports discord markdown and Placeholder API with player context
+    # Supports Discord markdown and Placeholder API with player context
     # Used when using Webhook
     [ChatRelay.DiscordWebhookFormat]
     messageFormat = "{message}"
@@ -81,11 +81,11 @@ escapeIngameMarkdown = false
 pattern = "[%level] (%logger{1}) %msg%n"
 # Minium logger level to show in the console relay. OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
 minLevel = "INFO"
-# Require administator on discord to use console
+# Require administator on Discord to use console
 requireAdmin = true
 
 [InlineCommands]
-# Enables the /mc discord slash command to run in game commands from discord
+# Enables the /mc Discord slash command to run in game commands from Discord
 enabled = true
 # Comma seperated list of the role ID's allowed to use the command
 allowedRoles = []
@@ -100,21 +100,21 @@ activityText = "Minecraft | %server:online%/%server:max_players%"
 
 [MemberCommands]
     [MemberCommands.PlayerList]
-    # Enables the playerlist discord slash command to get the players online
+    # Enables the playerlist Discord slash command to get the players online
     enabled = true
     name = "playerlist"
     description = "Gets the online players"
-    # Supports discord markdown and Placeholder API with server context
+    # Supports Discord markdown and Placeholder API with server context
     title = "%server:online%/%server:max_players%"
-    # Supports discord markdown and Placeholder API with player context
+    # Supports Discord markdown and Placeholder API with player context
     playerFormat = "%player:name%"
 
     [MemberCommands.WhiteList]
-    # Enables the whitelist discord slash command to allow discord users to whitelist players
+    # Enables the whitelist Discord slash command to allow Discord users to whitelist players
     enabled = false
     name = "whitelist"
     description = "Whitelist a player"
-        # Messages for the whitelist discord slash command
+        # Messages for the whitelist Discord slash command
         [MemberCommands.WhiteList.Messages]
         unknownPlayer = "Unknown player: {player}"
         alreadyWhiteListed = "Player already whitelisted"
@@ -124,34 +124,34 @@ activityText = "Minecraft | %server:online%/%server:max_players%"
         description = "The username of the player to whitelist"
 
 [Linking]
-# Enable account linking between Minecraft and discord. Enables /link in game and in discord
+# Enable account linking between Minecraft and Discord. Enables /link in game and in Discord
 enabled = false
 # Requires a linked account to join (Like a whitelist) Shows linking code on disconnect screen
 requireLinking = false
-# Sync the linked users discord nickname to their minecraft username
+# Sync the linked users Discord nickname to their Minecraft username
 nicknameSync = false
-# Comma seperated list of role ID's allowed to join the server. Leave blank to allow any linked account to join. Also restricts /link command in discord
+# Comma seperated list of role ID's allowed to join the server. Leave blank to allow any linked account to join. Also restricts /link command in Discord
 requiredRoles = []
-# A map of role ID's and minecraft group ID's. Syncs roles if the player has blockbot.sync.<group_id> permission
+# A map of role ID's and Minecraft group ID's. Syncs roles if the player has blockbot.sync.<group_id> permission
 syncedRoles = {}
-# Require linked players to be in the main discord
+# Require linked players to be in the main Discord
 requireInServer = false
 # Message to show when linked players try to join without the required role
-requiredRoleDisconnectMessage = "<red>You don't have the required discord role to join"
+requiredRoleDisconnectMessage = "<red>You don't have the required Discord role to join"
 # Message to show when unlinked players try to join and requireLinking is true
 unlinkedDisconnectMessage = [
     "<yellow>A linked Discord account is required to join",
-    "<yellow>Use <gray>/link</gray> in discord to link your account",
+    "<yellow>Use <gray>/link</gray> in Discord to link your account",
     "<gray>Link Code: <green><bold>{code}",
     "<gray>Discord: <blue><underline>discord.gg/INVITECODE"
 ]
-# Message to inform players they must be in the discord server to join
-notInServerMessage = "<red>You must be in the discord server to join"
-    # Messages for the /link minecraft and discord commands
+# Message to inform players they must be in the Discord server to join
+notInServerMessage = "<red>You must be in the Discord server to join"
+    # Messages for the /link Minecraft and Discord commands
     [Linking.Messages]
     noLinkedAccounts = "<red>There are no matching linked accounts"
     alreadyLinked = "<red>This account is already linked to <blue>{user}"
     failedUnlink = "<red>Failed to unlink these accounts!"
     successfulUnlink = "<blue>Successfully unlinked your account"
     successfulLink = "Account successfully linked to: {player}"
-    linkCode = "<blue>Link your account with <gray>/link</gray> in discord. Code: <green><bold>{code}"
+    linkCode = "<blue>Link your account with <gray>/link</gray> in Discord. Code: <green><bold>{code}"
