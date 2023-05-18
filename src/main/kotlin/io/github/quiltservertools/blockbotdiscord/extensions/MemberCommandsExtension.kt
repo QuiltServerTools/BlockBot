@@ -45,7 +45,7 @@ class MemberCommandsExtension : Extension() {
                 guild(config.getGuild(bot))
 
                 action {
-                    val profile = server.userCache.findByName(arguments.player).unwrap()
+                    val profile = server.userCache?.findByName(arguments.player)?.unwrap()
                     if (profile == null) {
                         respond {
                             content = config[MemberCommandsSpec.WhiteListSpec.MessagesSpec.unknownPlayer].replace(

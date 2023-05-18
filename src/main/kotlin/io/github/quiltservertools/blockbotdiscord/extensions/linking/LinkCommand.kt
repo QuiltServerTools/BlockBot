@@ -63,7 +63,10 @@ class LinkCommand(private val dispatcher: Dispatcher) {
 
         if (BlockBotDiscord.linkedAccounts.remove(player.uuid)) {
             logInfo("Unlinked ${player.name} from $id")
-            context.source.sendFeedback(TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.successfulUnlink]), false)
+            context.source.sendFeedback(
+                { TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.successfulUnlink]) },
+                false
+            )
 
             if (config[LinkingSpec.requireLinking]) {
                 context.source.playerOrThrow.networkHandler.disconnect(
@@ -74,7 +77,10 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                 )
             }
         } else {
-            context.source.sendFeedback(TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.failedUnlink]), false)
+            context.source.sendFeedback(
+                { TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.failedUnlink]) },
+                false
+            )
         }
 
         return 1
@@ -97,14 +103,17 @@ class LinkCommand(private val dispatcher: Dispatcher) {
 
             if (id != null && BlockBotDiscord.linkedAccounts.get(id) != null) {
                 val user = kord.getUser(id)
-                source.sendFeedback(Text.literal(user?.tag ?: id.toString()), false)
+                source.sendFeedback({ Text.literal(user?.tag ?: id.toString()) }, false)
 
                 for (uuid in BlockBotDiscord.linkedAccounts.get(id)!!) {
-                    val account = source.server.userCache.getByUuid(uuid).unwrap()
-                    source.sendFeedback(Text.literal("    - ${account?.name ?: uuid.toString()}"), false)
+                    val account = source.server.userCache?.getByUuid(uuid)?.unwrap()
+                    source.sendFeedback({ Text.literal("    - ${account?.name ?: uuid.toString()}") }, false)
                 }
             } else {
-                source.sendFeedback(TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.noLinkedAccounts]), false)
+                source.sendFeedback(
+                    { TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.noLinkedAccounts]) },
+                    false
+                )
             }
         }
 
@@ -117,21 +126,25 @@ class LinkCommand(private val dispatcher: Dispatcher) {
 
             if (user != null) {
                 context.source.sendFeedback(
-                    TextParserUtils.formatText(
-                        config[LinkingSpec.MessagesSpec.alreadyLinked].replace(
-                            "{user}",
-                            user.tag
+                    {
+                        TextParserUtils.formatText(
+                            config[LinkingSpec.MessagesSpec.alreadyLinked].replace(
+                                "{user}",
+                                user.tag
+                            )
                         )
-                    ), false
+                    }, false
                 )
             } else {
                 context.source.sendFeedback(
-                    TextParserUtils.formatText(
-                        config[LinkingSpec.MessagesSpec.linkCode].replace(
-                            "{code}",
-                            player.gameProfile.linkCode
+                    {
+                        TextParserUtils.formatText(
+                            config[LinkingSpec.MessagesSpec.linkCode].replace(
+                                "{code}",
+                                player.gameProfile.linkCode
+                            )
                         )
-                    ), false
+                    }, false
                 )
                 player.syncDiscord()
             }
