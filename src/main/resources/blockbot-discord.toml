@@ -40,7 +40,7 @@ escapeIngameMarkdown = false
     # Supports discord markdown and Placeholder API with player context
     # Minecraft -> Discord message format
     messageFormat = "{sender_display} » {message}"
-    # Minecraft -> Discord annoucement format (/say)
+    # Minecraft -> Discord announcement format (/say)
     announcementFormat = "{sender_display} » **{message}**"
     # Minecraft -> Discord emote format (/me)
     emoteFormat = "*{sender_display} {message}*"
@@ -79,15 +79,15 @@ escapeIngameMarkdown = false
 [ConsoleRelay]
 # Format to use for the console relay
 pattern = "[%level] (%logger{1}) %msg%n"
-# Minium logger level to show in the console relay. OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
+# Minimum logger level to show in the console relay. OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL
 minLevel = "INFO"
-# Require administator on discord to use console
+# Require administrator permissions on discord to use console
 requireAdmin = true
 
 [InlineCommands]
 # Enables the /mc discord slash command to run in game commands from discord
 enabled = true
-# Comma seperated list of the role ID's allowed to use the command
+# Comma separated list of the role ID's allowed to use inline commands
 allowedRoles = []
 # OP permission level to restrict commands
 opLevel = 3
@@ -130,7 +130,7 @@ enabled = false
 requireLinking = false
 # Sync the linked users discord nickname to their minecraft username
 nicknameSync = false
-# Comma seperated list of role ID's allowed to join the server. Leave blank to allow any linked account to join. Also restricts /link command in discord
+# Comma separated list of role ID's allowed to join the server. Leave blank to allow any linked account to join. Also restricts /link command in discord
 requiredRoles = []
 # A map of role ID's and minecraft group ID's. Syncs roles if the player has blockbot.sync.<group_id> permission
 syncedRoles = {}
