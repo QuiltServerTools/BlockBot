@@ -11,8 +11,6 @@ pluginManagement {
 rootProject.name = "blockbot-discord"
 include("blockbot-api")
 
-enableFeaturePreview("VERSION_CATALOGS")
-
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
