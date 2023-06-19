@@ -68,7 +68,7 @@ class LinkingExtension : Extension() {
                     BlockBotDiscord.linkedAccounts.add(snowflake, uuid)
                     logInfo("Linked $uuid to $snowflake")
                     linkCodes.remove(arguments.code)
-                    val profile = server.userCache.getByUuid(uuid).unwrap()
+                    val profile = server.userCache?.getByUuid(uuid)?.unwrap()
 
                     respond {
                         content = config[LinkingSpec.MessagesSpec.successfulLink].replace("{player}", profile?.name ?: "Unknown")
