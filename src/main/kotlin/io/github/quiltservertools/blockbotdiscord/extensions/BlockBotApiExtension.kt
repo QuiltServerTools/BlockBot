@@ -61,6 +61,7 @@ import org.koin.core.component.inject
 import java.net.URL
 import javax.imageio.ImageIO
 import kotlin.math.ceil
+import kotlin.math.max
 
 
 class BlockBotApiExtension : Extension(), Bot {
@@ -158,9 +159,17 @@ class BlockBotApiExtension : Extension(), Bot {
                 var hoverEvent: HoverEvent? = null
 
                 if (appendImages && attachment.isImage && attachment.size < 8 * 1024 * 1024) {
+                    // The entire message (serialized in json) can at most be 65535 bytes,
+                    // see DataOutputStream.writeUTF(String str, DataOutput out)
+
+                    // Each pixel adds ~40 characters to the final string
+                    // We want to use 64000 characters for the message lore. So we can have at most 1600 pixels.
+                    // The easiest implementation is to just limit the width and height to 40 pixels.
                     val image = ImageIO.read(URL(attachment.data.proxyUrl))
 
-                    val stepSize = (ceil(image.width.toDouble() / 48).toInt()).coerceAtLeast(1)
+                    val stepSizeWidth = (ceil(image.width.toDouble() / 40).toInt()).coerceAtLeast(1)
+                    val stepSizeHeight = (ceil(image.height.toDouble() / 40).toInt()).coerceAtLeast(1)
+                    val stepSize = max(stepSizeWidth, stepSizeHeight)
                     val stepSquared = stepSize * stepSize
                     val width = image.width
                     val height = image.height
