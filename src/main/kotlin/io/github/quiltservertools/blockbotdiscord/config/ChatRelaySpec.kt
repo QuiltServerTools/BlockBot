@@ -99,7 +99,7 @@ fun Config.formatPlayerAdvancementMessage(player: ServerPlayerEntity, advancemen
     formatDiscordRelayMessage(
         player,
         config[ChatRelaySpec.DiscordMessageFormatSpec.playerAdvancement],
-        mapOf("advancement" to advancement.display!!.title)
+        mapOf("advancement" to advancement.display.get().title)
     ).string
 
 fun Config.formatServerStartMessage(server: MinecraftServer): String =
