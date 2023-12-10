@@ -210,7 +210,7 @@ class BlockBotApiExtension : Extension(), Bot {
                             x += stepSize
                         }
 
-                        list.add(NbtString.of(Text.Serializer.toJson(text)))
+                        list.add(NbtString.of(Text.Serialization.toJsonString(text)))
                         y += stepSize
                         x = 0
                     }
