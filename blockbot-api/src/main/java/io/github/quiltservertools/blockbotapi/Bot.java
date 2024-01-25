@@ -10,8 +10,8 @@ import net.minecraft.text.Text;
 
 public interface Bot {
     void onChatMessage(MessageSender sender, Text message);
-    void onPlayerConnect(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server);
-    void onPlayerDisconnect(ServerPlayNetworkHandler handler, MinecraftServer server);
+    void onPlayerJoinMessage(ServerPlayerEntity player);
+    void onPlayerLeaveMessage(ServerPlayerEntity player);
     void onPlayerDeath(ServerPlayerEntity player, Text message);
     void onAdvancementGrant(ServerPlayerEntity player, Advancement advancement);
     void onServerStart(MinecraftServer server);

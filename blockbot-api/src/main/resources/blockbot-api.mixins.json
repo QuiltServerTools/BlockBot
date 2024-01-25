@@ -7,7 +7,9 @@
     "MeCommandMixin",
     "MixinPlayerAdvancementTracker",
     "MixinServerPlayerEntity",
+    "PlayerManagerMixin",
     "SayCommandMixin",
+    "ServerPlayNetworkHandlerMixin",
     "TellRawCommandMixin"
   ],
   "server": [],
