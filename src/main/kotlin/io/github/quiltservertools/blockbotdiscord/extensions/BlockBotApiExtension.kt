@@ -321,7 +321,7 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onPlayerJoinMessage(player: ServerPlayerEntity) {
-        if (player.isVanished()) sendPlayerJoinMessage(player)
+        if (!player.isVanished()) sendPlayerJoinMessage(player)
     }
 
     private fun sendPlayerJoinMessage(player: ServerPlayerEntity) {
