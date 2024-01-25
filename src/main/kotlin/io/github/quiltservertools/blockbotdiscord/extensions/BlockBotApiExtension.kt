@@ -320,8 +320,8 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onPlayerConnect(handler: ServerPlayNetworkHandler, sender: PacketSender, server: MinecraftServer) {
-        if (!handler.player.isVanished()) sendPlayerJoinMessage(handler.player)
+    override fun onPlayerJoinMessage(player: ServerPlayerEntity) {
+        if (player.isVanished()) sendPlayerJoinMessage(player)
     }
 
     private fun sendPlayerJoinMessage(player: ServerPlayerEntity) {
@@ -337,8 +337,8 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onPlayerDisconnect(handler: ServerPlayNetworkHandler, server: MinecraftServer) {
-        if (!handler.player.isVanished()) sendPlayerLeaveMessage(handler.player)
+    override fun onPlayerLeaveMessage(player: ServerPlayerEntity) {
+        if (!player.isVanished()) sendPlayerLeaveMessage(player)
     }
 
     private fun sendPlayerLeaveMessage(player: ServerPlayerEntity) {

@@ -1,15 +1,12 @@
 package io.github.quiltservertools.blockbotapi;
 
-import io.github.quiltservertools.blockbotapi.event.ChatMessageEvent;
-import io.github.quiltservertools.blockbotapi.event.PlayerAdvancementGrantEvent;
-import io.github.quiltservertools.blockbotapi.event.PlayerDeathEvent;
+import io.github.quiltservertools.blockbotapi.event.*;
 import io.github.quiltservertools.blockbotapi.sender.MessageSender;
 import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,8 +35,8 @@ public class BlockBotApi implements ModInitializer {
         BlockBotApi.bots.add(bot);
 
         ChatMessageEvent.EVENT.register(bot::onChatMessage);
-        ServerPlayConnectionEvents.JOIN.register(bot::onPlayerConnect);
-        ServerPlayConnectionEvents.DISCONNECT.register(bot::onPlayerDisconnect);
+        PlayerJoinMessageEvent.EVENT.register(bot::onPlayerJoinMessage);
+        PlayerLeaveMessageEvent.EVENT.register(bot::onPlayerLeaveMessage);
         PlayerDeathEvent.EVENT.register(bot::onPlayerDeath);
         PlayerAdvancementGrantEvent.EVENT.register(bot::onAdvancementGrant);
         ServerLifecycleEvents.SERVER_STARTED.register(bot::onServerStart);
