@@ -7,6 +7,7 @@ import me.drex.vanish.api.VanishAPI
 import net.fabricmc.loader.api.FabricLoader
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import net.minecraft.registry.DynamicRegistryManager
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
@@ -23,8 +24,8 @@ fun Message.summary(): String {
 
 fun GameProfile.getTextures() = Iterables.getFirst(this.properties.get("textures"), null)?.value
 
-fun Component.toNative(): MutableText = Text.Serialization.fromJson(GsonComponentSerializer.gson().serialize(this))?: Text.empty()
+fun Component.toNative(): MutableText = Text.Serialization.fromJson(GsonComponentSerializer.gson().serialize(this), DynamicRegistryManager.EMPTY)?: Text.empty()
 
-fun Text.toAdventure() = GsonComponentSerializer.gson().deserialize(Text.Serialization.toJsonString(this))
+fun Text.toAdventure() = GsonComponentSerializer.gson().deserialize(Text.Serialization.toJsonString(this, DynamicRegistryManager.EMPTY))
 
 fun ServerPlayerEntity.isVanished() = FabricLoader.getInstance().isModLoaded("melius-vanish") && VanishAPI.isVanished(this)

@@ -41,17 +41,15 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.drex.vanish.api.VanishEvents
-import net.fabricmc.fabric.api.networking.v1.PacketSender
+import net.fabricmc.loader.api.FabricLoader
 import net.kyori.adventure.text.KeybindComponent
 import net.kyori.adventure.text.TranslatableComponent
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.advancement.Advancement
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.LoreComponent
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.nbt.NbtList
-import net.minecraft.nbt.NbtString
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.*
 import net.minecraft.util.ActionResult
@@ -177,7 +175,7 @@ class BlockBotApiExtension : Extension(), Bot {
                     var x = 0
                     var y = 0
 
-                    val list = NbtList()
+                    val list = mutableListOf<Text>()
 
                     while (y < height) {
                         val text = Text.empty().setStyle(Style.EMPTY.withItalic(false))
@@ -210,18 +208,14 @@ class BlockBotApiExtension : Extension(), Bot {
                             x += stepSize
                         }
 
-                        list.add(NbtString.of(Text.Serialization.toJsonString(text)))
+                        list.add(text)
                         y += stepSize
                         x = 0
                     }
 
                     val stack = ItemStack(Items.STICK)
-                    val display = stack.getOrCreateSubNbt("display")
-
-                    display.put("Lore", list)
-
-
-                    stack.setCustomName(Text.empty())
+                    stack.set(DataComponentTypes.LORE, LoreComponent(list))
+                    stack.set(DataComponentTypes.CUSTOM_NAME, Text.empty())
                     hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, HoverEvent.ItemStackContent(stack))
                 }
 
