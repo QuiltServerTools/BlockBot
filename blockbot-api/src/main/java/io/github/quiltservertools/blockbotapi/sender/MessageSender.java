@@ -1,5 +1,7 @@
 package io.github.quiltservertools.blockbotapi.sender;
 
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +14,24 @@ public class MessageSender {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
+    }
+
+    public static MessageSender of(ServerCommandSource commandSource, MessageType type) {
+        var entity = commandSource.getEntity();
+        MessageSender sender;
+        if (entity instanceof ServerPlayerEntity player) {
+            sender = new PlayerMessageSender(
+                player,
+                type
+            );
+        } else {
+            sender = new MessageSender(
+                Text.literal(commandSource.getName()),
+                commandSource.getDisplayName(),
+                type
+            );
+        }
+        return sender;
     }
 
     public Text getName() {
