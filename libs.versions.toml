@@ -1,9 +1,9 @@
 [versions]
 minecraft = "1.20.4"
-fabric-loader = "0.15.6"
-yarn-mappings = "1.20.4+build.1"
+fabric-loader = "0.15.10"
+yarn-mappings = "1.20.4+build.3"
 
-fabric-api = "0.91.2+1.20.4"
+fabric-api = "0.97.0+1.20.4"
 
 # Kotlin
 fabric-kotlin = "1.9.4+kotlin.1.8.21"
@@ -15,7 +15,7 @@ emoji-java = "5.1.1"
 adventure-gson = "4.15.0-SNAPSHOT"
 
 placeholder-api = "2.3.0+1.20.3"
-permission-api = "0.3-SNAPSHOT"
+permission-api = "0.3.1"
 vanish-api = "1.5.0+1.20.3-rc1"
 konf = "1.1.2"
 
