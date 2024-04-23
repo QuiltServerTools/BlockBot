@@ -8,6 +8,7 @@
     "MixinPlayerAdvancementTracker",
     "MixinServerPlayerEntity",
     "PlayerManagerMixin",
+    "RandomCommandMixin",
     "SayCommandMixin",
     "ServerPlayNetworkHandlerMixin",
     "TellRawCommandMixin"
