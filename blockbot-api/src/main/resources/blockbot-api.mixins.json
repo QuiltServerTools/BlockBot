@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "io.github.quiltservertools.blockbotapi.mixin",
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MeCommandMixin",
     "MixinPlayerAdvancementTracker",

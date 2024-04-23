@@ -1,9 +1,9 @@
 plugins {
     java
     id("maven-publish")
-    id("fabric-loom") version "1.5.+"
-    kotlin("jvm") version "1.7.10"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("fabric-loom") version "1.6.+"
+    kotlin("jvm") version "1.9.23"
+    id("io.github.goooler.shadow") version "8.1.7"
     kotlin("plugin.serialization") version "1.7.10"
 }
 
@@ -22,8 +22,8 @@ allprojects {
     version = "$modVersion${getVersionMetadata()}"
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     loom {
@@ -128,7 +128,7 @@ tasks {
 
     compileKotlin {
         kotlinOptions {
-            jvmTarget = "17"
+            jvmTarget = "21"
         }
     }
 
