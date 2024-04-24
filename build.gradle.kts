@@ -38,8 +38,6 @@ allprojects {
         }
         maven("https://api.modrinth.com/maven")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
-        // net.kyori:adventure-text-serializer-gson dev builds
-        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
 
     // Declare dependencies
