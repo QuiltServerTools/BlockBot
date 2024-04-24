@@ -23,8 +23,8 @@ fun Message.summary(): String {
 
 fun GameProfile.getTextures() = Iterables.getFirst(this.properties.get("textures"), null)?.value
 
-fun Component.toNative(): MutableText = Text.Serializer.fromJson(GsonComponentSerializer.gson().serialize(this))?: Text.empty()
+fun Component.toNative(): MutableText = Text.Serialization.fromJson(GsonComponentSerializer.gson().serialize(this))?: Text.empty()
 
-fun Text.toAdventure() = GsonComponentSerializer.gson().deserialize(Text.Serializer.toJson(this))
+fun Text.toAdventure() = GsonComponentSerializer.gson().deserialize(Text.Serialization.toJsonString(this))
 
 fun ServerPlayerEntity.isVanished() = FabricLoader.getInstance().isModLoaded("melius-vanish") && VanishAPI.isVanished(this)

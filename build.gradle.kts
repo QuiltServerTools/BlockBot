@@ -1,7 +1,7 @@
 plugins {
     java
     id("maven-publish")
-    id("fabric-loom") version "1.2.+"
+    id("fabric-loom") version "1.6.+"
     kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     kotlin("plugin.serialization") version "1.7.10"
@@ -38,6 +38,8 @@ allprojects {
         }
         maven("https://api.modrinth.com/maven")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
+        // net.kyori:adventure-text-serializer-gson dev builds
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
 
     // Declare dependencies
