@@ -9,9 +9,7 @@ import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.utils.getTopRole
 import com.mojang.authlib.GameProfile
 import dev.kord.common.entity.Snowflake
-import dev.kord.core.Kord
 import dev.kord.core.behavior.edit
-import dev.kord.core.entity.Member
 import dev.kord.rest.request.RestRequestException
 import eu.pb4.placeholders.api.PlaceholderResult
 import eu.pb4.placeholders.api.Placeholders
@@ -140,7 +138,8 @@ suspend fun ServerPlayerEntity.syncDiscord() {
     try {
         syncLinkedName()
         syncLinkedRoles()
-    } catch (_: RestRequestException) {
+    } catch (e: RestRequestException) {
+        BlockBotDiscord.logger.error("Failed to sync ${this.nameForScoreboard}. This is likely caused by missing bot permissions", e)
     }
 }
 
@@ -153,11 +152,16 @@ suspend fun ServerPlayerEntity.syncLinkedName() {
 }
 
 suspend fun ServerPlayerEntity.syncLinkedRoles() {
-    val member = getLinkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild]))
+    val member = getLinkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild])) ?: return
+    val roles = member.roles.map { it.id.value }.toList()
     config[LinkingSpec.syncedRoles].entries
-        .filter { entry -> Permissions.check(this@syncLinkedRoles, "blockbot.sync.roles.${entry.key}", 4) }
-        .forEach {
-            member?.addRole(Snowflake(it.value), "blockbot role sync")
+        .forEach { syncedRole ->
+            val hasPermission = Permissions.check(this@syncLinkedRoles, "blockbot.sync.roles.${syncedRole.key}", 4)
+            if (roles.contains(syncedRole.value) && !hasPermission) {
+                member.removeRole(Snowflake(syncedRole.value), "blockbot role sync")
+            } else if (!roles.contains(syncedRole.value) && hasPermission) {
+                member.addRole(Snowflake(syncedRole.value), "blockbot role sync")
+            }
         }
 }
 
