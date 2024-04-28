@@ -138,8 +138,7 @@ suspend fun ServerPlayerEntity.syncDiscord() {
     try {
         syncLinkedName()
         syncLinkedRoles()
-    } catch (e: RestRequestException) {
-        BlockBotDiscord.logger.error("Failed to sync ${this.nameForScoreboard}. This is likely caused by missing bot permissions", e)
+    } catch (_: RestRequestException) {
     }
 }
 
