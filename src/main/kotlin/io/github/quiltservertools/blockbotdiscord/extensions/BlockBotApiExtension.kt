@@ -20,7 +20,7 @@ import dev.kord.core.entity.channel.TopGuildMessageChannel
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import dev.kord.rest.builder.message.EmbedBuilder
-import dev.kord.rest.builder.message.create.embed
+import dev.kord.rest.builder.message.embed
 import dev.vankka.mcdiscordreserializer.discord.DiscordSerializer
 import dev.vankka.mcdiscordreserializer.discord.DiscordSerializerOptions
 import dev.vankka.mcdiscordreserializer.minecraft.MinecraftSerializer
@@ -90,7 +90,7 @@ class BlockBotApiExtension : Extension(), Bot {
             check { failIfNot(config.getChannelsBi().containsValue(event.message.channelId.value)) }
 
             action {
-                val sender = event.message.getAuthorAsMember()!!
+                val sender = event.message.getAuthorAsMemberOrNull() ?: return@action
                 val configChannel = config.getChannelsBi().inverse()[event.message.channelId.value]!!
                 val result = RelayMessageEvent.EVENT.invoker().message(
                     RelayMessageSender(
@@ -140,7 +140,7 @@ class BlockBotApiExtension : Extension(), Bot {
         content = convertEmojiToTranslatable(content)
         if (message.referencedMessage != null) {
             val reply = config.getReplyMsg(
-                message.referencedMessage!!.data.author.username,
+                message.referencedMessage!!.getAuthorAsMemberOrNull()?.effectiveName ?: "unknown-user",
                 message.referencedMessage!!,
                 server
             )
@@ -239,7 +239,7 @@ class BlockBotApiExtension : Extension(), Bot {
         var topRoleMessage: MutableText =
             topRole?.data?.name?.literal() ?: "".literal()
         if (topColor != null) topRoleMessage = topRoleMessage.styled { it.withColor(topColor.rgb) }
-        var username: MutableText = sender.displayName.literal()
+        var username: MutableText = sender.effectiveName.literal()
         if (topColor != null) {
             username = username.styled {
                 it.withColor(topColor.rgb)
@@ -257,7 +257,7 @@ class BlockBotApiExtension : Extension(), Bot {
             chatWebhook.execute(chatWebhook.token!!) {
                 avatarUrl = config[ChatRelaySpec.WebhookSpec.webhookAvatar]
                 allowedMentions = mentions
-                embeds.add(EmbedBuilder().apply(builder))
+                embeds = mutableListOf(EmbedBuilder().apply(builder))
             }
         } else {
             val messageChannel = config.getChannel(Channels.CHAT, bot)
