@@ -30,7 +30,7 @@ class MentionToMinecraftRenderer(
     override fun appendUserMention(component: Component, id: String): Component {
         return runBlocking {
             val member = config.getGuild(bot).getMemberOrNull(Snowflake(id))
-            val name = member?.displayName ?: "unknown-user"
+            val name = member?.effectiveName ?: "unknown-user"
 
             component.append(
                 Component.text("@$name")

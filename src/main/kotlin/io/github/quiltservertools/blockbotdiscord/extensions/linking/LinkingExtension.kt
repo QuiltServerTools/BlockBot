@@ -6,7 +6,6 @@ import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
-import com.kotlindiscord.kord.extensions.types.respond
 import com.kotlindiscord.kord.extensions.utils.getTopRole
 import com.mojang.authlib.GameProfile
 import dev.kord.common.entity.Snowflake
@@ -48,7 +47,7 @@ class LinkingExtension : Extension() {
             name = "link"
             description = "links your discord account to a minecraft account"
 
-            guild(config.getGuild(bot))
+            guild(config.guildId)
 
             val roles = config[LinkingSpec.requiredRoles]
             if (roles.isNotEmpty()) {
@@ -114,7 +113,7 @@ private fun registerPlaceholders() {
             val color = if (arg == "colored") user?.asMemberOrNull()?.getDisplayColor() else null
 
             PlaceholderResult.value(
-                (user?.asMemberOrNull(config.guildId)?.displayName ?: user?.username)?.literal()
+                (user?.asMemberOrNull(config.guildId)?.effectiveName ?: user?.username)?.literal()
                     ?.styled { color?.let { _ -> it.withColor(color.rgb) } }
             )
         }

@@ -5,8 +5,7 @@ import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
-import com.kotlindiscord.kord.extensions.types.respond
-import dev.kord.rest.builder.message.create.embed
+import dev.kord.rest.builder.message.embed
 import io.github.quiltservertools.blockbotdiscord.config.*
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.WhitelistEntry
@@ -24,7 +23,7 @@ class MemberCommandsExtension : Extension() {
                 name = config[MemberCommandsSpec.PlayerListSpec.name]
                 description = config[MemberCommandsSpec.PlayerListSpec.description]
 
-                guild(config.getGuild(bot))
+                guild(config.guildId)
 
                 action {
                     respond {
@@ -42,7 +41,7 @@ class MemberCommandsExtension : Extension() {
                 name = config[MemberCommandsSpec.WhiteListSpec.name]
                 description = config[MemberCommandsSpec.WhiteListSpec.description]
 
-                guild(config.getGuild(bot))
+                guild(config.guildId)
 
                 action {
                     val profile = server.userCache?.findByName(arguments.player)?.unwrap()

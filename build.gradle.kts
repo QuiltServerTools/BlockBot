@@ -2,9 +2,9 @@ plugins {
     java
     id("maven-publish")
     id("fabric-loom") version "1.6.+"
-    kotlin("jvm") version "1.7.10"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    kotlin("plugin.serialization") version "1.7.10"
+    kotlin("jvm") version "1.9.23"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    kotlin("plugin.serialization") version "1.9.23"
 }
 
 configurations.implementation.get().extendsFrom(configurations.shadow.get())
