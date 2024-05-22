@@ -88,7 +88,7 @@ allprojects {
 repositories {
     mavenCentral()
     maven("https://maven.nucleoid.xyz/")
-    maven("https://maven.kotlindiscord.com/repository/maven-public/")
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 }
 
 dependencies {
