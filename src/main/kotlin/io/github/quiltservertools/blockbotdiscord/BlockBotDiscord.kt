@@ -103,7 +103,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
     override val coroutineContext = Dispatchers.Default
 }
 
-fun id(path: String) = Identifier.method_60655(BlockBotDiscord.MOD_ID, path)
+fun id(path: String): Identifier = Identifier.of(BlockBotDiscord.MOD_ID, path)
 
 fun logDebug(message: String) = BlockBotDiscord.logger.debug(message)
 fun logInfo(message: String) = BlockBotDiscord.logger.info(message)

@@ -399,8 +399,8 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onServerTick(server: MinecraftServer) {
-        BlockBotDiscord.launch {
-            if (server.ticks % 400 == 0) {
+        if (server.ticks % 400 == 0) {
+            BlockBotDiscord.launch {
                 kord.editPresence {
                     when (config[PresenceSpec.activityType]) {
                         ActivityType.Game -> playing(config.formatPresenceText(server))
