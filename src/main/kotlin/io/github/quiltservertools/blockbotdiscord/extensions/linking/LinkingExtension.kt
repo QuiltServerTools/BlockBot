@@ -6,13 +6,10 @@ import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
-import com.kotlindiscord.kord.extensions.types.respond
 import com.kotlindiscord.kord.extensions.utils.getTopRole
 import com.mojang.authlib.GameProfile
 import dev.kord.common.entity.Snowflake
-import dev.kord.core.Kord
 import dev.kord.core.behavior.edit
-import dev.kord.core.entity.Member
 import dev.kord.rest.request.RestRequestException
 import eu.pb4.placeholders.api.PlaceholderResult
 import eu.pb4.placeholders.api.Placeholders
@@ -48,7 +45,7 @@ class LinkingExtension : Extension() {
             name = "link"
             description = "links your discord account to a minecraft account"
 
-            guild(config.getGuild(bot))
+            guild(config.guildId)
 
             val roles = config[LinkingSpec.requiredRoles]
             if (roles.isNotEmpty()) {
@@ -114,7 +111,7 @@ private fun registerPlaceholders() {
             val color = if (arg == "colored") user?.asMemberOrNull()?.getDisplayColor() else null
 
             PlaceholderResult.value(
-                (user?.asMemberOrNull(config.guildId)?.displayName ?: user?.username)?.literal()
+                (user?.asMemberOrNull(config.guildId)?.effectiveName ?: user?.username)?.literal()
                     ?.styled { color?.let { _ -> it.withColor(color.rgb) } }
             )
         }
@@ -154,11 +151,16 @@ suspend fun ServerPlayerEntity.syncLinkedName() {
 }
 
 suspend fun ServerPlayerEntity.syncLinkedRoles() {
-    val member = getLinkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild]))
+    val member = getLinkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild])) ?: return
+    val roles = member.roles.map { it.id.value }.toList()
     config[LinkingSpec.syncedRoles].entries
-        .filter { entry -> Permissions.check(this@syncLinkedRoles, "blockbot.sync.roles.${entry.key}", 4) }
-        .forEach {
-            member?.addRole(Snowflake(it.value), "blockbot role sync")
+        .forEach { syncedRole ->
+            val hasPermission = Permissions.check(this@syncLinkedRoles, "blockbot.sync.roles.${syncedRole.key}", 4)
+            if (roles.contains(syncedRole.value) && !hasPermission) {
+                member.removeRole(Snowflake(syncedRole.value), "blockbot role sync")
+            } else if (!roles.contains(syncedRole.value) && hasPermission) {
+                member.addRole(Snowflake(syncedRole.value), "blockbot role sync")
+            }
         }
 }
 

@@ -7,6 +7,7 @@ import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import io.github.quiltservertools.blockbotdiscord.config.InlineCommandsSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.getGuild
+import io.github.quiltservertools.blockbotdiscord.config.guildId
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.dedicated.MinecraftDedicatedServer
@@ -26,7 +27,7 @@ class InlineCommandsExtension : Extension() {
             name = "mc"
             description = "Run a command in game"
 
-            guild(config.getGuild(bot))
+            guild(config.guildId)
             allowByDefault = false
 
             action {

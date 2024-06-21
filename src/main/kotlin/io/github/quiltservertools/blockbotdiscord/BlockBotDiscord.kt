@@ -4,6 +4,7 @@ import com.kotlindiscord.kord.extensions.ExtensibleBot
 import com.kotlindiscord.kord.extensions.utils.loadModule
 import dev.kord.gateway.Intent
 import dev.kord.gateway.Intents
+import dev.kord.gateway.NON_PRIVILEGED
 import dev.kord.gateway.PrivilegedIntent
 import io.github.quiltservertools.blockbotapi.BlockBotApi
 import io.github.quiltservertools.blockbotdiscord.config.*
@@ -66,7 +67,6 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
             bot = ExtensibleBot(config[BotSpec.token]) {
                 applicationCommands {
                     enabled = true
-                    syncPermissions = false
                 }
 
                 extensions {
@@ -78,7 +78,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
                 }
 
                 intents {
-                    +Intents.nonPrivileged
+                    +Intents.NON_PRIVILEGED
                     +Intent.GuildMembers
                 }
 
@@ -103,7 +103,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
     override val coroutineContext = Dispatchers.Default
 }
 
-fun id(path: String) = Identifier(BlockBotDiscord.MOD_ID, path)
+fun id(path: String): Identifier = Identifier.of(BlockBotDiscord.MOD_ID, path)
 
 fun logDebug(message: String) = BlockBotDiscord.logger.debug(message)
 fun logInfo(message: String) = BlockBotDiscord.logger.info(message)

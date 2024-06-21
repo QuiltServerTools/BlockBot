@@ -2,9 +2,9 @@ plugins {
     java
     id("maven-publish")
     id("fabric-loom") version "1.6.+"
-    kotlin("jvm") version "1.7.10"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    kotlin("plugin.serialization") version "1.7.10"
+    kotlin("jvm") version "1.9.23"
+    id("io.github.goooler.shadow") version "8.1.7"
+    kotlin("plugin.serialization") version "1.9.23"
 }
 
 configurations.implementation.get().extendsFrom(configurations.shadow.get())
@@ -22,8 +22,8 @@ allprojects {
     version = "$modVersion${getVersionMetadata()}"
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     loom {
@@ -38,8 +38,6 @@ allprojects {
         }
         maven("https://api.modrinth.com/maven")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
-        // net.kyori:adventure-text-serializer-gson dev builds
-        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
 
     // Declare dependencies
@@ -90,7 +88,7 @@ allprojects {
 repositories {
     mavenCentral()
     maven("https://maven.nucleoid.xyz/")
-    maven("https://maven.kotlindiscord.com/repository/maven-public/")
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 }
 
 dependencies {
@@ -128,7 +126,7 @@ tasks {
 
     compileKotlin {
         kotlinOptions {
-            jvmTarget = "17"
+            jvmTarget = "21"
         }
     }
 

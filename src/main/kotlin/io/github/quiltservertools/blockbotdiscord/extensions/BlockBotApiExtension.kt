@@ -20,7 +20,7 @@ import dev.kord.core.entity.channel.TopGuildMessageChannel
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import dev.kord.rest.builder.message.EmbedBuilder
-import dev.kord.rest.builder.message.create.embed
+import dev.kord.rest.builder.message.embed
 import dev.vankka.mcdiscordreserializer.discord.DiscordSerializer
 import dev.vankka.mcdiscordreserializer.discord.DiscordSerializerOptions
 import dev.vankka.mcdiscordreserializer.minecraft.MinecraftSerializer
@@ -41,17 +41,15 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.drex.vanish.api.VanishEvents
-import net.fabricmc.fabric.api.networking.v1.PacketSender
+import net.fabricmc.loader.api.FabricLoader
 import net.kyori.adventure.text.KeybindComponent
 import net.kyori.adventure.text.TranslatableComponent
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.advancement.Advancement
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.LoreComponent
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.nbt.NbtList
-import net.minecraft.nbt.NbtString
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.*
 import net.minecraft.util.ActionResult
@@ -92,7 +90,7 @@ class BlockBotApiExtension : Extension(), Bot {
             check { failIfNot(config.getChannelsBi().containsValue(event.message.channelId.value)) }
 
             action {
-                val sender = event.message.getAuthorAsMember()!!
+                val sender = event.message.getAuthorAsMemberOrNull() ?: return@action
                 val configChannel = config.getChannelsBi().inverse()[event.message.channelId.value]!!
                 val result = RelayMessageEvent.EVENT.invoker().message(
                     RelayMessageSender(
@@ -138,11 +136,11 @@ class BlockBotApiExtension : Extension(), Bot {
         val emojiString = EmojiParser.parseToAliases(message.content)
         var content: MutableText =
             if (config[ChatRelaySpec.convertMarkdown]) minecraftSerializer.serialize(emojiString)
-                .toNative() else emojiString.literal()
+                .toNative(server.registryManager) else emojiString.literal()
         content = convertEmojiToTranslatable(content)
         if (message.referencedMessage != null) {
             val reply = config.getReplyMsg(
-                message.referencedMessage!!.data.author.username,
+                message.referencedMessage!!.getAuthorAsMemberOrNull()?.effectiveName ?: "unknown-user",
                 message.referencedMessage!!,
                 server
             )
@@ -177,7 +175,7 @@ class BlockBotApiExtension : Extension(), Bot {
                     var x = 0
                     var y = 0
 
-                    val list = NbtList()
+                    val list = mutableListOf<Text>()
 
                     while (y < height) {
                         val text = Text.empty().setStyle(Style.EMPTY.withItalic(false))
@@ -210,18 +208,14 @@ class BlockBotApiExtension : Extension(), Bot {
                             x += stepSize
                         }
 
-                        list.add(NbtString.of(Text.Serialization.toJsonString(text)))
+                        list.add(text)
                         y += stepSize
                         x = 0
                     }
 
                     val stack = ItemStack(Items.STICK)
-                    val display = stack.getOrCreateSubNbt("display")
-
-                    display.put("Lore", list)
-
-
-                    stack.setCustomName(Text.empty())
+                    stack.set(DataComponentTypes.LORE, LoreComponent(list))
+                    stack.set(DataComponentTypes.CUSTOM_NAME, Text.empty())
                     hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, HoverEvent.ItemStackContent(stack))
                 }
 
@@ -245,7 +239,7 @@ class BlockBotApiExtension : Extension(), Bot {
         var topRoleMessage: MutableText =
             topRole?.data?.name?.literal() ?: "".literal()
         if (topColor != null) topRoleMessage = topRoleMessage.styled { it.withColor(topColor.rgb) }
-        var username: MutableText = sender.displayName.literal()
+        var username: MutableText = sender.effectiveName.literal()
         if (topColor != null) {
             username = username.styled {
                 it.withColor(topColor.rgb)
@@ -263,7 +257,7 @@ class BlockBotApiExtension : Extension(), Bot {
             chatWebhook.execute(chatWebhook.token!!) {
                 avatarUrl = config[ChatRelaySpec.WebhookSpec.webhookAvatar]
                 allowedMentions = mentions
-                embeds.add(EmbedBuilder().apply(builder))
+                embeds = mutableListOf(EmbedBuilder().apply(builder))
             }
         } else {
             val messageChannel = config.getChannel(Channels.CHAT, bot)
@@ -291,7 +285,7 @@ class BlockBotApiExtension : Extension(), Bot {
 
     override fun onChatMessage(sender: MessageSender, message: Text) {
         BlockBotDiscord.launch {
-            var content = discordSerializer.serialize(message.toAdventure(), DiscordSerializerOptions(false, false, KeybindComponent::keybind, TranslatableComponent::key))
+            var content = discordSerializer.serialize(message.toAdventure(sender.wrapperLookup), DiscordSerializerOptions(false, false, KeybindComponent::keybind, TranslatableComponent::key))
             if (config[ChatRelaySpec.escapeIngameMarkdown]) {
                 content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
             }
@@ -405,8 +399,8 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onServerTick(server: MinecraftServer) {
-        BlockBotDiscord.launch {
-            if (server.ticks % 400 == 0) {
+        if (server.ticks % 400 == 0) {
+            BlockBotDiscord.launch {
                 kord.editPresence {
                     when (config[PresenceSpec.activityType]) {
                         ActivityType.Game -> playing(config.formatPresenceText(server))

@@ -1,5 +1,6 @@
 package io.github.quiltservertools.blockbotapi.sender;
 
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -9,11 +10,13 @@ public class MessageSender {
     private final Text name;
     private final Text displayName;
     private final MessageType type;
+    private final RegistryWrapper.WrapperLookup wrapperLookup;
 
-    public MessageSender(Text name, Text displayName, @NotNull MessageType type) {
+    public MessageSender(Text name, Text displayName, @NotNull MessageType type, RegistryWrapper.WrapperLookup wrapperLookup) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
+        this.wrapperLookup = wrapperLookup;
     }
 
     public static MessageSender of(ServerCommandSource commandSource, MessageType type) {
@@ -28,7 +31,8 @@ public class MessageSender {
             sender = new MessageSender(
                 Text.literal(commandSource.getName()),
                 commandSource.getDisplayName(),
-                type
+                type,
+                commandSource.getRegistryManager()
             );
         }
         return sender;
@@ -45,6 +49,10 @@ public class MessageSender {
 
     public Text getDisplayName() {
         return displayName;
+    }
+
+    public RegistryWrapper.WrapperLookup getWrapperLookup() {
+        return wrapperLookup;
     }
 
     public enum MessageType {

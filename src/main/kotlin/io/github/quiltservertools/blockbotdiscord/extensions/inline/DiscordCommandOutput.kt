@@ -1,7 +1,6 @@
 package io.github.quiltservertools.blockbotdiscord.extensions.inline
 
 import com.kotlindiscord.kord.extensions.commands.application.slash.EphemeralSlashCommandContext
-import com.kotlindiscord.kord.extensions.types.respond
 import kotlinx.coroutines.runBlocking
 import net.minecraft.server.command.CommandOutput
 import net.minecraft.text.Text

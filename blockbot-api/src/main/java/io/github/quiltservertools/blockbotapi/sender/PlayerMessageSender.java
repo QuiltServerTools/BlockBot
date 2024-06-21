@@ -8,7 +8,7 @@ public class PlayerMessageSender extends MessageSender {
     private final ServerPlayerEntity player;
 
     public PlayerMessageSender(ServerPlayerEntity player, MessageType type) {
-        super(player.getName(), player.getDisplayName(), type);
+        super(player.getName(), player.getDisplayName(), type, player.server.getRegistryManager());
         this.profile = player.getGameProfile();
         this.player = player;
     }
