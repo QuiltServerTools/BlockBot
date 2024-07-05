@@ -140,7 +140,7 @@ class BlockBotApiExtension : Extension(), Bot {
         content = convertEmojiToTranslatable(content)
         if (message.referencedMessage != null) {
             val reply = config.getReplyMsg(
-                message.referencedMessage!!.getAuthorAsMemberOrNull()?.effectiveName ?: "unknown-user",
+                message.referencedMessage!!.getAuthorAsMemberOrNull()?.effectiveName ?: message.referencedMessage!!.data.author.username,
                 message.referencedMessage!!,
                 server
             )

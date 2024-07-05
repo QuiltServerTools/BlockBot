@@ -25,9 +25,9 @@ escapeIngameMarkdown = false
     # Supports Simplified Text Format and Placeholder API with server context
     messageFormat = "[<color:#7289DA>Discord</color> | {sender_colored}] {message}"
     # Discord -> Minecraft reply format
-    # Placeholders: {sender}, {summary}
+    # Placeholders: {sender}, {summary}, {message}
     # Supports Simplified Text Format and Placeholder API with server context
-    replyFormat = "<gray>(Replying to @{sender}: {summary})</gray>"
+    replyFormat = "<gray>(Replying to @{sender}: <hover:'{message}'>{summary}</hover>)</gray>"
     # Try to add images to messages
     appendImages = false
     # Use image interpolation

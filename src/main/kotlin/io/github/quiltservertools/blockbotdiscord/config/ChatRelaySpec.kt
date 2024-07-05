@@ -183,6 +183,7 @@ fun Config.getReplyMsg(
         Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
         mapOf(
             "sender" to (sender).literal(),
+            "message" to message.content.literal(),
             "summary" to message.summary().literal(),
         )
     ), PlaceholderContext.of(server)
