@@ -1,3 +1,5 @@
+import org.jetbrains.changelog.Changelog
+
 plugins {
     java
     id("maven-publish")
@@ -5,6 +7,8 @@ plugins {
     kotlin("jvm") version "2.0.20"
     id("io.github.goooler.shadow") version "8.1.7"
     kotlin("plugin.serialization") version "2.0.20"
+    id("me.modmuss50.mod-publish-plugin") version "0.7.4"
+    id("org.jetbrains.changelog") version "2.+"
 }
 
 configurations.implementation.get().extendsFrom(configurations.shadow.get())
@@ -19,7 +23,7 @@ allprojects {
 
     base.archivesName.set(modId)
     group = mavenGroup
-    version = "$modVersion${getVersionMetadata()}"
+    version = "$modVersion+${rootProject.libs.versions.minecraft.get()}${getVersionMetadata()}"
 
     java {
         sourceCompatibility = JavaVersion.VERSION_21
@@ -118,6 +122,33 @@ dependencies {
     }
 }
 
+publishMods {
+    file.set(tasks.remapJar.get().archiveFile)
+    type.set(STABLE)
+    changelog.set(fetchChangelog())
+
+    displayName.set("Blockbot ${version.get()}")
+    modLoaders.add("fabric")
+    modLoaders.add("quilt")
+
+    val minecraftVersion = rootProject.libs.versions.minecraft.get()
+    curseforge {
+        accessToken.set(providers.environmentVariable("CF_API_TOKEN"))
+        projectId.set("482904")
+        minecraftVersions.add(minecraftVersion)
+    }
+    modrinth {
+        accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
+        projectId.set("yKZ9outG")
+        minecraftVersions.add(minecraftVersion)
+    }
+    github {
+        accessToken.set(providers.environmentVariable("GITHUB_TOKEN"))
+        repository.set(providers.environmentVariable("GITHUB_REPOSITORY").getOrElse("QuiltServerTools/dryrun"))
+        commitish.set(providers.environmentVariable("GITHUB_REF_NAME").getOrElse("dryrun"))
+    }
+}
+
 tasks {
     remapJar {
         dependsOn(shadowJar)
@@ -199,4 +230,17 @@ fun getVersionMetadata(): String {
 
     // No tracking information could be found about the build
     return ""
+}
+
+private fun fetchChangelog(): String {
+    val changelog = tasks.getChangelog.get().changelog.get()
+    val modVersion: String by project
+    return if (changelog.has(modVersion)) {
+        changelog.renderItem(
+            changelog.get(modVersion).withHeader(false),
+            Changelog.OutputType.MARKDOWN
+        )
+    } else {
+        ""
+    }
 }
