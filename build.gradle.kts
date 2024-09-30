@@ -23,7 +23,7 @@ allprojects {
 
     base.archivesName.set(modId)
     group = mavenGroup
-    version = "$modVersion+${rootProject.libs.versions.minecraft.get()}${getVersionMetadata()}"
+    version = "$modVersion+${rootProject.libs.versions.minecraft.get()}"
 
     java {
         sourceCompatibility = JavaVersion.VERSION_21
@@ -218,18 +218,6 @@ tasks {
 
 fun com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar.relocate(pattern: String) {
     this.relocate(pattern, "io.github.quiltservertools.blockbotdiscord.libs.$pattern")
-}
-
-fun getVersionMetadata(): String {
-    val buildId = System.getenv("GITHUB_RUN_NUMBER")
-
-    // CI builds only
-    if (buildId != null) {
-        return "+build.$buildId"
-    }
-
-    // No tracking information could be found about the build
-    return ""
 }
 
 private fun fetchChangelog(): String {
