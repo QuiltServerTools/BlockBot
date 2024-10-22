@@ -132,10 +132,11 @@ publishMods {
     modLoaders.add("quilt")
 
     val minecraftVersion = rootProject.libs.versions.minecraft.get()
+    val curseForgeMinecraftVersion = rootProject.libs.versions.curseforge.minecraft.get()
     curseforge {
         accessToken.set(providers.environmentVariable("CF_API_TOKEN"))
         projectId.set("482904")
-        minecraftVersions.add(minecraftVersion)
+        minecraftVersions.add(curseForgeMinecraftVersion)
     }
     modrinth {
         accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))

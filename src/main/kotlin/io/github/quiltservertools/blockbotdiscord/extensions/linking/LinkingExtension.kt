@@ -143,7 +143,7 @@ suspend fun ServerPlayerEntity.syncDiscord() {
 }
 
 suspend fun ServerPlayerEntity.syncLinkedName() {
-    if (!config[LinkingSpec.nicknameSync] || !Permissions.check(this, "blockbot.sync.name", true)) return
+    if (!config[LinkingSpec.nicknameSync] || !Permissions.check(this.commandSource, "blockbot.sync.name", true)) return
     val member = getLinkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild]))
     member?.edit {
         nickname = name.string
@@ -155,7 +155,7 @@ suspend fun ServerPlayerEntity.syncLinkedRoles() {
     val roles = member.roles.map { it.id.value }.toList()
     config[LinkingSpec.syncedRoles].entries
         .forEach { syncedRole ->
-            val hasPermission = Permissions.check(this@syncLinkedRoles, "blockbot.sync.roles.${syncedRole.key}", 4)
+            val hasPermission = Permissions.check(this@syncLinkedRoles.commandSource, "blockbot.sync.roles.${syncedRole.key}", 4)
             if (roles.contains(syncedRole.value) && !hasPermission) {
                 member.removeRole(Snowflake(syncedRole.value), "blockbot role sync")
             } else if (!roles.contains(syncedRole.value) && hasPermission) {
