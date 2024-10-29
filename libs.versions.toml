@@ -1,10 +1,10 @@
 [versions]
-minecraft = "1.21.2-rc2"
-curseforge-minecraft="1.21.2-Snapshot"
+minecraft = "1.21.3"
+curseforge-minecraft="1.21.3"
 fabric-loader = "0.16.7"
-yarn-mappings = "1.21.2-rc2+build.2"
+yarn-mappings = "1.21.3+build.2"
 
-fabric-api = "0.106.1+1.21.2"
+fabric-api = "0.107.0+1.21.3"
 
 # Kotlin
 fabric-kotlin = "1.12.1+kotlin.2.0.20"
@@ -13,7 +13,7 @@ fabric-kotlin = "1.12.1+kotlin.2.0.20"
 kord-extensions = "1.9.0-SNAPSHOT"
 mc-discord-reserializer = "4.3.0"
 emoji-java = "5.1.1"
-adventure-gson = "4.16.0"
+adventure-gson = "4.17.0"
 
 placeholder-api = "2.5.0+1.21.2"
 permission-api = "0.3.1"

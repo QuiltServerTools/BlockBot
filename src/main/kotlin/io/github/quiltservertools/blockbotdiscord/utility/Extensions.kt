@@ -25,7 +25,7 @@ fun Message.summary(): String {
 
 fun GameProfile.getTextures() = Iterables.getFirst(this.properties.get("textures"), null)?.value
 
-fun Component.toNative(wrapperLookup: RegistryWrapper.WrapperLookup): MutableText = Text.Serialization.fromJson(GsonComponentSerializer.gson().serialize(this), DynamicRegistryManager.EMPTY)?: Text.empty()
+fun Component.toNative(wrapperLookup: RegistryWrapper.WrapperLookup): MutableText = Text.Serialization.fromJson(GsonComponentSerializer.gson().serialize(this), wrapperLookup)?: Text.empty()
 
 fun Text.toAdventure(wrapperLookup: RegistryWrapper.WrapperLookup) = GsonComponentSerializer.gson().deserialize(Text.Serialization.toJsonString(this, wrapperLookup))
 

@@ -71,7 +71,9 @@ class BlockBotApiExtension : Extension(), Bot {
             .addRenderer(MentionToMinecraftRenderer(bot))
     )
     private val discordSerializer = DiscordSerializer(
-        DiscordSerializerOptions.defaults().withKeybindProvider { Text.translatable(it.keybind()).string }
+        DiscordSerializerOptions.defaults()
+            .withKeybindProvider { Text.translatable(it.keybind()).string }
+            .withTranslationProvider { it.toNative(server.registryManager).string }
     )
     private val server: MinecraftServer by inject()
     private val mentions = AllowedMentionsBuilder()
