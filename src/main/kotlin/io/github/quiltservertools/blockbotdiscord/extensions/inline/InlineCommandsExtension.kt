@@ -1,12 +1,12 @@
 package io.github.quiltservertools.blockbotdiscord.extensions.inline
 
-import com.kotlindiscord.kord.extensions.commands.Arguments
-import com.kotlindiscord.kord.extensions.commands.converters.impl.string
-import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
+import dev.kordex.core.commands.Arguments
+import dev.kordex.core.commands.converters.impl.string
+import dev.kordex.core.extensions.Extension
+import dev.kordex.core.extensions.ephemeralSlashCommand
+import dev.kordex.core.i18n.types.Key
 import io.github.quiltservertools.blockbotdiscord.config.InlineCommandsSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
-import io.github.quiltservertools.blockbotdiscord.config.getGuild
 import io.github.quiltservertools.blockbotdiscord.config.guildId
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.ServerCommandSource
@@ -24,8 +24,8 @@ class InlineCommandsExtension : Extension() {
 
     override suspend fun setup() {
         ephemeralSlashCommand(::InlineCommandsArgs) {
-            name = "mc"
-            description = "Run a command in game"
+            name = Key("mc")
+            description = Key("Run a command in game")
 
             guild(config.guildId)
             allowByDefault = false
@@ -53,7 +53,8 @@ class InlineCommandsExtension : Extension() {
 
     inner class InlineCommandsArgs : Arguments() {
         val command by string {
-            name = "command"
-            description = "The command to run"}
+            name = Key("command")
+            description = Key("The command to run")
+        }
     }
 }

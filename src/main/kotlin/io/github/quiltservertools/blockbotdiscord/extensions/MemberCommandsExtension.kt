@@ -1,11 +1,12 @@
 package io.github.quiltservertools.blockbotdiscord.extensions
 
-import com.kotlindiscord.kord.extensions.commands.Arguments
-import com.kotlindiscord.kord.extensions.commands.converters.impl.string
-import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
-import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
+import dev.kordex.core.commands.Arguments
+import dev.kordex.core.commands.converters.impl.string
+import dev.kordex.core.extensions.Extension
+import dev.kordex.core.extensions.ephemeralSlashCommand
+import dev.kordex.core.extensions.publicSlashCommand
 import dev.kord.rest.builder.message.embed
+import dev.kordex.core.i18n.types.Key
 import io.github.quiltservertools.blockbotdiscord.config.*
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.WhitelistEntry
@@ -20,8 +21,8 @@ class MemberCommandsExtension : Extension() {
     override suspend fun setup() {
         if (config[MemberCommandsSpec.PlayerListSpec.enabled]) {
             ephemeralSlashCommand {
-                name = config[MemberCommandsSpec.PlayerListSpec.name]
-                description = config[MemberCommandsSpec.PlayerListSpec.description]
+                name = Key(config[MemberCommandsSpec.PlayerListSpec.name])
+                description = Key(config[MemberCommandsSpec.PlayerListSpec.description])
 
                 guild(config.guildId)
 
@@ -38,8 +39,8 @@ class MemberCommandsExtension : Extension() {
 
         if (config[MemberCommandsSpec.WhiteListSpec.enabled]) {
             publicSlashCommand(::WhitelistArgs) {
-                name = config[MemberCommandsSpec.WhiteListSpec.name]
-                description = config[MemberCommandsSpec.WhiteListSpec.description]
+                name = Key(config[MemberCommandsSpec.WhiteListSpec.name])
+                description = Key(config[MemberCommandsSpec.WhiteListSpec.description])
 
                 guild(config.guildId)
 
@@ -75,8 +76,8 @@ class MemberCommandsExtension : Extension() {
 
     inner class WhitelistArgs : Arguments() {
         val player by string {
-            name = config[MemberCommandsSpec.WhiteListSpec.PlayerArgumentSpec.name]
-            description = config[MemberCommandsSpec.WhiteListSpec.PlayerArgumentSpec.description]
+            name = Key(config[MemberCommandsSpec.WhiteListSpec.PlayerArgumentSpec.name])
+            description = Key(config[MemberCommandsSpec.WhiteListSpec.PlayerArgumentSpec.description])
         }
     }
 }

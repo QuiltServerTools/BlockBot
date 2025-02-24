@@ -1,11 +1,12 @@
 package io.github.quiltservertools.blockbotdiscord
 
-import com.kotlindiscord.kord.extensions.ExtensibleBot
-import com.kotlindiscord.kord.extensions.utils.loadModule
 import dev.kord.gateway.Intent
 import dev.kord.gateway.Intents
 import dev.kord.gateway.NON_PRIVILEGED
 import dev.kord.gateway.PrivilegedIntent
+import dev.kordex.core.ExtensibleBot
+import dev.kordex.core.utils.loadModule
+import dev.kordex.data.api.DataCollection
 import io.github.quiltservertools.blockbotapi.BlockBotApi
 import io.github.quiltservertools.blockbotdiscord.config.*
 import io.github.quiltservertools.blockbotdiscord.extensions.BlockBotApiExtension
@@ -68,6 +69,9 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
                 applicationCommands {
                     enabled = true
                 }
+
+                // data collection caused 404's during testing
+                dataCollectionMode = DataCollection.None
 
                 extensions {
                     add(::BlockBotApiExtension)

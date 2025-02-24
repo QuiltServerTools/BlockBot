@@ -1,6 +1,6 @@
 package io.github.quiltservertools.blockbotdiscord.extensions
 
-import com.kotlindiscord.kord.extensions.extensions.Extension
+import dev.kordex.core.extensions.Extension
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import io.github.quiltservertools.blockbotapi.Channels

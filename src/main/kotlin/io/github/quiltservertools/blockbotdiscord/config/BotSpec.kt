@@ -2,7 +2,7 @@ package io.github.quiltservertools.blockbotdiscord.config
 
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
-import com.kotlindiscord.kord.extensions.ExtensibleBot
+import dev.kordex.core.ExtensibleBot
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.ConfigSpec
 import dev.kord.common.entity.Snowflake

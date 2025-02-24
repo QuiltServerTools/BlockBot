@@ -1,23 +1,23 @@
 [versions]
-minecraft = "1.21.3"
-curseforge-minecraft="1.21.3"
-fabric-loader = "0.16.7"
-yarn-mappings = "1.21.3+build.2"
+minecraft = "1.21.4"
+curseforge-minecraft="1.21.4"
+fabric-loader = "0.16.10"
+yarn-mappings = "1.21.4+build.8"
 
-fabric-api = "0.107.0+1.21.3"
+fabric-api = "0.118.0+1.21.4"
 
 # Kotlin
-fabric-kotlin = "1.12.1+kotlin.2.0.20"
+fabric-kotlin = "1.13.1+kotlin.2.1.10"
 
 # Discord
-kord-extensions = "1.9.0-SNAPSHOT"
+kord-extensions = "2.3.1-SNAPSHOT"
 mc-discord-reserializer = "4.3.0"
 emoji-java = "5.1.1"
-adventure-gson = "4.17.0"
+adventure-gson = "4.19.0"
 
-placeholder-api = "2.5.0+1.21.2"
-permission-api = "0.3.1"
-vanish-api = "1.5.7+1.21.2-rc2"
+placeholder-api = "2.5.2+1.21.3"
+permission-api = "0.3.3"
+vanish-api = "1.5.11+1.21.4"
 konf = "1.1.2"
 
 [libraries]
@@ -28,7 +28,7 @@ fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-l
 fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
 fabric-kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric-kotlin" }
 
-kord-extensions = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version.ref = "kord-extensions" }
+kord-extensions = { module = "dev.kordex:kord-extensions", version.ref = "kord-extensions" }
 emoji = { module = "com.vdurmont:emoji-java", version.ref = "emoji-java"}
 mcDiscordReserializer = { module = "dev.vankka:mcdiscordreserializer", version.ref = "mc-discord-reserializer"}
 adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure-gson"}

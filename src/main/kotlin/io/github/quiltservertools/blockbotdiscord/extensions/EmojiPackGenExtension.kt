@@ -1,6 +1,6 @@
 package io.github.quiltservertools.blockbotdiscord.extensions
 
-import com.kotlindiscord.kord.extensions.extensions.Extension
+import dev.kordex.core.extensions.Extension
 
 class EmojiPackGenExtension : Extension() {
     override val name = "emojipack-gen"

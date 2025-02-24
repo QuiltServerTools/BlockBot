@@ -1,6 +1,6 @@
 package io.github.quiltservertools.blockbotdiscord
 
-import com.kotlindiscord.kord.extensions.ExtensibleBot
+import dev.kordex.core.ExtensibleBot
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.supplier.EntitySupplyStrategy

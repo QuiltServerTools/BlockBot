@@ -1,12 +1,12 @@
 package io.github.quiltservertools.blockbotdiscord.extensions
 
-import com.kotlindiscord.kord.extensions.checks.inGuild
-import com.kotlindiscord.kord.extensions.checks.isNotBot
-import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.event
-import com.kotlindiscord.kord.extensions.utils.ensureWebhook
-import com.kotlindiscord.kord.extensions.utils.getTopRole
-import com.kotlindiscord.kord.extensions.utils.hasPermission
+import dev.kordex.core.checks.inGuild
+import dev.kordex.core.checks.isNotBot
+import dev.kordex.core.extensions.Extension
+import dev.kordex.core.extensions.event
+import dev.kordex.core.utils.ensureWebhook
+import dev.kordex.core.utils.getTopRole
+import dev.kordex.core.utils.hasPermission
 import com.vdurmont.emoji.EmojiParser
 import dev.kord.common.entity.AllowedMentionType
 import dev.kord.common.entity.Permission

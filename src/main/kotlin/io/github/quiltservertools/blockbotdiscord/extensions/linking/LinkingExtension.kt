@@ -1,16 +1,17 @@
 package io.github.quiltservertools.blockbotdiscord.extensions.linking
 
 import com.google.common.collect.HashBiMap
-import com.kotlindiscord.kord.extensions.checks.memberFor
-import com.kotlindiscord.kord.extensions.commands.Arguments
-import com.kotlindiscord.kord.extensions.commands.converters.impl.string
-import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
-import com.kotlindiscord.kord.extensions.utils.getTopRole
+import dev.kordex.core.checks.memberFor
+import dev.kordex.core.commands.Arguments
+import dev.kordex.core.commands.converters.impl.string
+import dev.kordex.core.extensions.Extension
+import dev.kordex.core.extensions.ephemeralSlashCommand
+import dev.kordex.core.utils.getTopRole
 import com.mojang.authlib.GameProfile
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.behavior.edit
 import dev.kord.rest.request.RestRequestException
+import dev.kordex.core.i18n.types.Key
 import eu.pb4.placeholders.api.PlaceholderResult
 import eu.pb4.placeholders.api.Placeholders
 import eu.pb4.placeholders.api.TextParserUtils
@@ -42,8 +43,8 @@ class LinkingExtension : Extension() {
 
     override suspend fun setup() {
         ephemeralSlashCommand(::LinkingArgs) {
-            name = "link"
-            description = "links your discord account to a minecraft account"
+            name = Key("link")
+            description = Key("links your discord account to a minecraft account")
 
             guild(config.guildId)
 
@@ -85,8 +86,8 @@ class LinkingExtension : Extension() {
 
     inner class LinkingArgs : Arguments() {
         val code by string {
-            name = "code"
-            description = "The linking code received in-game"
+            name = Key("code")
+            description = Key("The linking code received in-game")
         }
     }
 
