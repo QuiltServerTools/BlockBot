@@ -56,6 +56,7 @@ import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.MathHelper.clamp
 import org.koin.core.component.inject
+import java.net.URI
 import java.net.URL
 import javax.imageio.ImageIO
 import kotlin.math.ceil
@@ -218,12 +219,12 @@ class BlockBotApiExtension : Extension(), Bot {
                     val stack = ItemStack(Items.STICK)
                     stack.set(DataComponentTypes.LORE, LoreComponent(list))
                     stack.set(DataComponentTypes.CUSTOM_NAME, Text.empty())
-                    hoverEvent = HoverEvent(HoverEvent.Action.SHOW_ITEM, HoverEvent.ItemStackContent(stack))
+                    hoverEvent = HoverEvent.ShowItem(stack)
                 }
 
                 attachments.add("[${attachment.filename}]".literal().styled {
                     it.withColor(Formatting.BLUE)
-                        .withClickEvent(ClickEvent(ClickEvent.Action.OPEN_URL, attachment.url))
+                        .withClickEvent(ClickEvent.OpenUrl(URI(attachment.url)))
                         .withHoverEvent(hoverEvent)
                 })
             }
@@ -232,7 +233,7 @@ class BlockBotApiExtension : Extension(), Bot {
         for (stickerItem in message.stickers) {
             val sticker = stickerItem.getSticker()
             attachments.add("[Sticker: ${sticker.name}]".literal().styled {
-                it.withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, (sticker.description ?: "").literal()))
+                it.withHoverEvent(HoverEvent.ShowText((sticker.description ?: "").literal()))
             })
         }
 
