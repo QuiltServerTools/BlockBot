@@ -3,7 +3,7 @@ import org.jetbrains.changelog.Changelog
 plugins {
     java
     id("maven-publish")
-    id("fabric-loom") version "1.10.+"
+    id("fabric-loom") version "1.11.+"
     kotlin("jvm") version "2.1.10"
     id("io.github.goooler.shadow") version "8.1.7"
     kotlin("plugin.serialization") version "2.1.10"
