@@ -190,7 +190,6 @@ tasks {
         relocate("com.ibm")
         relocate("com.iwebpp")
         relocate("com.kotlindiscord")
-        relocate("com.sun")
         relocate("com.typesafe")
         relocate("com.vdurmont")
         relocate("javassist")
