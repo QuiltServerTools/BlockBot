@@ -1,14 +1,11 @@
 package io.github.quiltservertools.blockbotdiscord.config
 
-import com.mojang.authlib.GameProfile
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.ConfigSpec
-import eu.pb4.placeholders.api.PlaceholderContext
-import eu.pb4.placeholders.api.Placeholders
-import eu.pb4.placeholders.api.TextParserUtils
 import io.github.quiltservertools.blockbotdiscord.extensions.linking.linkCode
-import io.github.quiltservertools.blockbotdiscord.utility.literal
+import io.github.quiltservertools.blockbotdiscord.utility.formatText
 import net.minecraft.server.MinecraftServer
+import net.minecraft.server.PlayerConfigEntry
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 
@@ -33,28 +30,16 @@ object LinkingSpec : ConfigSpec() {
     }
 }
 
-fun Config.formatUnlinkedDisconnectMessage(gameProfile: GameProfile, server: MinecraftServer): MutableText =
+fun Config.formatUnlinkedDisconnectMessage(playerConfigEntry: PlayerConfigEntry, server: MinecraftServer): MutableText =
     Text.empty().apply {
         config[LinkingSpec.unlinkedDisconnectMessage].forEach {
             this.append(
-                formatLine(
-                    it,
-                    server,
-                    gameProfile.linkCode
-                )
+                it.replace(
+                    "{code}",
+                    playerConfigEntry.linkCode
+                ).formatText()
             )
             this.append(Text.literal("\n"))
         }
     }
 
-private fun formatLine(line: String, server: MinecraftServer, code: String) =
-    Placeholders.parseText(
-        Placeholders.parseText(
-            TextParserUtils.formatText(line),
-            Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
-            mapOf(
-                "code" to code.literal()
-            )
-        ),
-        PlaceholderContext.of(server)
-    )

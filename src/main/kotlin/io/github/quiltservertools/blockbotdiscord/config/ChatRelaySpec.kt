@@ -4,11 +4,11 @@ import com.mojang.authlib.GameProfile
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.ConfigSpec
 import dev.kord.core.entity.Message
+import eu.pb4.placeholders.api.ParserContext
 import eu.pb4.placeholders.api.PlaceholderContext
-import eu.pb4.placeholders.api.Placeholders
-import eu.pb4.placeholders.api.TextParserUtils
 import io.github.quiltservertools.blockbotapi.sender.MessageSender
 import io.github.quiltservertools.blockbotapi.sender.PlayerMessageSender
+import io.github.quiltservertools.blockbotdiscord.utility.formatText
 import io.github.quiltservertools.blockbotdiscord.utility.getTextures
 import io.github.quiltservertools.blockbotdiscord.utility.literal
 import io.github.quiltservertools.blockbotdiscord.utility.summary
@@ -77,10 +77,12 @@ fun Config.formatWebhookAnnouncement(sender: MessageSender, message: String): St
     formatDiscordRelayMessage(sender, message, config[ChatRelaySpec.DiscordWebhookFormatSpec.announcementFormat])
 
 fun Config.formatWebhookAuthor(sender: MessageSender): String =
-    formatDiscordRelayMessage(sender, "", config[ChatRelaySpec.DiscordWebhookFormatSpec.authorFormat], mapOf(
-        "sender" to sender.name,
-        "sender_display" to sender.displayName
-    ))
+    formatDiscordRelayMessage(
+        sender, "", config[ChatRelaySpec.DiscordWebhookFormatSpec.authorFormat], mapOf(
+            "sender" to sender.name,
+            "sender_display" to sender.displayName
+        )
+    )
 
 fun Config.formatPlayerJoinMessage(player: ServerPlayerEntity): String =
     formatDiscordRelayMessage(player, config[ChatRelaySpec.DiscordMessageFormatSpec.playerJoin]).string
@@ -115,85 +117,57 @@ private fun formatDiscordRelayMessage(
         "message" to message.literal()
     )
 ): String {
-    var parsedText = Placeholders.parseText(
-        format.literal(),
-        Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
-        placeholders
-    )
-    if (sender is PlayerMessageSender) parsedText = Placeholders.parseText(
-        parsedText,
-        PlaceholderContext.of(sender.player)
-    )
-    return parsedText.string
+    var context = ParserContext.of()
+    if (sender is PlayerMessageSender) {
+        context = PlaceholderContext.of(sender.player).asParserContext()
+    }
+    return format.formatText(context, placeholders).string
 }
 
 fun formatDiscordRelayMessage(
     player: ServerPlayerEntity,
     format: String,
     placeholders: Map<String, Text> = mapOf()
-): Text =
-    Placeholders.parseText(
-        Placeholders.parseText(
-            format.literal(),
-            Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
-            placeholders
-        ),
-        PlaceholderContext.of(player)
-    )
+): Text = format.formatText(player, placeholders)
 
 fun formatDiscordRelayMessage(
     server: MinecraftServer,
     format: String,
     placeholders: Map<String, Text> = mapOf()
 ): String =
-    Placeholders.parseText(
-        Placeholders.parseText(
-            format.literal(),
-            Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
-            placeholders
-        ),
-        PlaceholderContext.of(server)
-    ).string
+    format.formatText(PlaceholderContext.of(server).asParserContext(), placeholders).string
 
 fun Config.getMinecraftChatRelayMsg(
     sender: MutableText,
     topRole: MutableText,
     message: Text,
     server: MinecraftServer
-): Text = Placeholders.parseText(
-    Placeholders.parseText(
-        TextParserUtils.formatText(this[ChatRelaySpec.MinecraftFormatSpec.messageFormat]),
-        Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
-        mapOf(
-            "sender" to sender.copy().formatted(Formatting.RESET),
-            "sender_colored" to sender,
-            "top_role" to topRole,
-            "message" to message
-        )
-    ), PlaceholderContext.of(server)
+): Text = this[ChatRelaySpec.MinecraftFormatSpec.messageFormat].formatText(
+    PlaceholderContext.of(server).asParserContext(),
+    mapOf(
+        "sender" to sender.copy().formatted(Formatting.RESET),
+        "sender_colored" to sender,
+        "top_role" to topRole,
+        "message" to message
+    )
 )
 
 fun Config.getReplyMsg(
     sender: String,
     message: Message,
     server: MinecraftServer
-): Text = Placeholders.parseText(
-    Placeholders.parseText(
-        TextParserUtils.formatText(this[ChatRelaySpec.MinecraftFormatSpec.replyFormat]),
-        Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
-        mapOf(
-            "sender" to (sender).literal(),
-            "message" to message.content.literal(),
-            "summary" to message.summary().literal(),
-        )
-    ), PlaceholderContext.of(server)
+): Text = this[ChatRelaySpec.MinecraftFormatSpec.replyFormat].formatText(
+    PlaceholderContext.of(server).asParserContext(),
+    mapOf(
+        "sender" to (sender).literal(),
+        "message" to message.content.literal(),
+        "summary" to message.summary().literal(),
+    )
 )
 
 fun Config.getWebhookChatRelayAvatar(gameProfile: GameProfile): String =
-    Placeholders.parseText(
-        this[ChatRelaySpec.WebhookSpec.playerAvatarUrl].literal(),
-        Placeholders.ALT_PLACEHOLDER_PATTERN_CUSTOM,
-        mapOf(
+    this[ChatRelaySpec.WebhookSpec.playerAvatarUrl].formatText(
+        ParserContext.of(), mapOf(
             "uuid" to gameProfile.id.toString().literal(),
             "username" to gameProfile.name.literal(),
             "texture" to (gameProfile.getTextures()?.literal() ?: Text.empty())

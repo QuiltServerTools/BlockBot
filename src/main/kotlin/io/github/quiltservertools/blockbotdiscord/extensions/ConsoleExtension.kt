@@ -62,7 +62,7 @@ class ConsoleExtension : Extension() {
                 val serverWorld: ServerWorld? = server.overworld
                 val source = ServerCommandSource(
                     server,
-                    if (serverWorld == null) Vec3d.ZERO else Vec3d.of(serverWorld.spawnPos),
+                    Vec3d.ZERO,
                     Vec2f.ZERO,
                     serverWorld,
                     4,

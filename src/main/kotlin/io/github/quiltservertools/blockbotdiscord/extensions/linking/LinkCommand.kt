@@ -1,20 +1,21 @@
 package io.github.quiltservertools.blockbotdiscord.extensions.linking
 
-import com.mojang.authlib.GameProfile
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.LongArgumentType
 import com.mojang.brigadier.context.CommandContext
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
-import eu.pb4.placeholders.api.TextParserUtils
+import eu.pb4.placeholders.api.ParserContext
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
 import io.github.quiltservertools.blockbotdiscord.config.LinkingSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.formatUnlinkedDisconnectMessage
 import io.github.quiltservertools.blockbotdiscord.extensions.unwrap
 import io.github.quiltservertools.blockbotdiscord.logInfo
+import io.github.quiltservertools.blockbotdiscord.utility.formatText
 import kotlinx.coroutines.launch
 import net.minecraft.command.argument.GameProfileArgumentType
+import net.minecraft.server.PlayerConfigEntry
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.CommandManager.literal
 import net.minecraft.server.command.ServerCommandSource
@@ -25,35 +26,42 @@ typealias Dispatcher = CommandDispatcher<ServerCommandSource>
 typealias Context = CommandContext<ServerCommandSource>
 
 class LinkCommand(private val dispatcher: Dispatcher) {
+
     fun register() {
         dispatcher.register(
             literal("link")
                 .executes { linkAccount(it, it.source.playerOrThrow) }
-                .then(literal("unlink")
-                    .requires { it.playerOrThrow.gameProfile.isLinked() }
-                    .executes { unlinkAccount(it, it.source.playerOrThrow) })
-                .then(literal("get")
-                    .requires { it.hasPermissionLevel(2) }
-                    .then(literal("minecraft")
-                        .then(argument("player", GameProfileArgumentType.gameProfile())
-                            .executes {
-                                getLinkedPlayer(
-                                    it,
-                                    GameProfileArgumentType.getProfileArgument(it, "player")
-                                )
-                            }
+                .then(
+                    literal("unlink")
+                        .requires { it.playerOrThrow.playerConfigEntry.isLinked() }
+                        .executes { unlinkAccount(it, it.source.playerOrThrow) })
+                .then(
+                    literal("get")
+                        .requires { it.hasPermissionLevel(2) }
+                        .then(
+                            literal("minecraft")
+                            .then(
+                                argument("player", GameProfileArgumentType.gameProfile())
+                                    .executes {
+                                        getLinkedPlayer(
+                                            it,
+                                            GameProfileArgumentType.getProfileArgument(it, "player")
+                                        )
+                                    }
+                            )
                         )
-                    )
-                    .then(literal("discord")
-                        .then(argument("id", LongArgumentType.longArg(1))
-                            .executes {
-                                getLinkedPlayer(
-                                    it,
-                                    Snowflake(LongArgumentType.getLong(it, "id"))
-                                )
-                            }
+                        .then(
+                            literal("discord")
+                            .then(
+                                argument("id", LongArgumentType.longArg(1))
+                                    .executes {
+                                        getLinkedPlayer(
+                                            it,
+                                            Snowflake(LongArgumentType.getLong(it, "id"))
+                                        )
+                                    }
+                            )
                         )
-                    )
                 )
         )
     }
@@ -64,21 +72,25 @@ class LinkCommand(private val dispatcher: Dispatcher) {
         if (BlockBotDiscord.linkedAccounts.remove(player.uuid)) {
             logInfo("Unlinked ${player.name} from $id")
             context.source.sendFeedback(
-                { TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.successfulUnlink]) },
+                {
+                    config[LinkingSpec.MessagesSpec.successfulUnlink].formatText(player)
+                },
                 false
             )
 
             if (config[LinkingSpec.requireLinking]) {
                 context.source.playerOrThrow.networkHandler.disconnect(
                     config.formatUnlinkedDisconnectMessage(
-                        player.gameProfile,
+                        player.playerConfigEntry,
                         context.source.server
                     )
                 )
             }
         } else {
             context.source.sendFeedback(
-                { TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.failedUnlink]) },
+                {
+                    config[LinkingSpec.MessagesSpec.failedUnlink].formatText(player)
+                },
                 false
             )
         }
@@ -86,7 +98,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
         return 1
     }
 
-    private fun getLinkedPlayer(context: Context, profiles: Collection<GameProfile>): Int {
+    private fun getLinkedPlayer(context: Context, profiles: Collection<PlayerConfigEntry>): Int {
         profiles.forEach {
             val id = BlockBotDiscord.linkedAccounts.get(it.id)
             getLinkedPlayer(context, id)
@@ -106,12 +118,12 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                 source.sendFeedback({ Text.literal(user?.tag ?: id.toString()) }, false)
 
                 for (uuid in BlockBotDiscord.linkedAccounts.get(id)!!) {
-                    val account = source.server.userCache?.getByUuid(uuid)?.unwrap()
+                    val account = source.server.apiServices.nameToIdCache.getByUuid(uuid)?.unwrap()
                     source.sendFeedback({ Text.literal("    - ${account?.name ?: uuid.toString()}") }, false)
                 }
             } else {
                 source.sendFeedback(
-                    { TextParserUtils.formatText(config[LinkingSpec.MessagesSpec.noLinkedAccounts]) },
+                    { config[LinkingSpec.MessagesSpec.noLinkedAccounts].formatText() },
                     false
                 )
             }
@@ -127,23 +139,19 @@ class LinkCommand(private val dispatcher: Dispatcher) {
             if (user != null) {
                 context.source.sendFeedback(
                     {
-                        TextParserUtils.formatText(
-                            config[LinkingSpec.MessagesSpec.alreadyLinked].replace(
-                                "{user}",
-                                user.tag
-                            )
-                        )
+                        config[LinkingSpec.MessagesSpec.alreadyLinked].replace(
+                            "{user}",
+                            user.tag
+                        ).formatText(player)
                     }, false
                 )
             } else {
                 context.source.sendFeedback(
                     {
-                        TextParserUtils.formatText(
-                            config[LinkingSpec.MessagesSpec.linkCode].replace(
-                                "{code}",
-                                player.gameProfile.linkCode
-                            )
-                        )
+                        config[LinkingSpec.MessagesSpec.linkCode].replace(
+                            "{code}",
+                            player.playerConfigEntry.linkCode
+                        ).formatText(player)
                     }, false
                 )
                 player.syncDiscord()

@@ -35,7 +35,7 @@ class InlineCommandsExtension : Extension() {
                 val output = DiscordCommandOutput(this)
                 val source = ServerCommandSource(
                     output,
-                    if (serverWorld == null) Vec3d.ZERO else Vec3d.of(serverWorld.spawnPos),
+                    Vec3d.ZERO,
                     Vec2f.ZERO,
                     serverWorld,
                     config[InlineCommandsSpec.opLevel],

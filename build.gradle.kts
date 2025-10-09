@@ -4,9 +4,9 @@ plugins {
     java
     id("maven-publish")
     id("fabric-loom") version "1.11.+"
-    kotlin("jvm") version "2.1.10"
+    kotlin("jvm") version "2.2.20"
     id("io.github.goooler.shadow") version "8.1.7"
-    kotlin("plugin.serialization") version "2.1.10"
+    kotlin("plugin.serialization") version "2.2.20"
     id("me.modmuss50.mod-publish-plugin") version "0.8.4"
     id("org.jetbrains.changelog") version "2.+"
 }
@@ -41,7 +41,10 @@ allprojects {
             url = uri("https://maven.fabricmc.net/")
         }
         maven("https://api.modrinth.com/maven")
-        maven("https://oss.sonatype.org/content/repositories/snapshots")
+        maven("https://snapshots-repo.kordex.dev")
+        maven("https://releases-repo.kordex.dev")
+        maven("https://repo.kordex.dev/snapshots")
+        maven("https://mirror-repo.kordex.dev")
     }
 
     // Declare dependencies
@@ -92,8 +95,8 @@ allprojects {
 repositories {
     mavenCentral()
     maven("https://maven.nucleoid.xyz/")
-    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     maven("https://snapshots-repo.kordex.dev")
+    maven("https://repo.kord.dev/snapshots")
 }
 
 dependencies {
@@ -155,12 +158,6 @@ tasks {
     remapJar {
         dependsOn(shadowJar)
         input.set(shadowJar.get().archiveFile)
-    }
-
-    compileKotlin {
-        kotlinOptions {
-            jvmTarget = "21"
-        }
     }
 
     shadowJar {
