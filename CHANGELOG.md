@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.5] - 2025-10-09
+### Changed
+- Update to 1.21.9/1.21.10
+
+### Fixed
+- Minecraft translation serialization
+
 ## [2.0.4] - 2025-07-12
 ### Changed
 - Update dependencies to 1.21.7

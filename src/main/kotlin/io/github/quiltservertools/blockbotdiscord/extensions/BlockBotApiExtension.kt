@@ -288,7 +288,7 @@ class BlockBotApiExtension : Extension(), Bot {
 
     override fun onChatMessage(sender: MessageSender, message: Text) {
         BlockBotDiscord.launch {
-            var content = discordSerializer.serialize(message.toAdventure(sender.wrapperLookup), DiscordSerializerOptions(false, false, KeybindComponent::keybind, TranslatableComponent::key))
+            var content = discordSerializer.serialize(message.toAdventure(sender.wrapperLookup), discordSerializer.defaultOptions.withEscapeMarkdown(false))
             if (config[ChatRelaySpec.escapeIngameMarkdown]) {
                 content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
             }
