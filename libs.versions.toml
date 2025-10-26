@@ -1,23 +1,23 @@
 [versions]
 minecraft = "1.21.10"
 curseforge-minecraft="1.21.10"
-fabric-loader = "0.17.2"
+fabric-loader = "0.17.3"
 yarn-mappings = "1.21.10+build.1"
 
-fabric-api = "0.134.1+1.21.10"
+fabric-api = "0.136.0+1.21.10"
 
 # Kotlin
-fabric-kotlin = "1.13.6+kotlin.2.2.20"
+fabric-kotlin = "1.13.7+kotlin.2.2.21"
 
 # Discord
 kord-extensions = "2.3.6-SNAPSHOT"
 mc-discord-reserializer = "4.3.0"
 emoji-java = "5.1.1"
-adventure-gson = "4.24.0"
+adventure-gson = "4.25.0"
 
-placeholder-api = "2.8.0+1.21.9"
+placeholder-api = "2.8.1+1.21.10"
 permission-api = "0.4.1"
-vanish-api = "1.6.1+1.21.9-rc1"
+vanish-api = "1.6.1+1.21.10"
 konf = "1.1.2"
 
 [libraries]

@@ -4,9 +4,9 @@ plugins {
     java
     id("maven-publish")
     id("fabric-loom") version "1.11.+"
-    kotlin("jvm") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
     id("io.github.goooler.shadow") version "8.1.7"
-    kotlin("plugin.serialization") version "2.2.20"
+    kotlin("plugin.serialization") version "2.2.21"
     id("me.modmuss50.mod-publish-plugin") version "0.8.4"
     id("org.jetbrains.changelog") version "2.+"
 }

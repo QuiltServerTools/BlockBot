@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.6] - 2025-10-26
+### Changed
+- Update adventure library to 4.25.0
+
 ## [2.0.5] - 2025-10-09
 ### Changed
 - Update to 1.21.9/1.21.10
