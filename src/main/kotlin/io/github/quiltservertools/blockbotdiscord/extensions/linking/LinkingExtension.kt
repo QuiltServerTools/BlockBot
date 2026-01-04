@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
+import net.minecraft.command.permission.PermissionLevel
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.PlayerConfigEntry
 import net.minecraft.server.network.ServerPlayerEntity
@@ -160,7 +161,7 @@ suspend fun ServerPlayerEntity.syncLinkedRoles() {
     config[LinkingSpec.syncedRoles].entries
         .forEach { syncedRole ->
             val hasPermission =
-                Permissions.check(this@syncLinkedRoles.commandSource, "blockbot.sync.roles.${syncedRole.key}", 4)
+                Permissions.check(this@syncLinkedRoles.commandSource, "blockbot.sync.roles.${syncedRole.key}", PermissionLevel.OWNERS)
             if (roles.contains(syncedRole.value) && !hasPermission) {
                 member.removeRole(Snowflake(syncedRole.value), "blockbot role sync")
             } else if (!roles.contains(syncedRole.value) && hasPermission) {

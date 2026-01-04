@@ -16,6 +16,7 @@ import io.github.quiltservertools.blockbotdiscord.utility.formatText
 import kotlinx.coroutines.launch
 import net.minecraft.command.argument.GameProfileArgumentType
 import net.minecraft.server.PlayerConfigEntry
+import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.CommandManager.literal
 import net.minecraft.server.command.ServerCommandSource
@@ -37,7 +38,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                         .executes { unlinkAccount(it, it.source.playerOrThrow) })
                 .then(
                     literal("get")
-                        .requires { it.hasPermissionLevel(2) }
+                        .requires (CommandManager.requirePermissionLevel(CommandManager.GAMEMASTERS_CHECK))
                         .then(
                             literal("minecraft")
                             .then(

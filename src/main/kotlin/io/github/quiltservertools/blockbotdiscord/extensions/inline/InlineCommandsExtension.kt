@@ -8,6 +8,8 @@ import dev.kordex.core.i18n.types.Key
 import io.github.quiltservertools.blockbotdiscord.config.InlineCommandsSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.guildId
+import net.minecraft.command.permission.LeveledPermissionPredicate
+import net.minecraft.command.permission.PermissionLevel
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.dedicated.MinecraftDedicatedServer
@@ -38,14 +40,14 @@ class InlineCommandsExtension : Extension() {
                     Vec3d.ZERO,
                     Vec2f.ZERO,
                     serverWorld,
-                    config[InlineCommandsSpec.opLevel],
+                    LeveledPermissionPredicate.fromLevel(PermissionLevel.fromLevel(config[InlineCommandsSpec.opLevel])),
                     member!!.asMember().tag,
                     Text.literal(member!!.asMember().tag),
                     server,
                     null
                 )
 
-                (server as MinecraftDedicatedServer).commandManager.executeWithPrefix(source, arguments.command)
+                (server as MinecraftDedicatedServer).commandManager.parseAndExecute(source, arguments.command)
                 output.sendBuffer()
             }
         }

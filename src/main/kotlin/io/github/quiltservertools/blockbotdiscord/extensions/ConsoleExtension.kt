@@ -11,6 +11,7 @@ import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.getChannel
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
+import net.minecraft.command.permission.LeveledPermissionPredicate
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.dedicated.MinecraftDedicatedServer
@@ -65,7 +66,7 @@ class ConsoleExtension : Extension() {
                     Vec3d.ZERO,
                     Vec2f.ZERO,
                     serverWorld,
-                    4,
+                    LeveledPermissionPredicate.OWNERS,
                     sender.id,
                     Text.literal(sender.id),
                     server,
