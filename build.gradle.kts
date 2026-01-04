@@ -5,7 +5,7 @@ plugins {
     id("maven-publish")
     id("fabric-loom") version "1.14.+"
     kotlin("jvm") version "2.2.21"
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("com.gradleup.shadow") version "9.3.0"
     kotlin("plugin.serialization") version "2.2.21"
     id("me.modmuss50.mod-publish-plugin") version "1.1.0"
     id("org.jetbrains.changelog") version "2.+"
@@ -157,7 +157,7 @@ publishMods {
 tasks {
     remapJar {
         dependsOn(shadowJar)
-        input.set(shadowJar.get().archiveFile)
+        inputFile.set(shadowJar.get().archiveFile)
     }
 
     shadowJar {
