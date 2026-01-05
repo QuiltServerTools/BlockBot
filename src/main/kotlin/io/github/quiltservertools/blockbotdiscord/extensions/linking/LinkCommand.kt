@@ -34,7 +34,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                 .executes { linkAccount(it, it.source.playerOrThrow) }
                 .then(
                     literal("unlink")
-                        .requires { it.playerOrThrow.playerConfigEntry.isLinked() }
+                        .requires { it.player?.playerConfigEntry?.isLinked() ?: false }
                         .executes { unlinkAccount(it, it.source.playerOrThrow) })
                 .then(
                     literal("get")

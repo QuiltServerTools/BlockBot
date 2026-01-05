@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.7] - 2026-01-05
+### Fixed
+- 'Invalid player data' when joining with a linked account
+
 ## [2.0.6] - 2025-10-26
 ### Changed
 - Update adventure library to 4.25.0
