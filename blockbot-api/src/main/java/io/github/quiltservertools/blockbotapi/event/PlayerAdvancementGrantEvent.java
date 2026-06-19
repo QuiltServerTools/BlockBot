@@ -2,8 +2,8 @@ package io.github.quiltservertools.blockbotapi.event;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.server.level.ServerPlayer;
 
 public interface PlayerAdvancementGrantEvent {
     Event<PlayerAdvancementGrantEvent> EVENT = EventFactory.createArrayBacked(PlayerAdvancementGrantEvent.class, (listeners) -> (player, advancement) -> {
@@ -12,5 +12,5 @@ public interface PlayerAdvancementGrantEvent {
         }
     });
 
-    void onAdvancementGrant(ServerPlayerEntity player, Advancement advancement);
+    void onAdvancementGrant(ServerPlayer player, Advancement advancement);
 }

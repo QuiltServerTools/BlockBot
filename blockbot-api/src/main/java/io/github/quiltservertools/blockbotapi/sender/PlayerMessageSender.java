@@ -1,14 +1,14 @@
 package io.github.quiltservertools.blockbotapi.sender;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 public class PlayerMessageSender extends MessageSender {
     private final GameProfile profile;
-    private final ServerPlayerEntity player;
+    private final ServerPlayer player;
 
-    public PlayerMessageSender(ServerPlayerEntity player, MessageType type) {
-        super(player.getName(), player.getDisplayName(), type, player.getEntityWorld().getServer().getRegistryManager());
+    public PlayerMessageSender(ServerPlayer player, MessageType type) {
+        super(player.getName(), player.getDisplayName(), type, player.level().getServer().registryAccess());
         this.profile = player.getGameProfile();
         this.player = player;
     }
@@ -17,7 +17,7 @@ public class PlayerMessageSender extends MessageSender {
         return profile;
     }
 
-    public ServerPlayerEntity getPlayer() {
+    public ServerPlayer getPlayer() {
         return player;
     }
 }

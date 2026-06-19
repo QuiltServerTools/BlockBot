@@ -44,17 +44,22 @@ import me.drex.vanish.api.VanishEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.kyori.adventure.text.KeybindComponent
 import net.kyori.adventure.text.TranslatableComponent
-import net.minecraft.advancement.Advancement
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.component.type.LoreComponent
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
+import net.minecraft.advancements.Advancement
+import net.minecraft.core.component.DataComponents
+import net.minecraft.world.item.component.ItemLore
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.*
-import net.minecraft.util.ActionResult
-import net.minecraft.util.Formatting
-import net.minecraft.util.math.MathHelper.clamp
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.InteractionResult
+import net.minecraft.ChatFormatting
+import net.minecraft.network.chat.ClickEvent
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.HoverEvent
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.network.chat.Style
+import net.minecraft.util.Mth.clamp
+import net.minecraft.world.item.ItemStackTemplate
 import org.koin.core.component.inject
 import java.net.URI
 import java.net.URL
@@ -73,8 +78,8 @@ class BlockBotApiExtension : Extension(), Bot {
     )
     private val discordSerializer = DiscordSerializer(
         DiscordSerializerOptions.defaults()
-            .withKeybindProvider { Text.translatable(it.keybind()).string }
-            .withTranslationProvider { it.toNative(server.registryManager).string }
+            .withKeybindProvider { Component.translatable(it.keybind()).string }
+            .withTranslationProvider { it.toNative(server.registryAccess()).string }
     )
     private val server: MinecraftServer by inject()
     private val mentions = AllowedMentionsBuilder()
@@ -106,13 +111,13 @@ class BlockBotApiExtension : Extension(), Bot {
                     event.message.content
                 )
 
-                if (result == ActionResult.PASS) {
+                if (result == InteractionResult.PASS) {
                     if (configChannel == Channels.CHAT) {
                         val messages = getChatMessage(sender, event.message)
 
                         server.submit {
                             for (message in messages) {
-                                server.playerManager.broadcast(
+                                server.playerList.broadcastSystemMessage(
                                     message,
                                     false
                                 )
@@ -132,15 +137,15 @@ class BlockBotApiExtension : Extension(), Bot {
         }
 
         // Send server started message if the server has already started. isLoading should be named isRunning
-        if (server.isLoading) onServerStart(server)
+        if (server.isReady) onServerStart(server)
     }
 
-    public suspend fun getChatMessage(sender: Member, message: Message): List<Text> {
+    public suspend fun getChatMessage(sender: Member, message: Message): List<Component> {
         val emojiString = EmojiParser.parseToAliases(message.content)
-        var content: MutableText =
+        var content: MutableComponent =
             if (config[ChatRelaySpec.convertMarkdown]) minecraftSerializer.serialize(emojiString)
-                .toNative(server.registryManager) else emojiString.literal()
-        content = convertEmojiToTranslatable(content)
+                .toNative(server.registryAccess()) else emojiString.literal()
+//        content = convertEmojiToTranslatable(content)
         if (message.referencedMessage != null) {
             val reply = config.getReplyMsg(
                 message.referencedMessage!!.getAuthorAsMemberOrNull()?.effectiveName ?: message.referencedMessage!!.data.author.username,
@@ -150,7 +155,7 @@ class BlockBotApiExtension : Extension(), Bot {
             content = "".literal().append(reply).append("\n").append(content)
         }
 
-        val attachments = mutableListOf<Text>()
+        val attachments = mutableListOf<Component>()
 
         if (message.attachments.isNotEmpty()) {
             val appendImages = config[ChatRelaySpec.MinecraftFormatSpec.appendImages]
@@ -178,10 +183,10 @@ class BlockBotApiExtension : Extension(), Bot {
                     var x = 0
                     var y = 0
 
-                    val list = mutableListOf<Text>()
+                    val list = mutableListOf<Component>()
 
                     while (y < height) {
-                        val text = Text.empty().setStyle(Style.EMPTY.withItalic(false))
+                        val text = Component.empty().setStyle(Style.EMPTY.withItalic(false))
                         while (x < width) {
                             var rgb: Int
 
@@ -206,7 +211,7 @@ class BlockBotApiExtension : Extension(), Bot {
                             } else {
                                 rgb = image.getRGB(x, y).and(0xffffff)
                             }
-                            val pixel = Text.literal("█").setStyle(Style.EMPTY.withColor(rgb))
+                            val pixel = Component.literal("█").setStyle(Style.EMPTY.withColor(rgb))
                             text.append(pixel)
                             x += stepSize
                         }
@@ -217,13 +222,13 @@ class BlockBotApiExtension : Extension(), Bot {
                     }
 
                     val stack = ItemStack(Items.STICK)
-                    stack.set(DataComponentTypes.LORE, LoreComponent(list))
-                    stack.set(DataComponentTypes.CUSTOM_NAME, Text.empty())
-                    hoverEvent = HoverEvent.ShowItem(stack)
+                    stack.set(DataComponents.LORE, ItemLore(list))
+                    stack.set(DataComponents.CUSTOM_NAME, Component.empty())
+                    hoverEvent = HoverEvent.ShowItem(ItemStackTemplate.fromStack(stack))
                 }
 
-                attachments.add("[${attachment.filename}]".literal().styled {
-                    it.withColor(Formatting.BLUE)
+                attachments.add("[${attachment.filename}]".literal().withStyle {
+                    it.withColor(ChatFormatting.BLUE)
                         .withClickEvent(ClickEvent.OpenUrl(URI(attachment.url)))
                         .withHoverEvent(hoverEvent)
                 })
@@ -232,19 +237,19 @@ class BlockBotApiExtension : Extension(), Bot {
 
         for (stickerItem in message.stickers) {
             val sticker = stickerItem.getSticker()
-            attachments.add("[Sticker: ${sticker.name}]".literal().styled {
+            attachments.add("[Sticker: ${sticker.name}]".literal().withStyle {
                 it.withHoverEvent(HoverEvent.ShowText((sticker.description ?: "").literal()))
             })
         }
 
         val topRole = sender.getTopRole()
         val topColor = sender.getDisplayColor()
-        var topRoleMessage: MutableText =
+        var topRoleMessage: MutableComponent =
             topRole?.data?.name?.literal() ?: "".literal()
-        if (topColor != null) topRoleMessage = topRoleMessage.styled { it.withColor(topColor.rgb) }
-        var username: MutableText = sender.effectiveName.literal()
+        if (topColor != null) topRoleMessage = topRoleMessage.withStyle { it.withColor(topColor.rgb) }
+        var username: MutableComponent = sender.effectiveName.literal()
         if (topColor != null) {
-            username = username.styled {
+            username = username.withStyle {
                 it.withColor(topColor.rgb)
             }
         }
@@ -286,12 +291,12 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onChatMessage(sender: MessageSender, message: Text) {
+    override fun onChatMessage(sender: MessageSender, message: Component) {
         BlockBotDiscord.launch {
-            var content = discordSerializer.serialize(message.toAdventure(sender.wrapperLookup), discordSerializer.defaultOptions.withEscapeMarkdown(false))
-            if (config[ChatRelaySpec.escapeIngameMarkdown]) {
-                content = MinecraftSerializer.INSTANCE.escapeMarkdown(content)
-            }
+            var content = discordSerializer.serialize(
+                message.toAdventure(sender.wrapperLookup),
+                discordSerializer.defaultOptions.withEscapeMarkdown(config[ChatRelaySpec.escapeIngameMarkdown])
+            )
             if (config[ChatRelaySpec.allowMentions]) {
                 content = convertStringToMention(content, config.getGuild(bot))
             }
@@ -317,11 +322,11 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onPlayerJoinMessage(player: ServerPlayerEntity) {
+    override fun onPlayerJoinMessage(player: ServerPlayer) {
         if (!player.isVanished()) sendPlayerJoinMessage(player)
     }
 
-    private fun sendPlayerJoinMessage(player: ServerPlayerEntity) {
+    private fun sendPlayerJoinMessage(player: ServerPlayer) {
         if (config.formatPlayerJoinMessage(player).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
@@ -334,11 +339,11 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onPlayerLeaveMessage(player: ServerPlayerEntity) {
+    override fun onPlayerLeaveMessage(player: ServerPlayer) {
         if (!player.isVanished()) sendPlayerLeaveMessage(player)
     }
 
-    private fun sendPlayerLeaveMessage(player: ServerPlayerEntity) {
+    private fun sendPlayerLeaveMessage(player: ServerPlayer) {
         if (config.formatPlayerLeaveMessage(player).isEmpty()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
@@ -351,7 +356,7 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onPlayerDeath(player: ServerPlayerEntity, message: Text) {
+    override fun onPlayerDeath(player: ServerPlayer, message: Component) {
         if (config.formatPlayerDeathMessage(player, message).isEmpty() || player.isVanished()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
@@ -364,7 +369,7 @@ class BlockBotApiExtension : Extension(), Bot {
         }
     }
 
-    override fun onAdvancementGrant(player: ServerPlayerEntity, advancement: Advancement) {
+    override fun onAdvancementGrant(player: ServerPlayer, advancement: Advancement) {
         if (config.formatPlayerAdvancementMessage(player, advancement).isEmpty() || player.isVanished()) return
         BlockBotDiscord.launch {
             createDiscordEmbed {
@@ -402,7 +407,7 @@ class BlockBotApiExtension : Extension(), Bot {
     }
 
     override fun onServerTick(server: MinecraftServer) {
-        if (server.ticks % 400 == 0) {
+        if (server.tickCount % 400 == 0) {
             BlockBotDiscord.launch {
                 kord.editPresence {
                     when (config[PresenceSpec.activityType]) {

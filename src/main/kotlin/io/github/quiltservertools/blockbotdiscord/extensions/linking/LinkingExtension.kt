@@ -9,8 +9,8 @@ import dev.kordex.core.commands.Arguments
 import dev.kordex.core.commands.converters.impl.string
 import dev.kordex.core.extensions.Extension
 import dev.kordex.core.extensions.ephemeralSlashCommand
-import dev.kordex.core.i18n.types.Key
 import dev.kordex.core.utils.getTopRole
+import dev.kordex.i18n.Key
 import eu.pb4.placeholders.api.PlaceholderResult
 import eu.pb4.placeholders.api.Placeholders
 import io.github.quiltservertools.blockbotdiscord.BlockBotDiscord
@@ -28,11 +28,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
-import net.minecraft.command.permission.PermissionLevel
+import net.minecraft.server.permissions.PermissionLevel
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.PlayerConfigEntry
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.Text
+import net.minecraft.server.players.NameAndId
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.Style
 import org.koin.core.component.inject
 import java.util.*
 import kotlin.random.Random
@@ -67,7 +68,7 @@ class LinkingExtension : Extension() {
                     BlockBotDiscord.linkedAccounts.add(snowflake, uuid)
                     logInfo("Linked $uuid to $snowflake")
                     linkCodes.remove(arguments.code)
-                    val profile = server.apiServices.nameToIdCache.getByUuid(uuid)?.unwrap()
+                    val profile = server.services().nameToIdCache.get(uuid)?.unwrap()
 
                     respond {
                         content = config[LinkingSpec.MessagesSpec.successfulLink].replace(
@@ -101,45 +102,45 @@ class LinkingExtension : Extension() {
 }
 
 private fun registerPlaceholders() {
-    Placeholders.register(id("linked_username")) { ctx, arg ->
+    Placeholders.registerServer<Unit>(id("linked_username")) { ctx, arg ->
         runBlocking {
-            val user = ctx.player?.getLinkedAccount()
+            val user = ctx.serverPlayer()?.getLinkedAccount()
             val color = if (arg == "colored") user?.asMemberOrNull()?.getDisplayColor() else null
 
-            PlaceholderResult.value(user?.username?.literal()?.styled { color?.let { _ -> it.withColor(color.rgb) } })
+            PlaceholderResult.value(user?.username?.literal()?.withStyle { color?.let { _ -> it.withColor(color.rgb) } ?: Style.EMPTY })
         }
     }
 
-    Placeholders.register(id("linked_display")) { ctx, arg ->
+    Placeholders.registerServer<Unit>(id("linked_display")) { ctx, arg ->
         runBlocking {
-            val user = ctx.player?.getLinkedAccount()
+            val user = ctx.serverPlayer()?.getLinkedAccount()
             val color = if (arg == "colored") user?.asMemberOrNull()?.getDisplayColor() else null
 
             PlaceholderResult.value(
                 (user?.asMemberOrNull(config.guildId)?.effectiveName ?: user?.username)?.literal()
-                    ?.styled { color?.let { _ -> it.withColor(color.rgb) } }
+                    ?.withStyle { color?.let { _ -> it.withColor(color.rgb) } ?: Style.EMPTY }
             )
         }
     }
 
-    Placeholders.register(id("linked_discriminator")) { ctx, _ ->
+    Placeholders.registerServer<Unit>(id("linked_discriminator")) { ctx, _ ->
         runBlocking {
-            PlaceholderResult.value(ctx.player?.getLinkedAccount()?.discriminator?.literal())
+            PlaceholderResult.value(ctx.serverPlayer()?.getLinkedAccount()?.discriminator?.literal())
         }
     }
 
-    Placeholders.register(id("linked_role")) { ctx, _ ->
+    Placeholders.registerServer<Unit>(id("linked_role")) { ctx, _ ->
         runBlocking {
-            val member = ctx.player?.getLinkedAccount()?.asMemberOrNull(config.guildId)
+            val member = ctx.serverPlayer()?.getLinkedAccount()?.asMemberOrNull(config.guildId)
             val color = member?.getTopRole()?.color
             val text = member?.getTopRole()?.data?.name?.literal()
 
-            PlaceholderResult.value(text?.styled { color?.let { _ -> it.withColor(color.rgb) } })
+            PlaceholderResult.value(text?.withStyle { color?.let { _ -> it.withColor(color.rgb) } ?: Style.EMPTY })
         }
     }
 }
 
-suspend fun ServerPlayerEntity.syncDiscord() {
+suspend fun ServerPlayer.syncDiscord() {
     try {
         syncLinkedName()
         syncLinkedRoles()
@@ -147,21 +148,21 @@ suspend fun ServerPlayerEntity.syncDiscord() {
     }
 }
 
-suspend fun ServerPlayerEntity.syncLinkedName() {
-    if (!config[LinkingSpec.nicknameSync] || !Permissions.check(this.commandSource, "blockbot.sync.name", true)) return
+suspend fun ServerPlayer.syncLinkedName() {
+    if (!config[LinkingSpec.nicknameSync] || !Permissions.check(this.createCommandSourceStack(), "blockbot.sync.name", true)) return
     val member = getLinkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild]))
     member?.edit {
         nickname = name.string
     }
 }
 
-suspend fun ServerPlayerEntity.syncLinkedRoles() {
+suspend fun ServerPlayer.syncLinkedRoles() {
     val member = getLinkedAccount()?.asMemberOrNull(Snowflake(config[BotSpec.guild])) ?: return
     val roles = member.roles.map { it.id.value }.toList()
     config[LinkingSpec.syncedRoles].entries
         .forEach { syncedRole ->
             val hasPermission =
-                Permissions.check(this@syncLinkedRoles.commandSource, "blockbot.sync.roles.${syncedRole.key}", PermissionLevel.OWNERS)
+                Permissions.check(this@syncLinkedRoles.createCommandSourceStack(), "blockbot.sync.roles.${syncedRole.key}", PermissionLevel.OWNERS)
             if (roles.contains(syncedRole.value) && !hasPermission) {
                 member.removeRole(Snowflake(syncedRole.value), "blockbot role sync")
             } else if (!roles.contains(syncedRole.value) && hasPermission) {
@@ -170,7 +171,7 @@ suspend fun ServerPlayerEntity.syncLinkedRoles() {
         }
 }
 
-fun PlayerConfigEntry.canJoin(server: MinecraftServer): Text? {
+fun NameAndId.canJoin(server: MinecraftServer): Component? {
     return runBlocking {
         if (config[LinkingSpec.enabled] && config[LinkingSpec.requireLinking]) {
             val account = this@canJoin.linkedAccount()
@@ -194,7 +195,7 @@ fun PlayerConfigEntry.canJoin(server: MinecraftServer): Text? {
     }
 }
 
-val PlayerConfigEntry.linkCode: String
+val NameAndId.linkCode: String
     get() {
         return if (LinkingExtension.linkCodes.containsValue(this.id)) {
             LinkingExtension.linkCodes.inverse()[this.id]!!

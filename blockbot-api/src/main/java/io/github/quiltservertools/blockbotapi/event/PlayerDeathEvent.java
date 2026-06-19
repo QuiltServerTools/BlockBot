@@ -2,8 +2,8 @@ package io.github.quiltservertools.blockbotapi.event;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
 
 public interface PlayerDeathEvent {
     Event<PlayerDeathEvent> EVENT = EventFactory.createArrayBacked(PlayerDeathEvent.class, (listeners) -> (player, message) -> {
@@ -12,5 +12,5 @@ public interface PlayerDeathEvent {
         }
     });
 
-    void death(ServerPlayerEntity player, Text message);
+    void death(ServerPlayer player, Component message);
 }

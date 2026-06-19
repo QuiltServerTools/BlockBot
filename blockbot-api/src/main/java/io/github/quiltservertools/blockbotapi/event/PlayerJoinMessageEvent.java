@@ -2,7 +2,7 @@ package io.github.quiltservertools.blockbotapi.event;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 public interface PlayerJoinMessageEvent {
     Event<PlayerJoinMessageEvent> EVENT = EventFactory.createArrayBacked(PlayerJoinMessageEvent.class, (listeners) -> (player) -> {
@@ -11,5 +11,5 @@ public interface PlayerJoinMessageEvent {
         }
     });
 
-    void onPlayerJoinMessage(ServerPlayerEntity player);
+    void onPlayerJoinMessage(ServerPlayer player);
 }

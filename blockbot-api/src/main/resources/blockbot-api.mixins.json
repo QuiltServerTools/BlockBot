@@ -4,13 +4,13 @@
   "package": "io.github.quiltservertools.blockbotapi.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "MeCommandMixin",
-    "MixinPlayerAdvancementTracker",
-    "MixinServerPlayerEntity",
-    "PlayerManagerMixin",
+    "EmoteCommandsMixin",
+    "MixinPlayerAdvancements",
+    "MixinServerPlayer",
+    "PlayerListMixin",
     "RandomCommandMixin",
     "SayCommandMixin",
-    "ServerPlayNetworkHandlerMixin",
+    "ServerGamePacketListenerImplMixin",
     "TellRawCommandMixin"
   ],
   "server": [],

@@ -12,8 +12,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
-import net.minecraft.server.PlayerConfigEntry
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.players.NameAndId
+import net.minecraft.server.level.ServerPlayer
 import java.io.File
 import java.util.*
 
@@ -84,7 +84,7 @@ class JsonLinkedAccounts : LinkedAccountData {
     }
 }
 
-suspend fun ServerPlayerEntity.getLinkedAccount(): User? {
+suspend fun ServerPlayer.getLinkedAccount(): User? {
     val id = BlockBotDiscord.linkedAccounts.get(this.uuid)
     if (id != null) {
         return BlockBotDiscord.bot.getKoin().get<Kord>().getUser(id)
@@ -93,9 +93,9 @@ suspend fun ServerPlayerEntity.getLinkedAccount(): User? {
     return null
 }
 
-fun PlayerConfigEntry.isLinked(): Boolean = BlockBotDiscord.linkedAccounts.get(this.id) != null
+fun NameAndId.isLinked(): Boolean = BlockBotDiscord.linkedAccounts.get(this.id) != null
 
-suspend fun PlayerConfigEntry.linkedAccount(): User? {
+suspend fun NameAndId.linkedAccount(): User? {
     val id = BlockBotDiscord.linkedAccounts.get(this.id)
     if (id != null) {
         return BlockBotDiscord.bot.getKoin().get<Kord>().getUser(id)

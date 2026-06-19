@@ -5,9 +5,9 @@ import com.uchuhimo.konf.ConfigSpec
 import io.github.quiltservertools.blockbotdiscord.extensions.linking.linkCode
 import io.github.quiltservertools.blockbotdiscord.utility.formatText
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.PlayerConfigEntry
-import net.minecraft.text.MutableText
-import net.minecraft.text.Text
+import net.minecraft.server.players.NameAndId
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.network.chat.Component
 
 object LinkingSpec : ConfigSpec() {
     val enabled by required<Boolean>()
@@ -30,8 +30,8 @@ object LinkingSpec : ConfigSpec() {
     }
 }
 
-fun Config.formatUnlinkedDisconnectMessage(playerConfigEntry: PlayerConfigEntry, server: MinecraftServer): MutableText =
-    Text.empty().apply {
+fun Config.formatUnlinkedDisconnectMessage(playerConfigEntry: NameAndId, server: MinecraftServer): MutableComponent =
+    Component.empty().apply {
         config[LinkingSpec.unlinkedDisconnectMessage].forEach {
             this.append(
                 it.replace(
@@ -39,7 +39,7 @@ fun Config.formatUnlinkedDisconnectMessage(playerConfigEntry: PlayerConfigEntry,
                     playerConfigEntry.linkCode
                 ).formatText()
             )
-            this.append(Text.literal("\n"))
+            this.append(Component.literal("\n"))
         }
     }
 

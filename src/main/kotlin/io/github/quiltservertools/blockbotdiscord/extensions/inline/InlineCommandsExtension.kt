@@ -4,19 +4,19 @@ import dev.kordex.core.commands.Arguments
 import dev.kordex.core.commands.converters.impl.string
 import dev.kordex.core.extensions.Extension
 import dev.kordex.core.extensions.ephemeralSlashCommand
-import dev.kordex.core.i18n.types.Key
+import dev.kordex.i18n.Key
 import io.github.quiltservertools.blockbotdiscord.config.InlineCommandsSpec
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.guildId
-import net.minecraft.command.permission.LeveledPermissionPredicate
-import net.minecraft.command.permission.PermissionLevel
+import net.minecraft.server.permissions.LevelBasedPermissionSet
+import net.minecraft.server.permissions.PermissionLevel
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.server.dedicated.MinecraftDedicatedServer
-import net.minecraft.server.world.ServerWorld
-import net.minecraft.text.Text
-import net.minecraft.util.math.Vec2f
-import net.minecraft.util.math.Vec3d
+import net.minecraft.commands.CommandSourceStack
+import net.minecraft.server.dedicated.DedicatedServer
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.network.chat.Component
+import net.minecraft.world.phys.Vec2
+import net.minecraft.world.phys.Vec3
 import org.koin.core.component.inject
 
 class InlineCommandsExtension : Extension() {
@@ -33,21 +33,21 @@ class InlineCommandsExtension : Extension() {
             allowByDefault = false
 
             action {
-                val serverWorld: ServerWorld? = server.overworld
+                val serverWorld: ServerLevel = server.overworld()
                 val output = DiscordCommandOutput(this)
-                val source = ServerCommandSource(
+                val source = CommandSourceStack(
                     output,
-                    Vec3d.ZERO,
-                    Vec2f.ZERO,
+                    Vec3.ZERO,
+                    Vec2.ZERO,
                     serverWorld,
-                    LeveledPermissionPredicate.fromLevel(PermissionLevel.fromLevel(config[InlineCommandsSpec.opLevel])),
+                    LevelBasedPermissionSet.forLevel(PermissionLevel.byId(config[InlineCommandsSpec.opLevel])),
                     member!!.asMember().tag,
-                    Text.literal(member!!.asMember().tag),
+                    Component.literal(member!!.asMember().tag),
                     server,
                     null
                 )
 
-                (server as MinecraftDedicatedServer).commandManager.parseAndExecute(source, arguments.command)
+                (server as DedicatedServer).commands.performPrefixedCommand(source, arguments.command)
                 output.sendBuffer()
             }
         }

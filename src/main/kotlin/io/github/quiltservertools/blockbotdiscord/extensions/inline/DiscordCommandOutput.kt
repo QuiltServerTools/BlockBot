@@ -2,14 +2,14 @@ package io.github.quiltservertools.blockbotdiscord.extensions.inline
 
 import dev.kordex.core.commands.application.slash.EphemeralSlashCommandContext
 import kotlinx.coroutines.runBlocking
-import net.minecraft.server.command.CommandOutput
-import net.minecraft.text.Text
+import net.minecraft.commands.CommandSource
+import net.minecraft.network.chat.Component
 
 class DiscordCommandOutput(private val commandContext: EphemeralSlashCommandContext<out InlineCommandsExtension.InlineCommandsArgs, *>) :
-    CommandOutput {
+    CommandSource {
     private val buffer = StringBuffer()
 
-    override fun sendMessage(message: Text) {
+    override fun sendSystemMessage(message: Component) {
         val content = message.string
 
         if (content.isNotEmpty()) {
@@ -20,11 +20,11 @@ class DiscordCommandOutput(private val commandContext: EphemeralSlashCommandCont
         }
     }
 
-    override fun shouldReceiveFeedback() = true
+    override fun acceptsSuccess() = true
 
-    override fun shouldTrackOutput() = true
+    override fun acceptsFailure() = true
 
-    override fun shouldBroadcastConsoleToOps() = true
+    override fun shouldInformAdmins() = true
 
     fun sendBuffer() {
         runBlocking {

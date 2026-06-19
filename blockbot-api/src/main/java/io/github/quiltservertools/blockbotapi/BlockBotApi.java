@@ -23,7 +23,7 @@ public class BlockBotApi implements ModInitializer {
     public void onInitialize() {
         ServerMessageEvents.CHAT_MESSAGE.register((message, sender, typeKey) -> ChatMessageEvent.EVENT.invoker().message(
             new PlayerMessageSender(sender, MessageSender.MessageType.REGULAR),
-            message.getContent()
+            message.decoratedContent()
         ));
     }
 

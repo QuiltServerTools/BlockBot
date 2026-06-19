@@ -27,6 +27,6 @@
   "depends": {
     "java": ">=21",
     "fabricloader": ">=${fabricLoader}",
-    "fabric": ">=${fabricApi}"
+    "fabric-api": ">=${fabricApi}"
   }
 }

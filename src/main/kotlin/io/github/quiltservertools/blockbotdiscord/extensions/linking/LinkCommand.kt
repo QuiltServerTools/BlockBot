@@ -14,39 +14,39 @@ import io.github.quiltservertools.blockbotdiscord.extensions.unwrap
 import io.github.quiltservertools.blockbotdiscord.logInfo
 import io.github.quiltservertools.blockbotdiscord.utility.formatText
 import kotlinx.coroutines.launch
-import net.minecraft.command.argument.GameProfileArgumentType
-import net.minecraft.server.PlayerConfigEntry
-import net.minecraft.server.command.CommandManager
-import net.minecraft.server.command.CommandManager.argument
-import net.minecraft.server.command.CommandManager.literal
-import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.Text
+import net.minecraft.commands.arguments.GameProfileArgument
+import net.minecraft.server.players.NameAndId
+import net.minecraft.commands.Commands
+import net.minecraft.commands.Commands.argument
+import net.minecraft.commands.Commands.literal
+import net.minecraft.commands.CommandSourceStack
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.network.chat.Component
 
-typealias Dispatcher = CommandDispatcher<ServerCommandSource>
-typealias Context = CommandContext<ServerCommandSource>
+typealias Dispatcher = CommandDispatcher<CommandSourceStack>
+typealias Context = CommandContext<CommandSourceStack>
 
 class LinkCommand(private val dispatcher: Dispatcher) {
 
     fun register() {
         dispatcher.register(
             literal("link")
-                .executes { linkAccount(it, it.source.playerOrThrow) }
+                .executes { linkAccount(it, it.source.playerOrException) }
                 .then(
                     literal("unlink")
-                        .requires { it.player?.playerConfigEntry?.isLinked() ?: false }
-                        .executes { unlinkAccount(it, it.source.playerOrThrow) })
+                        .requires { it.player?.nameAndId()?.isLinked() ?: false }
+                        .executes { unlinkAccount(it, it.source.playerOrException) })
                 .then(
                     literal("get")
-                        .requires (CommandManager.requirePermissionLevel(CommandManager.GAMEMASTERS_CHECK))
+                        .requires (Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(
                             literal("minecraft")
                             .then(
-                                argument("player", GameProfileArgumentType.gameProfile())
+                                argument("player", GameProfileArgument.gameProfile())
                                     .executes {
                                         getLinkedPlayer(
                                             it,
-                                            GameProfileArgumentType.getProfileArgument(it, "player")
+                                            GameProfileArgument.getGameProfiles(it, "player")
                                         )
                                     }
                             )
@@ -67,12 +67,12 @@ class LinkCommand(private val dispatcher: Dispatcher) {
         )
     }
 
-    private fun unlinkAccount(context: Context, player: ServerPlayerEntity): Int {
+    private fun unlinkAccount(context: Context, player: ServerPlayer): Int {
         val id = BlockBotDiscord.linkedAccounts.get(player.uuid)
 
         if (BlockBotDiscord.linkedAccounts.remove(player.uuid)) {
             logInfo("Unlinked ${player.name} from $id")
-            context.source.sendFeedback(
+            context.source.sendSuccess(
                 {
                     config[LinkingSpec.MessagesSpec.successfulUnlink].formatText(player)
                 },
@@ -80,15 +80,15 @@ class LinkCommand(private val dispatcher: Dispatcher) {
             )
 
             if (config[LinkingSpec.requireLinking]) {
-                context.source.playerOrThrow.networkHandler.disconnect(
+                context.source.playerOrException.connection.disconnect(
                     config.formatUnlinkedDisconnectMessage(
-                        player.playerConfigEntry,
+                        player.nameAndId(),
                         context.source.server
                     )
                 )
             }
         } else {
-            context.source.sendFeedback(
+            context.source.sendSuccess(
                 {
                     config[LinkingSpec.MessagesSpec.failedUnlink].formatText(player)
                 },
@@ -99,7 +99,7 @@ class LinkCommand(private val dispatcher: Dispatcher) {
         return 1
     }
 
-    private fun getLinkedPlayer(context: Context, profiles: Collection<PlayerConfigEntry>): Int {
+    private fun getLinkedPlayer(context: Context, profiles: Collection<NameAndId>): Int {
         profiles.forEach {
             val id = BlockBotDiscord.linkedAccounts.get(it.id)
             getLinkedPlayer(context, id)
@@ -116,14 +116,14 @@ class LinkCommand(private val dispatcher: Dispatcher) {
 
             if (id != null && BlockBotDiscord.linkedAccounts.get(id) != null) {
                 val user = kord.getUser(id)
-                source.sendFeedback({ Text.literal(user?.tag ?: id.toString()) }, false)
+                source.sendSuccess({ Component.literal(user?.tag ?: id.toString()) }, false)
 
                 for (uuid in BlockBotDiscord.linkedAccounts.get(id)!!) {
-                    val account = source.server.apiServices.nameToIdCache.getByUuid(uuid)?.unwrap()
-                    source.sendFeedback({ Text.literal("    - ${account?.name ?: uuid.toString()}") }, false)
+                    val account = source.server.services().nameToIdCache.get(uuid)?.unwrap()
+                    source.sendSuccess({ Component.literal("    - ${account?.name ?: uuid.toString()}") }, false)
                 }
             } else {
-                source.sendFeedback(
+                source.sendSuccess(
                     { config[LinkingSpec.MessagesSpec.noLinkedAccounts].formatText() },
                     false
                 )
@@ -133,12 +133,12 @@ class LinkCommand(private val dispatcher: Dispatcher) {
         return 1
     }
 
-    private fun linkAccount(context: Context, player: ServerPlayerEntity): Int {
+    private fun linkAccount(context: Context, player: ServerPlayer): Int {
         BlockBotDiscord.launch {
             val user = player.getLinkedAccount()
 
             if (user != null) {
-                context.source.sendFeedback(
+                context.source.sendSuccess(
                     {
                         config[LinkingSpec.MessagesSpec.alreadyLinked].replace(
                             "{user}",
@@ -147,11 +147,11 @@ class LinkCommand(private val dispatcher: Dispatcher) {
                     }, false
                 )
             } else {
-                context.source.sendFeedback(
+                context.source.sendSuccess(
                     {
                         config[LinkingSpec.MessagesSpec.linkCode].replace(
                             "{code}",
-                            player.playerConfigEntry.linkCode
+                            player.nameAndId().linkCode
                         ).formatText(player)
                     }, false
                 )

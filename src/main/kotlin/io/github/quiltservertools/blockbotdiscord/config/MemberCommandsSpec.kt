@@ -4,6 +4,7 @@ import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.ConfigSpec
 import eu.pb4.placeholders.api.PlaceholderContext
 import eu.pb4.placeholders.api.Placeholders
+import eu.pb4.placeholders.api.ServerPlaceholderContext
 import io.github.quiltservertools.blockbotdiscord.utility.isVanished
 import io.github.quiltservertools.blockbotdiscord.utility.literal
 import net.minecraft.server.MinecraftServer
@@ -35,16 +36,16 @@ object MemberCommandsSpec : ConfigSpec() {
 
 fun Config.formatPlayerListTitle(
     server: MinecraftServer
-): String = Placeholders.parseText(
-    this[MemberCommandsSpec.PlayerListSpec.title].literal(),
-    PlaceholderContext.of(server)
+): String = Placeholders.SERVER_PLACEHOLDER_PARSER.parseComponent(
+    this[MemberCommandsSpec.PlayerListSpec.title],
+    ServerPlaceholderContext.of(server).asParserContext()
 ).string
 
 fun Config.formatPlayerListContent(
     server: MinecraftServer
-): String = server.playerManager.playerList.filter { !it.isVanished() }.joinToString {
-    Placeholders.parseText(
-        this[MemberCommandsSpec.PlayerListSpec.playerFormat].literal(),
-        PlaceholderContext.of(it)
+): String = server.playerList.players.filter { !it.isVanished() }.joinToString {
+    Placeholders.SERVER_PLACEHOLDER_PARSER.parseComponent(
+        this[MemberCommandsSpec.PlayerListSpec.playerFormat],
+        ServerPlaceholderContext.of(server).asParserContext()
     ).string
 }

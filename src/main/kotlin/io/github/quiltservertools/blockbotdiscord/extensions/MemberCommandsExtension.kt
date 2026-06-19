@@ -6,10 +6,10 @@ import dev.kordex.core.extensions.Extension
 import dev.kordex.core.extensions.ephemeralSlashCommand
 import dev.kordex.core.extensions.publicSlashCommand
 import dev.kord.rest.builder.message.embed
-import dev.kordex.core.i18n.types.Key
+import dev.kordex.i18n.Key
 import io.github.quiltservertools.blockbotdiscord.config.*
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.WhitelistEntry
+import net.minecraft.server.players.UserWhiteListEntry
 import org.koin.core.component.inject
 import java.util.*
 
@@ -45,7 +45,7 @@ class MemberCommandsExtension : Extension() {
                 guild(config.guildId)
 
                 action {
-                    val profile = server.apiServices.nameToIdCache?.findByName(arguments.player)?.unwrap()
+                    val profile = server.services().nameToIdCache?.get(arguments.player)?.unwrap()
                     if (profile == null) {
                         respond {
                             content = config[MemberCommandsSpec.WhiteListSpec.MessagesSpec.unknownPlayer].replace(
@@ -56,12 +56,12 @@ class MemberCommandsExtension : Extension() {
                         return@action
                     }
 
-                    if (server.playerManager.isWhitelisted(profile)) {
+                    if (server.playerList.isWhiteListed(profile)) {
                         respond {
                             content = config[MemberCommandsSpec.WhiteListSpec.MessagesSpec.alreadyWhiteListed]
                         }
                     } else {
-                        server.playerManager.whitelist.add(WhitelistEntry(profile))
+                        server.playerList.whiteList.add(UserWhiteListEntry(profile))
                         respond {
                             content = config[MemberCommandsSpec.WhiteListSpec.MessagesSpec.successful].replace(
                                 "{player}",

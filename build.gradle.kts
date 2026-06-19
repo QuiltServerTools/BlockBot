@@ -3,8 +3,8 @@ import org.jetbrains.changelog.Changelog
 plugins {
     java
     id("maven-publish")
-    id("fabric-loom") version "1.14.+"
-    kotlin("jvm") version "2.2.21"
+    id("net.fabricmc.fabric-loom") version "1.17-SNAPSHOT"
+    kotlin("jvm") version "2.3.21"
     id("com.gradleup.shadow") version "9.3.0"
     kotlin("plugin.serialization") version "2.2.21"
     id("me.modmuss50.mod-publish-plugin") version "1.1.0"
@@ -19,15 +19,15 @@ allprojects {
     val modVersion: String by project
     val mavenGroup: String by project
 
-    apply(plugin = "fabric-loom")
+    apply(plugin = "net.fabricmc.fabric-loom")
 
-    base.archivesName.set(modId)
+//    base.archivesName.set(modId)
     group = mavenGroup
     version = "$modVersion+${rootProject.libs.versions.minecraft.get()}"
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_25
+        targetCompatibility = JavaVersion.VERSION_25
     }
 
     loom {
@@ -51,14 +51,13 @@ allprojects {
     dependencies {
         // Fabric
         minecraft(rootProject.libs.minecraft)
-        mappings(variantOf(rootProject.libs.yarn.mappings) { classifier("v2") })
-        modImplementation(rootProject.libs.fabric.loader)
+        implementation(rootProject.libs.fabric.loader)
 
         // Mods
-        modImplementation(rootProject.libs.fabric.api)
+        implementation(rootProject.libs.fabric.api)
 
         // Optional deps
-        modRuntimeOnly(rootProject.libs.permission.api)
+        runtimeOnly(rootProject.libs.permission.api)
     }
 
     // Produce a sources distribution
@@ -96,16 +95,17 @@ repositories {
     mavenCentral()
     maven("https://maven.nucleoid.xyz/")
     maven("https://snapshots-repo.kordex.dev")
-    maven("https://repo.kord.dev/snapshots")
+//    maven("https://repo.kord.dev/snapshots")
+    mavenLocal()
 }
 
 dependencies {
-    modImplementation(libs.fabric.kotlin)
+    implementation(libs.fabric.kotlin)
 
-    modImplementation(libs.placeholder.api)
+    implementation(libs.placeholder.api)
     include(libs.placeholder.api)
 
-    modImplementation(libs.permission.api)
+    implementation(libs.permission.api)
     include(libs.permission.api)
 
     shadow(libs.mcDiscordReserializer)
@@ -117,17 +117,21 @@ dependencies {
     shadow(libs.konf.base)
     shadow(libs.konf.toml)
 
+    implementation("com.ibm.icu:icu4j:74.2")
+    include("com.ibm.icu:icu4j:74.2")
+    shadow("com.ibm.icu:icu4j:74.2")
+
     // Optional deps
-    modCompileOnly(rootProject.libs.vanish.api)
+    compileOnly(rootProject.libs.vanish.api)
 
     subprojects.forEach {
-        implementation(project(":${it.name}", "namedElements"))
+        implementation(project(":${it.name}"))
         include(project("${it.name}:")) // nest within distribution
     }
 }
 
 publishMods {
-    file.set(tasks.remapJar.get().archiveFile)
+    file.set(tasks.shadowJar.get().archiveFile)
     type.set(STABLE)
     changelog.set(fetchChangelog())
 
@@ -155,24 +159,27 @@ publishMods {
 }
 
 tasks {
-    remapJar {
-        dependsOn(shadowJar)
-        inputFile.set(shadowJar.get().archiveFile)
+    jar {
+        destinationDirectory.set(project.layout.buildDirectory.dir("devlibs"))
+        archiveClassifier.set("dev")
     }
 
     shadowJar {
+        dependsOn(jar)
         from("LICENSE")
 
         configurations = listOf(
             project.configurations.shadow.get()
         )
-        archiveClassifier.set("dev-all")
+        archiveClassifier.set("")
 
-        minimize {
-            exclude(project(":blockbot-api"))
-        }
+//        minimize {
+//            exclude(project(":blockbot-api"))
+//            exclude(dependency("com.ibm.icu:icu4j:.*"))
+//        }
+        mergeServiceFiles()
 
-        exclude("kotlin/**", "kotlinx/coroutines/**", "kotlinx/serialization/**", "javax/**", "META-INF")
+        exclude("kotlin/**", "kotlinx/coroutines/**", "kotlinx/serialization/**", "javax/**",)
         exclude("org/checkerframework/**", "org/intellij/**", "org/jetbrains/annotations/**")
         exclude("com/google/gson/**")
         exclude("org/slf4j/**")
@@ -184,9 +191,9 @@ tasks {
         relocate("com.uchuhimo")
         relocate("com.github.zafarkhaja")
         relocate("com.googlecode")
-        relocate("com.ibm")
+//        relocate("com.ibm")
         relocate("com.iwebpp")
-        relocate("com.kotlindiscord")
+        relocate("dev.kordex")
         relocate("com.typesafe")
         relocate("com.vdurmont")
         relocate("javassist")
@@ -213,6 +220,11 @@ tasks {
         relocate("net.peanuuutz")
     }
 }
+
+loom.nestJars(
+    tasks.shadowJar,
+    fileTree(tasks.processIncludeJars.get().outputDirectory)
+)
 
 fun com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar.relocate(pattern: String) {
     this.relocate(pattern, "io.github.quiltservertools.blockbotdiscord.libs.$pattern")

@@ -24,7 +24,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.MinecraftServer
-import net.minecraft.util.Identifier
+import net.minecraft.resources.Identifier
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.nio.file.Files
@@ -107,7 +107,7 @@ object BlockBotDiscord : ModInitializer, CoroutineScope {
     override val coroutineContext = Dispatchers.Default
 }
 
-fun id(path: String): Identifier = Identifier.of(BlockBotDiscord.MOD_ID, path)
+fun id(path: String): Identifier = Identifier.fromNamespaceAndPath(BlockBotDiscord.MOD_ID, path)
 
 fun logDebug(message: String) = BlockBotDiscord.logger.debug(message)
 fun logInfo(message: String) = BlockBotDiscord.logger.info(message)

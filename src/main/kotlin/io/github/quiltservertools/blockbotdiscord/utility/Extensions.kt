@@ -14,13 +14,12 @@ import eu.pb4.placeholders.api.parsers.NodeParser
 import eu.pb4.placeholders.api.parsers.TagLikeParser
 import me.drex.vanish.api.VanishAPI
 import net.fabricmc.loader.api.FabricLoader
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
-import net.minecraft.registry.RegistryWrapper
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.MutableText
-import net.minecraft.text.Text
-import net.minecraft.text.TextCodecs
+import net.minecraft.core.HolderLookup
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.ComponentSerialization
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.server.level.ServerPlayer
 import java.util.function.Function
 
 val GSON: Gson = GsonBuilder().create()
@@ -30,12 +29,12 @@ val DYN_KEY = DynamicTextNode.key("blockbot")
 val TEXT_PARSER = NodeParser.builder()
     .simplifiedTextFormat()
     .quickText()
-    .globalPlaceholders()
+    .serverPlaceholders()
     .placeholders(TagLikeParser.PLACEHOLDER_ALTERNATIVE, DYN_KEY)
     .staticPreParsing()
     .build()
 
-fun String.literal(): MutableText = Text.literal(this)
+fun String.literal(): MutableComponent = Component.literal(this)
 
 fun Message.summary(): String {
     if (this.content.length > 20) {
@@ -45,25 +44,27 @@ fun Message.summary(): String {
     return this.content
 }
 
+typealias AdventureComponent = net.kyori.adventure.text.Component
+
 fun GameProfile.getTextures() = Iterables.getFirst(this.properties.get("textures"), null)?.value
 
-fun Component.toNative(wrapperLookup: RegistryWrapper.WrapperLookup): MutableText {
+fun AdventureComponent.toNative(wrapperLookup: HolderLookup.Provider): MutableComponent {
     val json = GSON.fromJson(GsonComponentSerializer.gson().serialize(this), JsonElement::class.java)
-    return TextCodecs.CODEC.decode(wrapperLookup.getOps(JsonOps.INSTANCE), json)
-        .result().map { it.first }.orElse(Text.empty()).copy()
+    return ComponentSerialization.CODEC.decode(wrapperLookup.createSerializationContext(JsonOps.INSTANCE), json)
+        .result().map { it.first }.orElse(Component.empty()).copy()
 }
 
-fun Text.toAdventure(wrapperLookup: RegistryWrapper.WrapperLookup): Component {
-    return TextCodecs.CODEC.encodeStart(wrapperLookup.getOps(JsonOps.INSTANCE), this).result()
+fun Component.toAdventure(wrapperLookup: HolderLookup.Provider): AdventureComponent {
+    return ComponentSerialization.CODEC.encodeStart(wrapperLookup.createSerializationContext(JsonOps.INSTANCE), this).result()
         .map { json -> GsonComponentSerializer.gson().deserialize(json.toString()) }
-        .orElseGet { Component.empty() }
+        .orElseGet { AdventureComponent.empty() }
 }
 
-fun ServerPlayerEntity.isVanished() =
+fun ServerPlayer.isVanished() =
     FabricLoader.getInstance().isModLoaded("melius-vanish") && VanishAPI.isVanished(this)
 
-fun String.formatText(context: ParserContext = ParserContext.of(), placeholders: Map<String, Text> = emptyMap()): Text {
-    return TEXT_PARSER.parseText(this, context.with(DYN_KEY, Function { key: String -> placeholders[key] }))
+fun String.formatText(context: ParserContext = ParserContext.of(), placeholders: Map<String, Component> = emptyMap()): Component {
+    return TEXT_PARSER.parseComponent(this, context.with(DYN_KEY, Function { key: String -> placeholders[key] }))
 }
 
-fun String.formatText(player: ServerPlayerEntity, placeholders: Map<String, Text> = emptyMap()) = this.formatText(PlaceholderContext.of(player).asParserContext(), placeholders)
+fun String.formatText(player: ServerPlayer, placeholders: Map<String, Component> = emptyMap()) = this.formatText(PlaceholderContext.of(player).asParserContext(), placeholders)

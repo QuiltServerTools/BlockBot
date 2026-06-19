@@ -1,28 +1,26 @@
 [versions]
-minecraft = "1.21.11"
-curseforge-minecraft="1.21.11"
-fabric-loader = "0.18.4"
-yarn-mappings = "1.21.11+build.3"
+minecraft = "26.2"
+curseforge-minecraft="26.2"
+fabric-loader = "0.19.3"
 
-fabric-api = "0.140.2+1.21.11"
+fabric-api = "0.152.1+26.2"
 
 # Kotlin
-fabric-kotlin = "1.13.7+kotlin.2.2.21"
+fabric-kotlin = "1.13.11+kotlin.2.3.21"
 
 # Discord
-kord-extensions = "2.3.6-SNAPSHOT"
-mc-discord-reserializer = "4.3.0"
+kord-extensions = "2.4.1-SNAPSHOT"
+mc-discord-reserializer = "5.0.0-SNAPSHOT"
 emoji-java = "5.1.1"
-adventure-gson = "4.25.0"
+adventure-gson = "5.1.1"
 
-placeholder-api = "2.8.1+1.21.10"
-permission-api = "0.6.1"
-vanish-api = "1.6.5+1.21.11"
+placeholder-api = "3.1.0-beta.1+26.2"
+permission-api = "0.7.0"
+vanish-api = "1.6.12+26.2"
 konf = "1.1.2"
 
 [libraries]
-minecraft = { module = "net.minecraft:minecraft", version.ref = "minecraft" }
-yarn-mappings = { module = "net.fabricmc:yarn", version.ref = "yarn-mappings" }
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 
 fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }

@@ -11,15 +11,15 @@ import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.getChannel
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
-import net.minecraft.command.permission.LeveledPermissionPredicate
+import net.minecraft.server.permissions.LevelBasedPermissionSet
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.server.dedicated.MinecraftDedicatedServer
-import net.minecraft.server.world.ServerWorld
-import net.minecraft.text.Text
-import net.minecraft.util.ActionResult
-import net.minecraft.util.math.Vec2f
-import net.minecraft.util.math.Vec3d
+import net.minecraft.commands.CommandSourceStack
+import net.minecraft.server.dedicated.DedicatedServer
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.network.chat.Component
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.phys.Vec2
+import net.minecraft.world.phys.Vec3
 import org.koin.core.component.inject
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -58,26 +58,26 @@ class ConsoleExtension : Extension() {
 
         RelayMessageEvent.EVENT.register { sender, channel, message ->
             if (channel == Channels.CONSOLE && message.isNotEmpty()) {
-                if (config[ConsoleRelaySpec.requireAdmin] && !sender.admin) return@register ActionResult.FAIL
+                if (config[ConsoleRelaySpec.requireAdmin] && !sender.admin) return@register InteractionResult.FAIL
 
-                val serverWorld: ServerWorld? = server.overworld
-                val source = ServerCommandSource(
+                val serverWorld: ServerLevel = server.overworld()
+                val source = CommandSourceStack(
                     server,
-                    Vec3d.ZERO,
-                    Vec2f.ZERO,
+                    Vec3.ZERO,
+                    Vec2.ZERO,
                     serverWorld,
-                    LeveledPermissionPredicate.OWNERS,
+                    LevelBasedPermissionSet.OWNER,
                     sender.id,
-                    Text.literal(sender.id),
+                    Component.literal(sender.id),
                     server,
                     null
                 )
 
-                (server as MinecraftDedicatedServer).enqueueCommand(message, source)
-                return@register ActionResult.SUCCESS
+                (server as DedicatedServer).handleConsoleInput(message, source)
+                return@register InteractionResult.SUCCESS
             }
 
-            ActionResult.PASS
+            InteractionResult.PASS
         }
     }
 

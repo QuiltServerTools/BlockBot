@@ -2,16 +2,9 @@ package io.github.quiltservertools.blockbotdiscord.utility
 
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.User
-import eu.pb4.placeholders.api.ParserContext
-import eu.pb4.placeholders.api.PlaceholderHandler
-import eu.pb4.placeholders.api.PlaceholderResult
-import eu.pb4.placeholders.api.Placeholders
-import eu.pb4.placeholders.api.node.TextNode
 import io.github.quiltservertools.blockbotdiscord.config.config
 import io.github.quiltservertools.blockbotdiscord.config.guildId
 import kotlinx.coroutines.flow.firstOrNull
-import net.minecraft.text.MutableText
-import net.minecraft.text.Text
 import java.util.regex.Pattern
 
 
@@ -55,21 +48,23 @@ suspend fun convertStringToEmoji(message: String, guild: Guild): String {
 private val emojiPattern =
     Pattern.compile(":(?<id>[^:\\s]+):")
 
-fun convertEmojiToTranslatable(
-    input: MutableText
-): MutableText {
-    return Placeholders.parseNodes(
-        TextNode.convert(input),
-        emojiPattern,
-        object : Placeholders.PlaceholderGetter {
-            override fun getPlaceholder(placeholder: String): PlaceholderHandler {
-                return PlaceholderHandler { _, _ ->
-                    PlaceholderResult.value(Text.translatable(":$placeholder:"))
-                }
-            }
-            override fun isContextOptional() = true
-        }
-    ).toText(ParserContext.of(), true).copy()
-}
+//fun convertEmojiToTranslatable(
+//    input: MutableComponent
+//): MutableComponent {
+//    val parser = NodeParser.merge(TagParser.DEFAULT, Placeholders.COMMON_PLACEHOLDER_PARSER)
+//
+//    return Placeholders.SERVER_PLACEHOLDER_PARSER.parseNodes(
+//        TextNode.convert(input),
+//        emojiPattern,
+//        object : Placeholders.PlaceholderGetter {
+//            override fun getPlaceholder(placeholder: String): PlaceholderHandler {
+//                return PlaceholderHandler { _, _ ->
+//                    PlaceholderResult.value(Component.translatable(":$placeholder:"))
+//                }
+//            }
+//            override fun isContextOptional() = true
+//        }
+//    ).toText(ParserContext.of(), true).copy()
+//}
 
 suspend fun User.asMemberOrNull() = this.asMemberOrNull(config.guildId)
