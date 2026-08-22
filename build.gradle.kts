@@ -7,7 +7,7 @@ plugins {
     kotlin("jvm") version "2.3.21"
     id("com.gradleup.shadow") version "9.3.0"
     kotlin("plugin.serialization") version "2.2.21"
-    id("me.modmuss50.mod-publish-plugin") version "1.1.0"
+    id("me.modmuss50.mod-publish-plugin") version "2.2.0"
     id("org.jetbrains.changelog") version "2.+"
 }
 
@@ -145,6 +145,7 @@ publishMods {
         accessToken.set(providers.environmentVariable("CF_API_TOKEN"))
         projectId.set("482904")
         minecraftVersions.add(curseForgeMinecraftVersion)
+        server = true
     }
     modrinth {
         accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
