@@ -46,6 +46,6 @@ fun Config.formatPlayerListContent(
 ): String = server.playerList.players.filter { !it.isVanished() }.joinToString {
     Placeholders.SERVER_PLACEHOLDER_PARSER.parseComponent(
         this[MemberCommandsSpec.PlayerListSpec.playerFormat],
-        ServerPlaceholderContext.of(server).asParserContext()
+        ServerPlaceholderContext.of(it).asParserContext()
     ).string
 }
