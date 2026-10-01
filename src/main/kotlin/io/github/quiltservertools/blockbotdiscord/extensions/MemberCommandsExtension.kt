@@ -24,7 +24,7 @@ class MemberCommandsExtension : Extension() {
                 name = Key(config[MemberCommandsSpec.PlayerListSpec.name])
                 description = Key(config[MemberCommandsSpec.PlayerListSpec.description])
 
-                guild(config.guildId)
+                scope.limitToGuild(config.guildId)
 
                 action {
                     respond {
@@ -42,7 +42,7 @@ class MemberCommandsExtension : Extension() {
                 name = Key(config[MemberCommandsSpec.WhiteListSpec.name])
                 description = Key(config[MemberCommandsSpec.WhiteListSpec.description])
 
-                guild(config.guildId)
+                scope.limitToGuild(config.guildId)
 
                 action {
                     val profile = server.services().nameToIdCache?.get(arguments.player)?.unwrap()

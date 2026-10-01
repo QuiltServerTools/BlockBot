@@ -48,7 +48,7 @@ class LinkingExtension : Extension() {
             name = Key("link")
             description = Key("links your discord account to a minecraft account")
 
-            guild(config.guildId)
+            scope.limitToGuild(config.guildId)
 
             val roles = config[LinkingSpec.requiredRoles]
             if (roles.isNotEmpty()) {

@@ -29,7 +29,7 @@ class InlineCommandsExtension : Extension() {
             name = Key("mc")
             description = Key("Run a command in game")
 
-            guild(config.guildId)
+            scope.limitToGuild(config.guildId)
             allowByDefault = false
 
             action {

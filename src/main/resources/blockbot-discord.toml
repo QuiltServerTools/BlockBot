@@ -64,7 +64,7 @@ escapeIngameMarkdown = false
     # URL for the webhook avatar for messages not from players
     webhookAvatar = "https://i.imgur.com/IxPg1R2.png"
     # URL to get the webhook avatar from for players
-    playerAvatarUrl = "https://cravatar.eu/helmavatar/{uuid}/128.png?{texture}"
+    playerAvatarUrl = "https://mc-heads.net/avatar/{uuid}"
 
     # Placeholders: {sender}, {sender_display}, {message}
     # Supports discord markdown and Placeholder API with player context
