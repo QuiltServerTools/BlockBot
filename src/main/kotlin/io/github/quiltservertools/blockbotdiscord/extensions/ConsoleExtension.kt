@@ -67,10 +67,8 @@ class ConsoleExtension : Extension() {
                     Vec2.ZERO,
                     serverWorld,
                     LevelBasedPermissionSet.OWNER,
-                    sender.id,
                     Component.literal(sender.id),
-                    server,
-                    null
+                    server
                 )
 
                 (server as DedicatedServer).handleConsoleInput(message, source)

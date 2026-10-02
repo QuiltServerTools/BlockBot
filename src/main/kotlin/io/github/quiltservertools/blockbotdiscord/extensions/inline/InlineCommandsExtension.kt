@@ -41,10 +41,8 @@ class InlineCommandsExtension : Extension() {
                     Vec2.ZERO,
                     serverWorld,
                     LevelBasedPermissionSet.forLevel(PermissionLevel.byId(config[InlineCommandsSpec.opLevel])),
-                    member!!.asMember().tag,
                     Component.literal(member!!.asMember().tag),
-                    server,
-                    null
+                    server
                 )
 
                 (server as DedicatedServer).commands.performPrefixedCommand(source, arguments.command)

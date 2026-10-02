@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.10] - 2026-09-28
+### Changed
+- Update to 26.3
+
 ## [2.0.7] - 2026-01-05
 ### Fixed
 - 'Invalid player data' when joining with a linked account
